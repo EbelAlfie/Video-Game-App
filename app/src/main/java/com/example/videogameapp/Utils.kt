@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import com.example.videogameapp.presentation.view.GameDetailActivity
 
 object Utils {
     const val USER_OFFLINE = 0
@@ -32,7 +33,9 @@ object Utils {
         }
     }
 
-    fun generateIntent(context: Context, id: Int?, slug: String?) {
-
+    fun generateIntent(context: Context, id: Long?, slug: String?) {
+        val intent = Intent(context, GameDetailActivity::class.java)
+        intent.putExtra(ID_KEY, id)
+        context.startActivity(intent)
     }
 }

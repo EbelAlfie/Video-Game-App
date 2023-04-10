@@ -1,26 +1,179 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".presentation.view.GameDetailActivity"
-    android:background="@drawable/background_design">
+    android:background="@color/dark_background">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/detail_padding" >
 
-    <ImageView
-        android:id="@+id/iv_game_image"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-    <TextView
-        android:id="@+id/tv_game_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="Title"
-        style="@style/tv_header_style"
-        app:layout_constraintTop_toBottomOf="@id/iv_game_image"
-        app:layout_constraintStart_toStartOf="parent"/>
+        <ImageView
+            android:id="@+id/iv_game_image"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription"/>
+        <TextView
+            android:id="@+id/tv_game_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Title"
+            style="@style/tv_header_style"
+            app:layout_constraintTop_toBottomOf="@id/iv_game_image"
+            app:layout_constraintStart_toStartOf="parent"/>
+        <TextView
+            android:id="@+id/tv_desc_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/overview"
+            style="@style/tv_header_style"
+            app:layout_constraintTop_toBottomOf="@id/tv_game_title"
+            app:layout_constraintStart_toStartOf="parent"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/tv_metacritic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="5.4"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_game_image"
+            android:layout_margin="@dimen/view_margin"/>
+
+        <TextView
+            android:id="@+id/tv_game_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="@string/overview"
+            style="@style/tv_small_style"
+            app:layout_constraintTop_toBottomOf="@id/tv_desc_title"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:id="@+id/tv_genre_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/genres_title"
+            style="@style/tv_medium_style"
+            app:layout_constraintTop_toBottomOf="@id/tv_game_desc"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_game_genre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/tv_small_style"
+            tools:text="genres"
+            app:layout_constraintTop_toBottomOf="@id/tv_genre_title"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:id="@+id/tv_platform_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/platform_title"
+            style="@style/tv_medium_style"
+            app:layout_constraintTop_toBottomOf="@id/tv_game_desc"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/tv_genre_title"/>
+        <TextView
+            android:id="@+id/tv_game_platform"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/tv_small_style"
+            tools:text="platforms"
+            app:layout_constraintTop_toBottomOf="@id/tv_platform_title"
+            app:layout_constraintStart_toStartOf="@id/tv_platform_title"/>
+
+        <TextView
+            android:id="@+id/tv_released_date_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/released_date_title"
+            style="@style/tv_medium_style"
+            app:layout_constraintTop_toBottomOf="@id/tv_game_genre"
+            app:layout_constraintStart_toStartOf="parent" />
+        <TextView
+            android:id="@+id/tv_game_released_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/tv_small_style"
+            tools:text="released date"
+            app:layout_constraintTop_toBottomOf="@id/tv_released_date_title"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:id="@+id/tv_age_rating_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Age Rating"
+            style="@style/tv_medium_style"
+            app:layout_constraintTop_toBottomOf="@id/tv_game_released_date"
+            app:layout_constraintStart_toStartOf="parent"/>
+        <TextView
+            android:id="@+id/tv_game_age_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/tv_small_style"
+            tools:text="age rating"
+            app:layout_constraintTop_toBottomOf="@id/tv_age_rating_title"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:id="@+id/tv_developer_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/developer_title"
+            style="@style/tv_medium_style"
+            app:layout_constraintTop_toBottomOf="@id/tv_game_platform"
+            app:layout_constraintStart_toStartOf="@id/tv_platform_title"/>
+        <TextView
+            android:id="@+id/tv_game_developer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/tv_small_style"
+            tools:text="developers"
+            app:layout_constraintTop_toBottomOf="@id/tv_developer_title"
+            app:layout_constraintStart_toStartOf="@id/tv_developer_title"/>
+        <TextView
+            android:id="@+id/tv_screenshot_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/screenshots_title"
+            style="@style/tv_header_style"
+            app:layout_constraintTop_toBottomOf="@id/tv_game_age_rating"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <com.smarteist.autoimageslider.SliderView
+            android:id="@+id/sv_show_backdrop"
+            android:layout_width="match_parent"
+            android:layout_height="360dp"
+            app:sliderIndicatorEnabled="false"
+            app:sliderAnimationDuration="600"
+            app:sliderAutoCycleDirection="back_and_forth"
+            app:sliderAutoCycleEnabled="true"
+            app:sliderScrollTimeInSec="4"
+            app:sliderStartAutoCycle="true"
+            app:layout_constraintTop_toBottomOf="@id/tv_screenshot_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:id="@+id/tv_trailer_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/trailer_title"
+            style="@style/tv_header_style"
+            app:layout_constraintTop_toBottomOf="@id/tv_screenshot_title"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

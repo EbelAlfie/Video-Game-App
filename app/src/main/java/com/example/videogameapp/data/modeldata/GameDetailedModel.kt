@@ -10,6 +10,8 @@ data class GameDetailedModel (
         val desc: String?,
         @SerializedName("name")
         val name: String?,
+        @SerializedName("tba")
+        val tbaStatus: Boolean,
         @SerializedName("released")
         val dateReleased: String?,
         @SerializedName("background_image_additional")

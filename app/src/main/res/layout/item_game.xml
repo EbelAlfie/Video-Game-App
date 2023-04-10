@@ -6,11 +6,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/item_games_design"
-    android:layout_margin="@dimen/view_margin">
+    android:layout_margin="@dimen/view_margin"
+    android:paddingBottom="@dimen/detail_padding">
     <ImageView
         android:id="@+id/iv_poster"
         android:layout_width="300dp"
         android:layout_height="100dp"
+        android:scaleType="fitCenter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -20,6 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="5.4"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/iv_poster"
         android:layout_margin="@dimen/view_margin"/>
@@ -29,34 +32,54 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/iv_poster"
-        tools:text="title"
+        tools:text="Title"
         style="@style/tv_header_style" />
+    <TextView
+        android:id="@+id/tv_ratings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/rating"
+        style="@style/tv_medium_game_item"
+        app:layout_constraintTop_toBottomOf="@id/tv_game_title"
+        app:layout_constraintStart_toStartOf="@id/tv_game_title"/>
+    <TextView
+        android:id="@+id/tv_review_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/review_count"
+        style="@style/tv_medium_game_item"
+        app:layout_constraintTop_toBottomOf="@id/tv_ratings"
+        app:layout_constraintStart_toStartOf="@id/tv_ratings"/>
+    <TextView
+        android:id="@+id/tv_platforms"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/platform"
+        style="@style/tv_medium_game_item"
+        app:layout_constraintTop_toBottomOf="@id/tv_review_count"
+        app:layout_constraintStart_toStartOf="@id/tv_review_count"/>
     <TextView
         android:id="@+id/tv_released_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="released data: dd-mm-yyyy"
-        app:layout_constraintTop_toBottomOf="@id/tv_game_title"
-        app:layout_constraintStart_toStartOf="@id/tv_game_title"/>
+        android:text="@string/released_date"
+        style="@style/tv_medium_game_item"
+        app:layout_constraintTop_toBottomOf="@id/tv_platforms"
+        app:layout_constraintStart_toStartOf="@id/tv_platforms"/>
     <TextView
         android:id="@+id/tv_genres"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="genrenya"
+        android:text="@string/genre_genrenya"
+        style="@style/tv_medium_game_item"
         app:layout_constraintTop_toBottomOf="@id/tv_released_date"
         app:layout_constraintStart_toStartOf="@id/tv_released_date" />
     <TextView
         android:id="@+id/tv_playtime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="playtime"
+        android:text="@string/playtime"
+        style="@style/tv_medium_game_item"
         app:layout_constraintTop_toBottomOf="@id/tv_genres"
         app:layout_constraintStart_toStartOf="@id/tv_genres"/>
-    <TextView
-        android:id="@+id/tv_platforms"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="platform"
-        app:layout_constraintTop_toBottomOf="@id/tv_playtime"
-        app:layout_constraintStart_toStartOf="@id/tv_playtime"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

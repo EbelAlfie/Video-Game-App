@@ -2,6 +2,7 @@ package com.example.videogameapp.presentation.view
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.adapter.FragmentViewHolder
 import com.example.videogameapp.presentation.viewmodel.HomeViewModel
 
 class FragmentAdapter (activity: MainActivity, private val viewModel: HomeViewModel): FragmentStateAdapter(activity) {

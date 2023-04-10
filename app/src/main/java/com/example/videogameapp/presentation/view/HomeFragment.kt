@@ -68,6 +68,6 @@ class HomeFragment (private var viewModel: HomeViewModel): Fragment(), GamePagin
     }
 
     override fun onItemClicked(position: Int) {
-        Utils.generateIntent()
+        Utils.generateIntent(requireContext(), pagingAdapter.getGameId(position), null)
     }
 }

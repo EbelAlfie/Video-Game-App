@@ -1,29 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/app_container"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/background_design">
-    <androidx.constraintlayout.widget.ConstraintLayout
+    android:background="@color/dark_background">
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/fragment_view_pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/fragment_view_pager"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            />
-
-
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/view_navbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:menu="@menu/bottom_navbar"
-            app:layout_constraintTop_toBottomOf="@id/fragment_view_pager"
-            app:layout_constraintBottom_toBottomOf="parent"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.core.widget.NestedScrollView>
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/view_navbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:menu="@menu/bottom_navbar"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
+        app:itemActiveIndicatorStyle="@color/yellow_theme"
+        android:background="@color/dark_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/app_container"
+        app:layout_constraintEnd_toEndOf="@id/app_container"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

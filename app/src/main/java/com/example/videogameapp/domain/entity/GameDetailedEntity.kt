@@ -7,6 +7,7 @@ data class GameDetailedEntity (
         val id: Long,
         val desc: String,
         val name: String,
+        val tbaStatus: Boolean,
         val dateReleased: String,
         val backgroundImageAdditional: String,
         val metacriticUrl: String,

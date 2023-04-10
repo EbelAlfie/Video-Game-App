@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">Video Game App</string>
+    <string name="released_date">Released date: %s</string>
+    <string name="genre_genrenya">Genre: %s</string>
+    <string name="playtime">Playtime: %d</string>
+    <string name="platform">Platform: %s</string>
+    <string name="overview">Overview</string>
+    <string name="genres_title">Genres</string>
+    <string name="rating">Rating: %d</string>
+    <string name="review_count">Review Count: %d</string>
+    <string name="platform_title">Supported System</string>
+    <string name="developer_title">Developer</string>
+    <string name="released_date_title">Released date</string>
+    <string name="screenshots_title">Screenshots</string>
+    <string name="trailer_title">Trailer</string>
 </resources>
