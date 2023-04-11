@@ -30,12 +30,12 @@ class HomeFragment (private var viewModel: HomeViewModel): Fragment(), GamePagin
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecView()
-        getData()
+        getData(initQueryGameItemParam(null, null))
     }
 
-    private fun getData() {
+    private fun getData(queryParam: QueryGameItemEntity) {
         lifecycleScope.launch {
-            viewModel.getGameList(this, initQueryGameItemParam(null, null)).collectLatest {
+            viewModel.getGameList(this, queryParam).collectLatest {
                 pagingAdapter.submitData(lifecycle, it)
             }
         }
@@ -55,7 +55,10 @@ class HomeFragment (private var viewModel: HomeViewModel): Fragment(), GamePagin
             rvGameList.adapter = pagingAdapter
             searchView.setOnQueryTextListener(object: OnQueryTextListener{
                 override fun onQueryTextSubmit(query: String?): Boolean {
-                    initQueryGameItemParam(query, null)
+                    if (query?.isNotBlank()!!) {
+                        val queryEntity = initQueryGameItemParam(query, null)
+                        getData(queryEntity)
+                    }
                     return true
                 }
 

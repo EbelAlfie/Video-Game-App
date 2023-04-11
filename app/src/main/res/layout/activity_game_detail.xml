@@ -113,7 +113,7 @@
             android:id="@+id/tv_age_rating_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Age Rating"
+            android:text="@string/age_rating_title"
             style="@style/tv_medium_style"
             app:layout_constraintTop_toBottomOf="@id/tv_game_released_date"
             app:layout_constraintStart_toStartOf="parent"/>
@@ -151,7 +151,7 @@
             app:layout_constraintTop_toBottomOf="@id/tv_game_age_rating"
             app:layout_constraintStart_toStartOf="parent"/>
 
-        <com.smarteist.autoimageslider.SliderView
+        <!--<com.smarteist.autoimageslider.SliderView
             android:id="@+id/sv_show_backdrop"
             android:layout_width="match_parent"
             android:layout_height="360dp"
@@ -163,7 +163,7 @@
             app:sliderStartAutoCycle="true"
             app:layout_constraintTop_toBottomOf="@id/tv_screenshot_title"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent"/>-->
 
         <TextView
             android:id="@+id/tv_trailer_title"
@@ -172,6 +172,15 @@
             android:text="@string/trailer_title"
             style="@style/tv_header_style"
             app:layout_constraintTop_toBottomOf="@id/tv_screenshot_title"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:id="@+id/tv_tag_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tags_title"
+            style="@style/tv_medium_game_item"
+            app:layout_constraintTop_toBottomOf="@id/tv_trailer_title"
             app:layout_constraintStart_toStartOf="parent"/>
 
 

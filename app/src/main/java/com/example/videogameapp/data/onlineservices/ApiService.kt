@@ -10,14 +10,15 @@ import retrofit2.http.Query
 interface ApiService {
 
     @GET("games")
-    suspend fun getAllGame(@Query("dates") dates: String?,
+    suspend fun getAllGame(@Query("key") apiKey: String = API_KEY,
+                           @Query("dates") dates: String?,
                            @Query("search") search: String?,
-                           @Query("key") apiKey: String = API_KEY
+                           @Query("page") page: Int
     ): GameItemResponse
 
     //@Headers("key:" + ServiceUtils.API_KEY)
     @GET("games/{id}")
-    suspend fun getGameDetail(@Path("id") id: Int,
+    suspend fun getGameDetail(@Path("id") id: Long,
                               @Query("key") apiKey: String = API_KEY
     ): GameDetailedModel
 

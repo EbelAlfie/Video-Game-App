@@ -10,5 +10,5 @@ import kotlinx.coroutines.flow.Flow
 interface AppRepository {
     fun getGameList(scope: CoroutineScope, queryGameItemEntity: QueryGameItemEntity): Flow<PagingData<GameItemEntity>>
 
-    fun getGameDetail(id: Int): Flow<GameDetailedEntity>
+    fun getGameDetail(id: Long): Flow<GameDetailedEntity>
 }

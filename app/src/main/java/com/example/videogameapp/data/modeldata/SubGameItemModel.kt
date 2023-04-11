@@ -13,11 +13,11 @@ data class StoreResponseModel (
 
 data class RatingModel (
     @SerializedName("title")
-    val ratingTitle: String,
+    val ratingTitle: String?,
     @SerializedName("count")
-    val ratingCount: Int,
+    val ratingCount: Int?,
     @SerializedName("percentage")
-    val percentage: Int
+    val percentage: Int?
     ) {
     companion object {
         fun convertList(ratingModelList: List<RatingModel?>) : List<RatingEntity> {
@@ -30,12 +30,12 @@ data class RatingModel (
 
 data class StoreModel(
     @SerializedName("name")
-    val name: String
+    val name: String?
     )
 
 data class GenresModel (
     @SerializedName("name")
-    val genreName: String
+    val genreName: String?
     ) {
     companion object {
         fun convertList(genres: List<GenresModel?>): List<GenresEntity> {
@@ -47,30 +47,26 @@ data class GenresModel (
 }
 
 data class PlatformModelResponse (
-    val platform: PlatformObject
-)
-
-data class PlatformObject (
     @SerializedName("platform")
-    val platformObj: PlatformModel
-    )
+    val platforms: PlatformModel?
+)
 
 data class PlatformModel (
     @SerializedName("name")
-    val platform: String
+    val platform: String?
     ) {
     companion object {
-        fun convertList(platformModelList: List<PlatformModelResponse?>): List<PlatformEntity> {
-            return platformModelList.map {
-                PlatformEntity(it?.platform?.platformObj?.platform ?: "")
-            }
+        fun convertList(platformModelList: List<PlatformModelResponse?>?): List<PlatformEntity> {
+            return platformModelList?.map {
+                PlatformEntity(it?.platforms?.platform ?: "")
+            } ?: listOf(PlatformEntity(""))
         }
     }
 }
 
 data class ScreenShotModel (
     @SerializedName("image")
-    val image: String
+    val image: String?
     ) {
     companion object {
         fun convertList(images: List<ScreenShotModel?>): List<ScreenShotEntity> {

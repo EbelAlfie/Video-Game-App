@@ -26,13 +26,13 @@ interface GameItemDao {
     fun insertGameItemScreenshot(gameItemScreenshot: ScreenShotDbModel)
 
     //query sublists
-    @Query("SELECT * FROM rating_db WHERE id=:ratingId")
-    fun getSpecificRating(ratingId: Int): List<RatingDbModel>
-    @Query("SELECT * FROM rating_db WHERE id=:genreId")
-    fun getSpecificGenre(genreId: Int): List<GenresDbModel>
-    @Query("SELECT * FROM rating_db WHERE id=:platformId")
-    fun getSpecificPlatform(platformId: Int): List<PlatformDbModel>
-    @Query("SELECT * FROM rating_db WHERE id=:screenShotId")
-    fun getSpecificScreenshot(screenShotId: Int): List<ScreenShotDbModel>
+//    @Query("SELECT * FROM rating_db WHERE id=:ratingId")
+//    fun getSpecificRating(ratingId: Int): List<RatingDbModel>
+//    @Query("SELECT * FROM rating_db WHERE id=:genreId")
+//    fun getSpecificGenre(genreId: Int): List<GenresDbModel>
+//    @Query("SELECT * FROM rating_db WHERE id=:platformId")
+//    fun getSpecificPlatform(platformId: Int): List<PlatformDbModel>
+//    @Query("SELECT * FROM rating_db WHERE id=:screenShotId")
+//    fun getSpecificScreenshot(screenShotId: Int): List<ScreenShotDbModel>
 
 }

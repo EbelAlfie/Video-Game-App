@@ -1,6 +1,7 @@
 package com.example.videogameapp.presentation.di
 
 import com.example.videogameapp.data.di.DataComponent
+import com.example.videogameapp.presentation.view.GameDetailActivity
 import com.example.videogameapp.presentation.view.MainActivity
 import dagger.Component
 
@@ -15,5 +16,5 @@ interface AppComponent {
     }
 
     fun injectMain(mainActivity: MainActivity)
-
+    fun injectDetailed(detailActivity: GameDetailActivity)
 }

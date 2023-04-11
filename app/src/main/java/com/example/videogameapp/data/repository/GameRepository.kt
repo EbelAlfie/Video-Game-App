@@ -1,5 +1,6 @@
 package com.example.videogameapp.data.repository
 
+import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -24,13 +25,14 @@ class GameRepository @Inject constructor(private val apiService: ApiService): Ap
         }.flow.cachedIn(scope)
     }
 
-    override fun getGameDetail(id: Int): Flow<GameDetailedEntity> {
+    override fun getGameDetail(id: Long): Flow<GameDetailedEntity> {
         return flow{
             try {
                 val data = apiService.getGameDetail(id)
-                emit(GameDetailedEntity(0, "", "", "", "", "", null, 0, listOf(), listOf(),listOf(),listOf(),listOf()))
+                emit(GameDetailedModel.convert(data))
             }catch (e: Exception) {
-                emit(GameDetailedEntity(0, "", "", "", "", "", null, 0, listOf(), listOf(),listOf(),listOf(),listOf()))
+                Log.d("TAG", e.message.toString())
+                emit(GameDetailedEntity(0, "", "", false, "", "", "", null, 0, "", listOf(), listOf(),listOf(),listOf()))
             }
 
         }

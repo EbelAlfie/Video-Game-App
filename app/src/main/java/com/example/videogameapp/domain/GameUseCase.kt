@@ -13,7 +13,7 @@ class GameUseCase @Inject constructor(private val repository: AppRepository): Ap
         return repository.getGameList(scope, queryGameItemEntity)
     }
 
-    override fun getGameDetail(id: Int): Flow<GameDetailedEntity> {
+    override fun getGameDetail(id: Long): Flow<GameDetailedEntity> {
         return repository.getGameDetail(id)
     }
 

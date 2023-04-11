@@ -25,31 +25,32 @@ data class GameDetailedModel (
         @SerializedName("genres")
         val genres: List<GenresModel?>,
         @SerializedName("platforms")
-        val platforms: List<PlatformModel?>,//
-        @SerializedName("short_screenshots")
-        val screenShots: List<ScreenShotModel?>,
+        val platforms: List<PlatformModelResponse?>,
         @SerializedName("developers")
         val developer: List<DeveloperDetailModel?>,
         @SerializedName("publishers")
-        val publishers: List<PublisherDetailModel?>
+        val publishers: List<PublisherDetailModel?>,
+        @SerializedName("esrb_rating")
+        val esrbRating: AgeRatingModel
         ) {
         companion object {
-                /*fun transform(it: GameDetailedModel): GameDetailedEntity {
+                fun convert(it: GameDetailedModel): GameDetailedEntity {
                         return GameDetailedEntity(
                                 id = it.id ?: 0,
                                 desc = it.desc ?: "",
                                 name = it.name ?: "",
                                 dateReleased = it.dateReleased ?: "",
                                 backgroundImageAdditional = it.backgroundImageAdditional ?: "",
+                                tbaStatus = it.tbaStatus,
                                 metaCritic = it.metaCritic,
-                                metacriticUrl = it.metacriticUrl,
-                                playtime = it.playtime,
-                                platforms = it.platforms,
-                                screenShots = ScreenShotModel.convertList(it.screenShots),
-                                developer = it.developer,
-                                publishers = it.publishers,
-                                genres = GenresModel.convertList(it.genres),
+                                metacriticUrl = it.metacriticUrl ?: "",
+                                playtime = it.playtime ?: 0,
+                                ageRating = it.esrbRating.ageRating,
+                                platforms = PlatformModel.convertList(it.platforms),
+                                developer = DeveloperDetailModel.convertList(it.developer),
+                                publishers = PublisherDetailModel.convertList(it.publishers),
+                                genres = GenresModel.convertList(it.genres)
                         )
-                }*/
+                }
         }
 }

@@ -17,10 +17,10 @@ data class GameItemEntity(
     val backgroundImage: String?,
     val metaCritic: Int?,
     val playtime: Int?,
-    val ratings: List<RatingEntity>,
+    val ratings: List<RatingEntity?>,
     val reviewCount: Int,
     val genres: List<GenresEntity?>,
-    val platforms: List<PlatformEntity?>,//
+    val platforms: List<PlatformEntity?>,
     val screenShots: List<ScreenShotEntity?>,
 ){
     fun getMetacritics(): String {
@@ -34,5 +34,10 @@ data class GameItemEntity(
             in 70..100 -> R.color.green
             else -> R.color.red
         }
+    }
+
+    fun getRatings(): String {
+        if (ratings.isEmpty()) return "-"
+        return ratings.maxBy { it?.ratingCount ?: 0 }?.ratingTitle ?: "-"
     }
 }

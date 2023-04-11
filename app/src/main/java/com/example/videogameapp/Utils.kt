@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.text.Html
+import android.text.Spanned
 import com.example.videogameapp.presentation.view.GameDetailActivity
 
 object Utils {
@@ -18,6 +20,10 @@ object Utils {
             setTitle(title)
             setMessage(message)
         }
+    }
+
+    fun String.htmlFormater(): Spanned {
+        return Html.fromHtml(this, Html.FROM_HTML_MODE_LEGACY)
     }
 
     fun isNetworkAvailable(context: Context): Boolean {

@@ -43,9 +43,14 @@ class GamePagingAdapter(private val listener: SetOnItemClicked): PagingDataAdapt
     override fun onBindViewHolder(holder: GameViewHolder, position: Int) {
         val data = getItem(position) ?: return
         holder.binding.apply {
-            Picasso.get().load(data.backgroundImage).into(ivPoster)
+            if (data.backgroundImage?.isNotBlank() == true) {
+                Picasso.get().load(data.backgroundImage).into(ivPoster)
+            }else ivPoster.setImageResource(R.drawable.baseline_broken_image_24)
+
             tvGameTitle.text = data.name
             tvPlaytime.text = context.getString(R.string.playtime, data.playtime)
+
+            tvRatings.text = context.getString(R.string.rating, data.getRatings())
 
             setReleasedDateTv(tvReleasedDate, data)
 
@@ -63,7 +68,7 @@ class GamePagingAdapter(private val listener: SetOnItemClicked): PagingDataAdapt
     }
 
     private fun setReleasedDateTv(tvReleasedDate: TextView, data: GameItemEntity) {
-        tvReleasedDate.text = if (data.tbaStatus) context.getString(R.string.released_date, data.dateReleased) else "TBA"
+        tvReleasedDate.text = context.getString(R.string.released_date, if (!data.tbaStatus) data.dateReleased else "TBA")
     }
 
     private fun setMetacritics(tvMetacritic: TextView, data: GameItemEntity) {
@@ -76,7 +81,7 @@ class GamePagingAdapter(private val listener: SetOnItemClicked): PagingDataAdapt
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GamePagingAdapter.GameViewHolder {
         context = parent.context
-        return GamePagingAdapter.GameViewHolder(
+        return GameViewHolder(
             ItemGameBinding.inflate(
                 LayoutInflater.from(context),
                 parent,

@@ -14,12 +14,12 @@ class GamePagingDataSource(private val apiService: ApiService, private val query
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, GameItemEntity> {
-        val position = params.key ?: 0
+        val position = params.key ?: 1
         return try {
-            val list = getOnlineData()
+            val list = getOnlineData(position)
             LoadResult.Page(
                 data = list,
-                nextKey = if (position == 1) 1 else position * 10 - 10,
+                nextKey = if (list.isEmpty()) null else position + 1,
                 prevKey = null
             )
         }catch (e: Exception) {
@@ -27,10 +27,11 @@ class GamePagingDataSource(private val apiService: ApiService, private val query
         }
     }
 
-    private suspend fun getOnlineData(): List<GameItemEntity> {
+    private suspend fun getOnlineData(position: Int): List<GameItemEntity> {
         val response = apiService.getAllGame(
             dates = queryGameItemModel.dates,
-            search = queryGameItemModel.search
+            search = queryGameItemModel.search,
+            page = if (position == 1) 1 else position * 10 - 10,
         )
         return GameItemModel.convertList(response.results)
     }
