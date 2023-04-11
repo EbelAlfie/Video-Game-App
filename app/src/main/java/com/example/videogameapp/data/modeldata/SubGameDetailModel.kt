@@ -34,3 +34,16 @@ data class AgeRatingModel (
     @SerializedName("name")
     val ageRating: String
     )
+
+data class TagsModel (
+    @SerializedName("name")
+    val name: String?
+    ) {
+    companion object {
+        fun convertList(tags: List<TagsModel?>): List<String> {
+            return tags.map {
+                it?.name ?: ""
+            }
+        }
+    }
+}

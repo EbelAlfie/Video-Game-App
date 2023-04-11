@@ -15,5 +15,6 @@ data class GameDetailedEntity (
         val genres: List<GenresEntity>,
         val platforms: List<PlatformEntity>,
         val developer: List<DeveloperDetailEntity>,
-        val publishers: List<PublisherDetailEntity>
+        val publishers: List<PublisherDetailEntity>,
+        val tags: List<String>
         )

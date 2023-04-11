@@ -32,7 +32,7 @@ class GameRepository @Inject constructor(private val apiService: ApiService): Ap
                 emit(GameDetailedModel.convert(data))
             }catch (e: Exception) {
                 Log.d("TAG", e.message.toString())
-                emit(GameDetailedEntity(0, "", "", false, "", "", "", null, 0, "", listOf(), listOf(),listOf(),listOf()))
+                emit(GameDetailedEntity(0, "", "", false, "", "", "", null, 0, "", listOf(), listOf(),listOf(),listOf(), listOf()))
             }
 
         }

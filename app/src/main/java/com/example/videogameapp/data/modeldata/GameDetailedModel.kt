@@ -31,7 +31,9 @@ data class GameDetailedModel (
         @SerializedName("publishers")
         val publishers: List<PublisherDetailModel?>,
         @SerializedName("esrb_rating")
-        val esrbRating: AgeRatingModel
+        val esrbRating: AgeRatingModel,
+        @SerializedName("tags")
+        val tags: List<TagsModel>
         ) {
         companion object {
                 fun convert(it: GameDetailedModel): GameDetailedEntity {
@@ -49,7 +51,8 @@ data class GameDetailedModel (
                                 platforms = PlatformModel.convertList(it.platforms),
                                 developer = DeveloperDetailModel.convertList(it.developer),
                                 publishers = PublisherDetailModel.convertList(it.publishers),
-                                genres = GenresModel.convertList(it.genres)
+                                genres = GenresModel.convertList(it.genres),
+                                tags = TagsModel.convertList(it.tags)
                         )
                 }
         }

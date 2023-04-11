@@ -174,14 +174,24 @@
             app:layout_constraintTop_toBottomOf="@id/tv_screenshot_title"
             app:layout_constraintStart_toStartOf="parent"/>
 
+        <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+            android:id="@+id/trailer_video"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_trailer_title"/>
+
         <TextView
             android:id="@+id/tv_tag_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/tags_title"
             style="@style/tv_medium_game_item"
-            app:layout_constraintTop_toBottomOf="@id/tv_trailer_title"
+            app:layout_constraintTop_toBottomOf="@id/trailer_video"
             app:layout_constraintStart_toStartOf="parent"/>
+
+
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

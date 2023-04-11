@@ -55,6 +55,8 @@ class GameDetailActivity : AppCompatActivity() {
             tvGameDeveloper.text = data.developer.joinToString { it.name }
             tvGameAgeRating.text = data.ageRating
 
+
+
         }
     }
 }
