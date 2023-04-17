@@ -2,13 +2,12 @@ package com.example.videogameapp.data.repository
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.videogameapp.data.modeldata.GameItemModel
-import com.example.videogameapp.data.modeldata.QueryGameItemModel
-import com.example.videogameapp.data.onlineservices.ApiService
-import com.example.videogameapp.domain.entity.GameItemEntity
-import com.example.videogameapp.domain.entity.QueryGameItemEntity
+import com.example.videogameapp.data.modeldata.gamedatamodel.GameItemModel
+import com.example.videogameapp.data.modeldata.gamedatamodel.QueryGameItemModel
+import com.example.videogameapp.data.onlineservices.GameApiService
+import com.example.videogameapp.domain.entity.gameentity.GameItemEntity
 
-class GamePagingDataSource(private val apiService: ApiService, private val queryGameItemModel: QueryGameItemModel): PagingSource<Int, GameItemEntity>() {
+class GamePagingDataSource(private val gameApiService: GameApiService, private val queryGameItemModel: QueryGameItemModel): PagingSource<Int, GameItemEntity>() {
     override fun getRefreshKey(state: PagingState<Int, GameItemEntity>): Int? {
         return null
     }
@@ -28,10 +27,13 @@ class GamePagingDataSource(private val apiService: ApiService, private val query
     }
 
     private suspend fun getOnlineData(position: Int): List<GameItemEntity> {
-        val response = apiService.getAllGame(
+        val response = gameApiService.getAllGame(
             dates = queryGameItemModel.dates,
             search = queryGameItemModel.search,
-            page = if (position == 1) 1 else position * 10 - 10,
+            store = queryGameItemModel.store,
+            platform = queryGameItemModel.platform,
+            ordering = queryGameItemModel.ordering,
+            page = if (position == 1) 1 else position * 10 - 10
         )
         return GameItemModel.convertList(response.results)
     }

@@ -1,13 +1,14 @@
 package com.example.videogameapp.presentation.di
 
 import com.example.videogameapp.data.di.DataComponent
-import com.example.videogameapp.presentation.view.GameDetailActivity
+import com.example.videogameapp.presentation.view.homeview.GameDetailActivity
 import com.example.videogameapp.presentation.view.MainActivity
+import com.example.videogameapp.presentation.view.storeview.StoreDetailActivity
 import dagger.Component
 
 @RawgScope
 @Component(
-    modules = [GameUseCaseModule::class],
+    modules = [UseCaseModule::class],
     dependencies = [DataComponent::class])
 interface AppComponent {
     @Component.Factory
@@ -16,5 +17,6 @@ interface AppComponent {
     }
 
     fun injectMain(mainActivity: MainActivity)
-    fun injectDetailed(detailActivity: GameDetailActivity)
+    fun injectDetailed(gameDetailActivity: GameDetailActivity)
+    fun injectStoreDetail(storeDetailActivity: StoreDetailActivity)
 }

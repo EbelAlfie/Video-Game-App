@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -41,11 +42,8 @@ dependencies {
     kapt 'androidx.room:room-compiler:2.5.1'
     implementation "androidx.room:room-ktx:2.4.2"
 
-    implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:chromecast-sender:0.28'
 
-/*
-    implementation 'com.github.smarteist:autoimageslider:1.4.0'
-*/
+    implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:chromecast-sender:0.28'
 
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1"
     implementation "androidx.activity:activity-ktx:1.7.0"

@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 data class RatingDbModel (
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo("id")
-    val id: Int,
+    val id: Long,
     @ColumnInfo("title")
     val ratingTitle: String,
     @ColumnInfo("count")
@@ -21,7 +21,7 @@ data class RatingDbModel (
 data class GenresDbModel (
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo("id")
-    val id: Int,
+    val id: Long,
     @ColumnInfo("name")
     val genreName: String
 )
@@ -30,7 +30,7 @@ data class GenresDbModel (
 data class PlatformDbModel (
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo("id")
-    val id: Int,
+    val id: Long,
     @ColumnInfo("name")
     val platform: String
 )
@@ -39,7 +39,7 @@ data class PlatformDbModel (
 data class ScreenShotDbModel (
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo("id")
-    val id: Int,
+    val id: Long,
     @ColumnInfo("image")
     val image: String
 )

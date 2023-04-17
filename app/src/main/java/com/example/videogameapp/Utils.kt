@@ -7,13 +7,17 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.text.Html
 import android.text.Spanned
-import com.example.videogameapp.presentation.view.GameDetailActivity
+import com.example.videogameapp.domain.entity.gameentity.GameItemEntity
 
 object Utils {
     const val USER_OFFLINE = 0
     const val USER_ONLINE = 1
 
     const val ID_KEY = "id"
+    const val OBJ_KEY = "Object"
+
+    const val DELAY_TIME: Long = 2500
+    const val PERIODE_TIME: Long = 4000
 
     fun setUpAlertDialog(title: String, message: String, context: Context): AlertDialog.Builder {
         return AlertDialog.Builder(context).apply {
@@ -22,7 +26,7 @@ object Utils {
         }
     }
 
-    fun String.htmlFormater(): Spanned {
+    fun String.fromHtml(): Spanned {
         return Html.fromHtml(this, Html.FROM_HTML_MODE_LEGACY)
     }
 
@@ -39,9 +43,15 @@ object Utils {
         }
     }
 
-    fun generateIntent(context: Context, id: Long?, slug: String?) {
-        val intent = Intent(context, GameDetailActivity::class.java)
+    fun generateIntent(context: Context, id: Long?, kelas: Class<*>): Intent {
+        val intent = Intent(context, kelas)
         intent.putExtra(ID_KEY, id)
-        context.startActivity(intent)
+        return intent
+    }
+
+    fun generateIntentScnd(context: Context, id: GameItemEntity, kelas: Class<*>): Intent {
+        val intent = Intent(context, kelas)
+        intent.putExtra(OBJ_KEY, id)
+        return intent
     }
 }

@@ -16,13 +16,17 @@
         android:theme="@style/Theme.VideoGameApp"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.view.GameDetailActivity"
+            android:name=".presentation.view.storeview.StoreDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".presentation.view.homeview.GameDetailActivity"
             android:exported="false" />
         <activity
             android:name=".presentation.view.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

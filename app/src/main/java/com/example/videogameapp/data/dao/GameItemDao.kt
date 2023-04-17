@@ -1,29 +1,27 @@
 package com.example.videogameapp.data.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.example.videogameapp.data.modeldata.databasemodel.*
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface GameItemDao {
     //game item
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertGameItem(gameItemDbModel: GameItemDbModel)
+    suspend fun insertGameItem(gameItemDbModel: GameItemDbModel)
 
     @Query("SELECT * FROM game_database")
-    fun getGameItem(): GameItemDbModel
+    suspend fun getAllGameLibrary(): Flow<List<GameItemDbModel>>
 
     //sublists
+    /*@Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertGameItemGenre(gameItemGenre: List<GenresDbModel>)
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertGameItemPlatform(gameItemGenre: GenresDbModel)
+    fun insertGameItemPlatform(gameItemPlatform: List<PlatformDbModel>)
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertGameItemPlatform(gameItemPlatform: PlatformDbModel)
+    fun insertGameItemRating(gameItemRating: List<RatingDbModel>)
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertGameItemRating(gameItemRating: RatingDbModel)
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertGameItemScreenshot(gameItemScreenshot: ScreenShotDbModel)
+    fun insertGameItemScreenshot(gameItemScreenshot: List<ScreenShotDbModel>)*/
 
     //query sublists
 //    @Query("SELECT * FROM rating_db WHERE id=:ratingId")

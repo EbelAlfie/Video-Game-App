@@ -8,25 +8,17 @@
     android:background="@drawable/item_games_design"
     android:layout_margin="@dimen/view_margin"
     android:paddingBottom="@dimen/detail_padding">
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/iv_poster"
-        android:layout_width="300dp"
-        android:layout_height="100dp"
-        android:scaleType="fitCenter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="fitXY"
+        app:shapeAppearanceOverlay="@style/upper_corner_rounded_image"
+        tools:src="@drawable/ic_launcher_background"
+        tools:ignore="contentDescription"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/ic_launcher_background"
-        tools:ignore="contentDescription"/>
-    <TextView
-        android:id="@+id/tv_metacritic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="5.4"
-        android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/iv_poster"
-        android:layout_margin="@dimen/view_margin"/>
+        app:layout_constraintTop_toTopOf="parent" />
     <TextView
         android:id="@+id/tv_game_title"
         android:layout_width="wrap_content"
@@ -44,10 +36,10 @@
         app:layout_constraintTop_toBottomOf="@id/tv_game_title"
         app:layout_constraintStart_toStartOf="@id/tv_game_title"/>
     <TextView
-        android:id="@+id/tv_review_count"
+        android:id="@+id/tv_metacritic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/review_count"
+        android:text="@string/metacritic"
         style="@style/tv_medium_game_item"
         app:layout_constraintTop_toBottomOf="@id/tv_ratings"
         app:layout_constraintStart_toStartOf="@id/tv_ratings"/>
@@ -57,8 +49,8 @@
         android:layout_height="wrap_content"
         android:text="@string/platform"
         style="@style/tv_medium_game_item"
-        app:layout_constraintTop_toBottomOf="@id/tv_review_count"
-        app:layout_constraintStart_toStartOf="@id/tv_review_count"/>
+        app:layout_constraintTop_toBottomOf="@id/tv_metacritic"
+        app:layout_constraintStart_toStartOf="@id/tv_metacritic"/>
     <TextView
         android:id="@+id/tv_released_date"
         android:layout_width="wrap_content"
@@ -75,12 +67,15 @@
         style="@style/tv_medium_game_item"
         app:layout_constraintTop_toBottomOf="@id/tv_released_date"
         app:layout_constraintStart_toStartOf="@id/tv_released_date" />
-    <TextView
-        android:id="@+id/tv_playtime"
+    <ImageButton
+        android:id="@+id/btn_library"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/playtime"
-        style="@style/tv_medium_game_item"
+        android:src="@drawable/baseline_library_add_24"
+        android:backgroundTint="@color/gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:layout_constraintStart_toStartOf="@id/tv_genres"
         app:layout_constraintTop_toBottomOf="@id/tv_genres"
-        app:layout_constraintStart_toStartOf="@id/tv_genres"/>
+        tools:ignore="contentDescription"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

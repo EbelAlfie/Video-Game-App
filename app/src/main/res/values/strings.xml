@@ -1,20 +1,50 @@
 <resources>
     <string name="app_name">Video Game App</string>
+    <string name="search">Search…</string>
+
     <string name="released_date">Released date: %s</string>
     <string name="genre_genrenya">Genre: %s</string>
-    <string name="playtime">Playtime: %d</string>
+    <string name="playtime">Playtime: %d hour</string>
     <string name="platform">Platform: %s</string>
-    <string name="overview">Overview</string>
-    <string name="genres_title">Genres</string>
     <string name="rating">Rating: %s</string>
-    <string name="review_count">Review Count: %d</string>
+    <string name="metacritic">Metacritic Score: %d</string>
+
+    <string name="overview_title">Overview</string>
+    <string name="genres_title">Genres</string>
     <string name="platform_title">Supported System</string>
     <string name="developer_title">Developer</string>
     <string name="released_date_title">Released date</string>
     <string name="screenshots_title">Screenshots</string>
     <string name="trailer_title">Trailer</string>
+
     <string name="library">Library</string>
     <string name="home">Home</string>
+    <string name="stores">Stores</string>
+    <string name="back">back</string>
+
     <string name="age_rating_title">Age Rating</string>
     <string name="tags_title">Tags</string>
+    <string name="store_title">Store</string>
+    <string name="publisher_title">Publisher</string>
+    <string name="dlc_title">Dlc</string>
+
+    <string name="total_games">Total games:</string>
+    <string name="about_us">About Us</string>
+    <string name="popular_games">Popular Games</string>
+
+    <string name="exceptional_rating">exceptional</string>
+    <string name="recommended_rating">recommended</string>
+    <string name="meh_rating">meh</string>
+
+    <string-array name="order_by">
+        <item>Relevance</item>
+        <item>Date added</item>
+        <item>Name</item>
+        <item>Release date</item>
+        <item>Popularity</item>
+        <item>Average rating</item>
+    </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

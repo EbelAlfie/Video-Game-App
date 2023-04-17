@@ -6,11 +6,17 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/dark_background">
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/fragment_view_pager"
+    <include
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
+        layout="@layout/custom_main_toolbar"/>
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/fragment_view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         />
@@ -19,9 +25,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:menu="@menu/bottom_navbar"
-        app:itemIconTint="@color/white"
-        app:itemTextColor="@color/white"
-        app:itemActiveIndicatorStyle="@color/yellow_theme"
+        app:itemIconTint="@color/bottom_navbar_icontint"
+        app:itemTextColor="@color/bottom_navbar_icontint"
         android:background="@color/dark_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@id/app_container"

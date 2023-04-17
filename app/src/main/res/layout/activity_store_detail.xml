@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".presentation.view.storeview.StoreDetailActivity"
+    android:background="@color/dark_background">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/iv_store_poster"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            style="@style/shapeable_image_view_style"
+            tools:src="@drawable/ic_launcher_background"
+            tools:ignore="contentDescription"/>
+
+        <TextView
+            android:id="@+id/tv_store_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Title"
+            android:layout_below="@id/iv_store_poster"
+            style="@style/tv_header_style"/>
+
+        <TextView
+            android:id="@+id/tv_store_desc_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/about_us"
+            style="@style/tv_header_style"
+            android:layout_below="@id/tv_store_title"/>
+
+        <TextView
+            android:id="@+id/tv_store_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="desc"
+            style="@style/tv_small_style"
+            android:layout_below="@id/tv_store_desc_title"/>
+
+        <TextView
+            android:id="@+id/tv_store_game_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/popular_games"
+            style="@style/tv_header_style"
+            android:layout_below="@id/tv_store_desc"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_list_game"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_store_game_list"/>
+
+    </RelativeLayout>
+</androidx.core.widget.NestedScrollView>
