@@ -7,6 +7,8 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.text.Html
 import android.text.Spanned
+import android.view.LayoutInflater
+import android.view.View
 import com.example.videogameapp.domain.entity.gameentity.GameItemEntity
 
 object Utils {
@@ -18,6 +20,13 @@ object Utils {
 
     const val DELAY_TIME: Long = 2500
     const val PERIODE_TIME: Long = 4000
+
+    fun createLoading(context: Context): AlertDialog.Builder {
+        return AlertDialog.Builder(context).apply {
+            setCancelable(false)
+            setView(View.inflate(context, R.layout.loading_layout, null))
+        }
+    }
 
     fun setUpAlertDialog(title: String, message: String, context: Context): AlertDialog.Builder {
         return AlertDialog.Builder(context).apply {

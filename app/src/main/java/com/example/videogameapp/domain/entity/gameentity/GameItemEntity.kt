@@ -16,10 +16,10 @@ data class GameItemEntity(
     val metaCritic: Int?,
     val playtime: Int,
     val reviewCount: Int,
-    val ratings: List<RatingEntity?>,
-    val genres: List<GenresEntity?>,
-    val platforms: List<PlatformEntity?>,
-    val screenShots: List<ScreenShotEntity?>,
+    val ratings: List<RatingEntity>,
+    val genres: List<GenresEntity>,
+    val platforms: List<PlatformEntity>,
+    val screenShots: List<ScreenShotEntity>,
 ): Parcelable{
     companion object {
         fun transformDbModel(gameItemEntity: GameItemEntity): GameItemDbModel {

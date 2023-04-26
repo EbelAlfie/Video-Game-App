@@ -1,5 +1,6 @@
 package com.example.videogameapp.presentation.view.storeview
 
+import android.app.AlertDialog
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -25,6 +26,7 @@ import javax.inject.Inject
 class StoreDetailActivity : AppCompatActivity(), GamePagingAdapter.SetOnItemClicked {
     private lateinit var binding: ActivityStoreDetailBinding
     private lateinit var gameAdapter: GamePagingAdapter
+    private lateinit var loadingDialog: AlertDialog
 
     @Inject
     lateinit var vmFactory: ViewModelFactory
@@ -37,6 +39,7 @@ class StoreDetailActivity : AppCompatActivity(), GamePagingAdapter.SetOnItemClic
         binding = ActivityStoreDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val id = intent.getLongExtra(Utils.ID_KEY, -1L)
+
         val storeItemEntity = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(Utils.OBJ_KEY, StoreItemEntity::class.java)
         } else { intent.getParcelableExtra(Utils.OBJ_KEY) }
@@ -55,12 +58,14 @@ class StoreDetailActivity : AppCompatActivity(), GamePagingAdapter.SetOnItemClic
             gameAdapter = GamePagingAdapter(this@StoreDetailActivity)
             rvListGame.adapter = gameAdapter
         }
+        loadingDialog = Utils.createLoading(this).create()
     }
 
     private fun getGameList(id: Long) {
         lifecycleScope.launch {
             storeDetailViewModel.getAllGameByStore(this, QueryGameItemEntity("", null, id.toString(), null, null)).collectLatest {
                 gameAdapter.submitData(lifecycle, it)
+                storeDetailViewModel.setStatusLoading(false)
             }
         }
     }
@@ -76,6 +81,10 @@ class StoreDetailActivity : AppCompatActivity(), GamePagingAdapter.SetOnItemClic
     }
 
     private fun setObserver() {
+        storeDetailViewModel.getStatusLoading().observe(this) {
+            if (it) loadingDialog.show() else loadingDialog.cancel()
+        }
+
         storeDetailViewModel.getStoreDetailData().observe(this) {
             if (it == null) return@observe
             setDesc(it)
@@ -87,6 +96,7 @@ class StoreDetailActivity : AppCompatActivity(), GamePagingAdapter.SetOnItemClic
     }
 
     private fun getDescrption(id: Long) {
+        storeDetailViewModel.setStatusLoading(true)
         storeDetailViewModel.getDetailedStoreData(id)
     }
 

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="splash_screen">
+        <item name="android:windowSplashScreenBackground">@color/dark_background</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/appicon</item>
+
+    </style>
+</resources>

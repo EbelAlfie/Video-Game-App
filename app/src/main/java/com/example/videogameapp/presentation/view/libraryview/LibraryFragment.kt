@@ -30,6 +30,10 @@ class LibraryFragment(private val viewModel: HomeViewModel) : Fragment(), Librar
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setRecView()
+    }
+
+    override fun onResume() {
+        super.onResume()
         getData()
     }
 

@@ -6,25 +6,37 @@ import com.example.videogameapp.R
 data class GameDetailedEntity (
     val id: Long,
     val desc: String,
-    val name: String,
-    val tbaStatus: Boolean,
-    val dateReleased: String,
+    var name: String,
+    var tbaStatus: Boolean,
+    var dateReleased: String,
     val metacriticUrl: String,
-    val metaCritic: Int?,
-    val playtime: Int,
+    var metaCritic: Int?,
+    var playtime: Int,
     var poster: String?,
     val ageRating: String,
-    val genres: List<GenresEntity>,
-    val platforms: List<PlatformEntity>,
+    var genres: List<GenresEntity>,
+    var platforms: List<PlatformEntity>,
     val developer: List<DeveloperDetailEntity>,
     val publishers: List<PublisherDetailEntity>,
     val tags: List<TagsEntity>,
-    var screenShots: List<ScreenShotEntity?>,
+    var screenShots: List<ScreenShotEntity>,
     val store: List<StoreEntity>
-        ){
-        fun getMetacritics(): String {
-                return metaCritic?.toString() ?: ""
-        }
+    ){
+
+    //setters
+    fun setGameName(gameName: String) { name = gameName }
+    fun setGameDateReleased(gameDateReleased: String) { dateReleased = gameDateReleased }
+    fun setGameTba(gameTbaStatus: Boolean) { tbaStatus = gameTbaStatus }
+    fun setGameMetaCritic(gameMetaCritic: Int?) { metaCritic = gameMetaCritic }
+    fun setGamePlaytime(gamePlaytime: Int) { playtime = gamePlaytime }
+    fun setGamePlatforms(gamePlatforms: List<PlatformEntity>) { platforms = gamePlatforms}
+    fun setGameGenres(gameGenres: List<GenresEntity>) { genres = gameGenres}
+    fun setGamePoster(gamePoster: String?) { poster = gamePoster}
+    fun setGameScreenshots(gameScreenshot: List<ScreenShotEntity>) { screenShots = gameScreenshot}
+
+    fun getMetacritics(): String {
+        return metaCritic?.toString() ?: ""
+    }
 
     fun getReleasedDate(): String {
         return if (!tbaStatus) dateReleased else "TBA"

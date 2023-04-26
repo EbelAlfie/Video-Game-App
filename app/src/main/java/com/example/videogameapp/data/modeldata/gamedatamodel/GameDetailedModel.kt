@@ -5,25 +5,11 @@ import com.google.gson.annotations.SerializedName
 
 data class GameDetailedModel (
     @SerializedName("id")
-        val id: Long?,
+    val id: Long?,
     @SerializedName("description")
         val desc: String?,
-    @SerializedName("name")
-        val name: String?,
-    @SerializedName("tba")
-        val tbaStatus: Boolean,
-    @SerializedName("released")
-        val dateReleased: String?,
     @SerializedName("metacritic_url")
         val metacriticUrl: String?,
-    @SerializedName("metacritic")
-        val metaCritic: Int?,
-    @SerializedName("playtime")
-        val playtime: Int?,
-    @SerializedName("genres")
-        val genres: List<GenresModel?>,
-    @SerializedName("platforms")
-        val platforms: List<PlatformModelResponse?>,
     @SerializedName("developers")
         val developer: List<DeveloperDetailModel?>,
     @SerializedName("publishers")
@@ -40,17 +26,17 @@ data class GameDetailedModel (
                     return GameDetailedEntity(
                         id = it.id ?: 0,
                         desc = it.desc ?: "",
-                        name = it.name ?: "",
-                        dateReleased = it.dateReleased ?: "",
-                        tbaStatus = it.tbaStatus,
-                        metaCritic = it.metaCritic,
+                        name = "",
+                        dateReleased = "",
+                        tbaStatus = false,
+                        metaCritic = null,
                         metacriticUrl = it.metacriticUrl ?: "",
-                        playtime = it.playtime ?: 0,
+                        playtime = 0,
                         ageRating = it.esrbRating?.ageRating ?: "",
-                        platforms = PlatformModel.convertList(it.platforms),
+                        platforms = listOf(),
                         developer = DeveloperDetailModel.convertList(it.developer),
                         publishers = PublisherDetailModel.convertList(it.publishers),
-                        genres = GenresModel.convertList(it.genres),
+                        genres = listOf(),
                         tags = TagsModel.convertList(it.tags),
                         store = StoreDetailResponseModel.convertList(it.stores),
                         screenShots = listOf(),

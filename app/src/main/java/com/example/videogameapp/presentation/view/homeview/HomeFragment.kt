@@ -1,5 +1,6 @@
 package com.example.videogameapp.presentation.view.homeview
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +20,7 @@ class HomeFragment (private var viewModel: HomeViewModel): Fragment(),
     GamePagingAdapter.SetOnItemClicked {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var pagingAdapter: GamePagingAdapter
+    private lateinit var loadingDialog: AlertDialog
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,12 +33,21 @@ class HomeFragment (private var viewModel: HomeViewModel): Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
+        setObserver()
         getData(initQueryGameItemParam(null, null, null, null, null))
     }
 
+    private fun setObserver() {
+        viewModel.getStatusLoading().observe(requireActivity()) {
+            if (it) loadingDialog.show() else loadingDialog.cancel()
+        }
+    }
+
     private fun getData(queryParam: QueryGameItemEntity) {
+        viewModel.setStatusLoading(true)
         lifecycleScope.launch {
             viewModel.getGameList(this, queryParam).collectLatest {
+                viewModel.setStatusLoading(false)
                 pagingAdapter.submitData(lifecycle, it)
             }
         }
@@ -57,6 +68,9 @@ class HomeFragment (private var viewModel: HomeViewModel): Fragment(),
             rvGameList.layoutManager = GridLayoutManager(requireContext(), 2)
             pagingAdapter = GamePagingAdapter(this@HomeFragment)
             rvGameList.adapter = pagingAdapter
+
+            loadingDialog = Utils.createLoading(requireContext()).create()
+
             searchView.setOnQueryTextListener(object: OnQueryTextListener{
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     if (query?.isNotBlank()!!) {
@@ -76,6 +90,7 @@ class HomeFragment (private var viewModel: HomeViewModel): Fragment(),
     }
 
     override fun onLibraryAdd(position: Int) {
+        viewModel.setStatusLoading(true)
         viewModel.insertGameItem(pagingAdapter.getGameData(position))
     }
 }

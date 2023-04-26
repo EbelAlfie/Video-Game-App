@@ -2,13 +2,32 @@ package com.example.videogameapp.presentation.view.homeview
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.videogameapp.databinding.ItemScreenshotBinding
+import com.example.videogameapp.domain.entity.gameentity.GameItemEntity
 import com.example.videogameapp.domain.entity.gameentity.ScreenShotEntity
 import com.squareup.picasso.Picasso
 
-class GameScreenShotAdapter(private val screenshots: MutableList<ScreenShotEntity?>): Adapter<GameScreenShotAdapter.ScreenShotViewHolder>() {
+class GameScreenShotAdapter(private val screenshots: MutableList<ScreenShotEntity?>): PagingDataAdapter<ScreenShotEntity, GameScreenShotAdapter.ScreenShotViewHolder>(DiffCallback) {
+    companion object {
+        object DiffCallback : DiffUtil.ItemCallback<ScreenShotEntity>() {
+            override fun areItemsTheSame(
+                oldItem: ScreenShotEntity,
+                newItem: ScreenShotEntity
+            ): Boolean {
+                return (oldItem.image == newItem.image)
+            }
+
+            override fun areContentsTheSame(
+                oldItem: ScreenShotEntity,
+                newItem: ScreenShotEntity
+            ) = oldItem == newItem
+        }
+    }
+
     class ScreenShotViewHolder(val binding: ItemScreenshotBinding): ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScreenShotViewHolder {

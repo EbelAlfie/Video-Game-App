@@ -27,6 +27,10 @@ class HomeViewModel @Inject constructor(private val useCase: GameUseCase): ViewM
     private val _storeLiveData = MutableLiveData<List<StoreEntity>>()
     fun getStoreLiveData() : LiveData<List<StoreEntity>> = _storeLiveData
 
+    private val _statusLoading = MutableLiveData<Boolean>()
+    fun getStatusLoading(): LiveData<Boolean> = _statusLoading
+    fun setStatusLoading(loading: Boolean) = run { _statusLoading.value = loading }
+
     fun getGameDetail(id: Long) {
         viewModelScope.launch {
             useCase.getGameDetail(id).collect {
@@ -53,7 +57,7 @@ class HomeViewModel @Inject constructor(private val useCase: GameUseCase): ViewM
         }
     }
 
-    fun getLibraryData(): Flow<List<GameItemEntity>> {
+    suspend fun getLibraryData(): Flow<List<GameItemEntity>> {
         return useCase.getAllGameLibrary()
     }
 

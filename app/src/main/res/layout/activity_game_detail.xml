@@ -4,19 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipChildren="false"
-    android:clipToPadding="false"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".presentation.view.homeview.GameDetailActivity"
     android:background="@color/dark_background">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         android:padding="@dimen/detail_padding" >
         <ImageView
             android:id="@+id/iv_game_image"
-            android:layout_width="300dp"
+            android:layout_width="match_parent"
             android:layout_height="300dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/baseline_broken_image_24"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -170,6 +172,7 @@
             style="@style/tv_header_style"
             app:layout_constraintTop_toBottomOf="@id/tv_game_age_rating"
             app:layout_constraintStart_toStartOf="parent"/>
+
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/vp_image_slider"

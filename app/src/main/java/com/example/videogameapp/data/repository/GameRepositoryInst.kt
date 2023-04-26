@@ -13,9 +13,10 @@ import com.example.videogameapp.data.onlineservices.GameApiService
 import com.example.videogameapp.domain.entity.gameentity.*
 import com.example.videogameapp.domain.interfaces.GameRepository
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.internal.NopCollector.emit
+import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 class GameRepositoryInst @Inject constructor(private val gameApiService: GameApiService, private val libraryDbObj : LocalDbModule):
@@ -62,27 +63,38 @@ class GameRepositoryInst @Inject constructor(private val gameApiService: GameApi
     }
 
     override suspend fun insertToLibrary(gameEntity: GameItemEntity) {
-        gameEntity.apply {
-            val gameData = GameItemEntity.transformDbModel(this)
-            val platformData = PlatformEntity.toPlatformModel(id, platforms)
-            val ratingData = RatingEntity.toRatingModel(id, ratings)
-            val genresData = GenresEntity.toGenreModel(id, genres)
-            try {
+        try {
+            gameEntity.apply {
+                val gameData = GameItemEntity.transformDbModel(this)
+                val platformData = PlatformEntity.toPlatformModel(id, platforms)
+                val ratingData = RatingEntity.toRatingModel(id, ratings)
+                val genresData = GenresEntity.toGenreModel(id, genres)
                 libraryDbObj.gameItemDao().insertGameItem(gameData)
-            }catch (e : Exception) {
-                Log.d("Error", e.message.toString())
+                /*platformData.forEach {
+                    libraryDbObj.gameItemDao().insertGameItemPlatform(it)
+                }
+                ratingData.forEach {
+                    libraryDbObj.gameItemDao().insertGameItemRating(it)
+                }
+                genresData.forEach {
+                    libraryDbObj.gameItemDao().insertGameItemGenre(it)
+                }*/
             }
-//            libraryDbObj.gameItemDao().insertGameItemPlatform(platformData)
-//            libraryDbObj.gameItemDao().insertGameItemRating(ratingData)
-//            libraryDbObj.gameItemDao().insertGameItemGenre(genresData)
+        }catch (e: Exception) {
+            Log.d("test", e.message.toString())
         }
     }
 
     override suspend fun getAllGameLibrary(): Flow<List<GameItemEntity>> {
-        val data = libraryDbObj.gameItemDao().getAllGameLibrary()
-        return flow {
-            GameItemDbModel.convertList(data)
-        }
+        return flow{
+            try {
+                val data = libraryDbObj.gameItemDao().getAllGameLibrary()
+                emit(GameItemDbModel.convertList(data))
+            }catch (e: Exception) {
+                Log.d("TAG", e.message.toString())
+                emit(listOf())
+            }
+        }.flowOn(Dispatchers.IO)
     }
 
 

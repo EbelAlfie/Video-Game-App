@@ -1,6 +1,7 @@
 package com.example.videogameapp.presentation.view
 
 import android.os.Bundle
+import android.window.SplashScreen
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
@@ -25,6 +26,7 @@ class MainActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         (application as RawgApp).appComponent.injectMain(this)
         super.onCreate(savedInstanceState)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setBottomNavBar()

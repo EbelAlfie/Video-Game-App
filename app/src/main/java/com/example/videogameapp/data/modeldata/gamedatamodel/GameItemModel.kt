@@ -11,8 +11,6 @@ data class GameItemResponse (
 data class GameItemModel (
     @SerializedName("id")
     val id: Long?,
-    @SerializedName("slug")
-    val slugId: String?,
     @SerializedName("name")
     val name: String?,
     @SerializedName("released")

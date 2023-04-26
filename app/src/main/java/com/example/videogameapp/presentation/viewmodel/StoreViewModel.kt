@@ -21,6 +21,10 @@ class StoreViewModel @Inject constructor(private val storeUseCase: StoreUseCase,
     private val _storeDetailData = MutableLiveData<StoreDetailEntity>()
     fun getStoreDetailData() : LiveData<StoreDetailEntity> = _storeDetailData
 
+    private val _statusLoading = MutableLiveData<Boolean>()
+    fun getStatusLoading(): LiveData<Boolean> = _statusLoading
+    fun setStatusLoading(loading: Boolean) = run { _statusLoading.value = loading }
+
     fun getAllStore(scope: CoroutineScope): Flow<List<StoreItemEntity>> {
         return storeUseCase.getAllStore(scope)
     }

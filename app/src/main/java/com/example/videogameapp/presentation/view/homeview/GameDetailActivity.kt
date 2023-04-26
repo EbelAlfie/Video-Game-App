@@ -1,5 +1,6 @@
 package com.example.videogameapp.presentation.view.homeview
 
+import android.app.AlertDialog
 import android.content.res.Resources
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -19,9 +20,7 @@ import com.example.videogameapp.RawgApp
 import com.example.videogameapp.Utils
 import com.example.videogameapp.Utils.fromHtml
 import com.example.videogameapp.databinding.ActivityGameDetailBinding
-import com.example.videogameapp.domain.entity.gameentity.GameDetailedEntity
-import com.example.videogameapp.domain.entity.gameentity.GameItemEntity
-import com.example.videogameapp.domain.entity.gameentity.ScreenShotEntity
+import com.example.videogameapp.domain.entity.gameentity.*
 import com.example.videogameapp.presentation.viewmodel.HomeViewModel
 import com.example.videogameapp.presentation.viewmodel.ViewModelFactory
 import com.squareup.picasso.Picasso
@@ -33,6 +32,7 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
     private lateinit var binding: ActivityGameDetailBinding
     private lateinit var gameStoreLinkAdapter: GameStoreLinkAdapter
     private lateinit var screenShotsAdapter: GameScreenShotAdapter
+    private lateinit var loadingDialog: AlertDialog
     private var game: GameItemEntity? = null
 
     @Inject
@@ -59,21 +59,34 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
     private fun setStoreObserver(gameData: GameDetailedEntity) {
         homeViewModel.getStoreLiveData().observe(this) {storeEntity ->
             if (storeEntity.isEmpty() || gameData.store.isEmpty()) return@observe
-            storeEntity.forEachIndexed { index, item ->
-                item.name = gameData.store[index].name
-            }
+            storeEntity.forEachIndexed { index, item -> item.name = gameData.store[index].name }
             gameStoreLinkAdapter.addData(storeEntity.toMutableList())
         }
     }
 
     private fun setObserver() {
+        homeViewModel.getStatusLoading().observe(this) {
+            if (it) loadingDialog.show() else loadingDialog.cancel()
+        }
         homeViewModel.getDetailedGameData().observe(this){gameData ->
             if (gameData == null) return@observe
             getStoreLink(gameData.id)
-            gameData.poster = game!!.backgroundImage
-            gameData.screenShots = game!!.screenShots
+            game?.let {
+                gameData.apply {
+                    setGameName(it.name)
+                    setGameDateReleased(it.dateReleased)
+                    setGameTba(it.tbaStatus)
+                    setGameMetaCritic(it.metaCritic)
+                    setGamePlaytime(it.playtime)
+                    setGamePlatforms(it.platforms)
+                    setGameGenres(it.genres)
+                    setGamePoster(it.backgroundImage)
+                    setGameScreenshots(it.screenShots)
+                }
+            }
             setStoreObserver(gameData)
             setView(gameData)
+            homeViewModel.setStatusLoading(false)
         }
     }
 
@@ -87,9 +100,11 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
             gameStoreLinkAdapter = GameStoreLinkAdapter(mutableListOf(), this@GameDetailActivity)
             rvListStore.adapter = gameStoreLinkAdapter
         }
+        loadingDialog = Utils.createLoading(this).create()
     }
 
     private fun reqItem(id: Long) {
+        homeViewModel.setStatusLoading(true)
         homeViewModel.getGameDetail(id)
     }
 
@@ -98,7 +113,7 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
             setImagePoster(ivGameImage, data)
             setMetacritics(tvMetacritic, data)
 
-            screenShotsAdapter.updateList(data.screenShots as List<ScreenShotEntity>)
+            screenShotsAdapter.updateList(data.screenShots)
 
             tvGameReleasedDate.text = data.getReleasedDate()
             tvGameTitle.text = data.name
@@ -127,8 +142,6 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
         binding.apply {
             screenShotsAdapter = GameScreenShotAdapter(game?.screenShots?.toMutableList() ?: mutableListOf())
             vpImageSlider.apply{
-                clipToPadding = false
-                clipChildren = false
                 offscreenPageLimit = 5
                 (getChildAt(0) as RecyclerView).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
                 setTransformation(this)
@@ -157,7 +170,10 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
 
     private fun setImagePoster(ivGameImage: ImageView, data: GameDetailedEntity) {
         if (data.poster != null && data.poster!!.isNotBlank()) {
-            Picasso.get().load(data.poster).into(ivGameImage)
+            Picasso.get().load(data.poster).apply {
+                //resize(300, 100)
+                into(ivGameImage)
+            }
         }else ivGameImage.setImageResource(R.drawable.baseline_broken_image_24)
     }
 
