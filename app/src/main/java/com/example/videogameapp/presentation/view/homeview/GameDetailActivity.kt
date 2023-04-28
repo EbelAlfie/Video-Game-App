@@ -10,6 +10,8 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.viewModels
+import androidx.core.view.size
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.CompositePageTransformer
@@ -24,6 +26,8 @@ import com.example.videogameapp.domain.entity.gameentity.*
 import com.example.videogameapp.presentation.viewmodel.HomeViewModel
 import com.example.videogameapp.presentation.viewmodel.ViewModelFactory
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.abs
@@ -33,7 +37,6 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
     private lateinit var gameStoreLinkAdapter: GameStoreLinkAdapter
     private lateinit var screenShotsAdapter: GameScreenShotAdapter
     private lateinit var loadingDialog: AlertDialog
-    private var game: GameItemEntity? = null
 
     @Inject
     lateinit var vmFactory: ViewModelFactory
@@ -49,11 +52,10 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
         setContentView(binding.root)
 
         setStoreLinkRv()
-        setScreenShotSlider()
         setObserver()
-        game = homeViewModel.getIntent(intent)
-        if (game == null) return
-        reqItem(game!!.id)
+        val id = homeViewModel.getIntent(intent)
+        if (id == -1L) return
+        reqItem(id)
     }
 
     private fun setStoreObserver(gameData: GameDetailedEntity) {
@@ -64,6 +66,14 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
         }
     }
 
+    private fun setScreenshootSlide(id: Long) {
+        lifecycleScope.launch {
+            homeViewModel.getGameDetailedScreenshoot(this, id).collectLatest {
+                screenShotsAdapter.submitData(lifecycle, it)
+            }
+        }
+    }
+
     private fun setObserver() {
         homeViewModel.getStatusLoading().observe(this) {
             if (it) loadingDialog.show() else loadingDialog.cancel()
@@ -71,27 +81,11 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
         homeViewModel.getDetailedGameData().observe(this){gameData ->
             if (gameData == null) return@observe
             getStoreLink(gameData.id)
-            game?.let {
-                gameData.apply {
-                    setGameName(it.name)
-                    setGameDateReleased(it.dateReleased)
-                    setGameTba(it.tbaStatus)
-                    setGameMetaCritic(it.metaCritic)
-                    setGamePlaytime(it.playtime)
-                    setGamePlatforms(it.platforms)
-                    setGameGenres(it.genres)
-                    setGamePoster(it.backgroundImage)
-                    setGameScreenshots(it.screenShots)
-                }
-            }
+            setScreenshootSlide(gameData.id)
             setStoreObserver(gameData)
             setView(gameData)
             homeViewModel.setStatusLoading(false)
         }
-    }
-
-    private fun getStoreLink(id: Long) {
-        homeViewModel.getGameStoreLink(id)
     }
 
     private fun setStoreLinkRv() {
@@ -103,15 +97,12 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
         loadingDialog = Utils.createLoading(this).create()
     }
 
-    private fun reqItem(id: Long) {
-        homeViewModel.setStatusLoading(true)
-        homeViewModel.getGameDetail(id)
-    }
-
     private fun setView(data: GameDetailedEntity) {
         binding.apply {
             setImagePoster(ivGameImage, data)
             setMetacritics(tvMetacritic, data)
+
+            setScreenShotSlider(data.screenShots)
 
             screenShotsAdapter.updateList(data.screenShots)
 
@@ -138,9 +129,9 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
         vpImageSlider.setPageTransformer(compositePageTransformer)
     }
 
-    private fun setScreenShotSlider() {
+    private fun setScreenShotSlider(screenshoots: List<ScreenShotEntity>) {
         binding.apply {
-            screenShotsAdapter = GameScreenShotAdapter(game?.screenShots?.toMutableList() ?: mutableListOf())
+            screenShotsAdapter = GameScreenShotAdapter(screenshoots.toMutableList())
             vpImageSlider.apply{
                 offscreenPageLimit = 5
                 (getChildAt(0) as RecyclerView).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
@@ -157,7 +148,7 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
         var currentItem = 0
         val update = Runnable {
             binding.vpImageSlider.setCurrentItem(currentItem, true)
-            if (currentItem == game?.screenShots?.size) currentItem = 0
+            if (currentItem == binding.vpImageSlider.size) currentItem = 0
             else currentItem++
         }
         timer.schedule(object : TimerTask() {
@@ -185,7 +176,16 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
         tvMetacritic.setTextColor(getColor(data.getMetacriticColor()))
     }
 
-    override fun onItemClicked(position: Int) {
+    private fun getStoreLink(id: Long) {
+        homeViewModel.getGameStoreLink(id)
+    }
+
+    private fun reqItem(id: Long) {
+        homeViewModel.setStatusLoading(true)
+        homeViewModel.getGameDetail(id)
+    }
+
+    override fun onStoreClicked(position: Int) {
 
     }
 }

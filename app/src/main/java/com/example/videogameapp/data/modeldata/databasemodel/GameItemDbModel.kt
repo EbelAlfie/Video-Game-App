@@ -4,7 +4,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.videogameapp.domain.entity.gameentity.GameItemEntity
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 
 @Entity(tableName = "game_database")
@@ -28,6 +27,12 @@ data class GameItemDbModel(
     val playtime: Int?,
     @ColumnInfo("reviews_count")
     val reviewCount: Int?,
+    @ColumnInfo("ratings")
+    val ratings: String,
+    @ColumnInfo("genres")
+    val genres: String,
+    @ColumnInfo("platforms")
+    val platforms: String,
 ) {
     companion object {
         fun convertList(item: List<GameItemDbModel>): List<GameItemEntity> {
@@ -41,9 +46,9 @@ data class GameItemDbModel(
                             metaCritic = it.metaCritic,
                             playtime = it.playtime ?: 0,
                             reviewCount = it.reviewCount ?: 0,
-                            ratings = listOf(),
-                            genres = listOf(),
-                            platforms = listOf(),
+                            ratings = it.ratings,
+                            genres = it.genres,
+                            platforms = it.platforms,
                             screenShots = listOf()
                         )
             }

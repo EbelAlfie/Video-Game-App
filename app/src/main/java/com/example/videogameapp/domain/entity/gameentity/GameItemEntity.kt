@@ -16,10 +16,10 @@ data class GameItemEntity(
     val metaCritic: Int?,
     val playtime: Int,
     val reviewCount: Int,
-    val ratings: List<RatingEntity>,
-    val genres: List<GenresEntity>,
-    val platforms: List<PlatformEntity>,
-    val screenShots: List<ScreenShotEntity>,
+    val ratings: String,
+    val genres: String,
+    val platforms: String,
+    val screenShots: List<String>,
 ): Parcelable{
     companion object {
         fun transformDbModel(gameItemEntity: GameItemEntity): GameItemDbModel {
@@ -32,6 +32,9 @@ data class GameItemEntity(
                 metaCritic = gameItemEntity.metaCritic,
                 playtime = gameItemEntity.playtime,
                 reviewCount = gameItemEntity.reviewCount,
+                ratings = gameItemEntity.ratings,
+                genres = gameItemEntity.genres,
+                platforms = gameItemEntity.platforms
             )
         }
     }
@@ -49,17 +52,12 @@ data class GameItemEntity(
     }
 
     fun getReviewColor(context: Context) : Int {
-        return when (getRatings()) {
+        return when (ratings) {
             context.getString(R.string.exceptional_rating) -> R.color.green
             context.getString(R.string.recommended_rating) -> R.color.blue
             context.getString(R.string.meh_rating) -> R.color.yellow
             else -> R.color.red
         }
-    }
-
-    fun getRatings(): String {
-        if (ratings.isEmpty()) return "-"
-        return ratings.maxBy { it?.ratingCount ?: 0 }?.ratingTitle ?: "-"
     }
 
     fun getReleasedDate(): String {

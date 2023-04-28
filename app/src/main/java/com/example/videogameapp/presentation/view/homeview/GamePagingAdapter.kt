@@ -52,10 +52,10 @@ class GamePagingAdapter(private val listener: SetOnItemClicked): PagingDataAdapt
             }else ivPoster.setImageResource(R.drawable.baseline_broken_image_24)
 
             tvGameTitle.text = data.name
-            tvRatings.text = context.getString(R.string.rating, data.getRatings())
+            tvRatings.text = context.getString(R.string.rating, data.ratings)
             tvRatings.setTextColor(context.getColor(data.getReviewColor(context)))
-            tvGenres.text = context.getString(R.string.genre_genrenya, data.genres.joinToString{ it?.genreName ?: "" })
-            tvPlatforms.text = context.getString(R.string.platform, data.platforms.joinToString { it?.platform ?: "" })
+            tvGenres.text = context.getString(R.string.genre_genrenya, data.genres)
+            tvPlatforms.text = context.getString(R.string.platform, data.platforms)
             tvReleasedDate.text = context.getString(R.string.released_date, data.getReleasedDate())
 
             setMetacritics(tvMetacritic, data)
@@ -93,7 +93,7 @@ class GamePagingAdapter(private val listener: SetOnItemClicked): PagingDataAdapt
     }
 
     fun getGameData(position: Int): GameItemEntity {
-        return getItem(position) ?: GameItemEntity(0, "", true, "", "", null, 0, 0, listOf(), listOf(), listOf(), listOf())
+        return getItem(position) ?: GameItemEntity(0, "", true, "", "", null, 0, 0, "", "", "", listOf())
     }
 
 }

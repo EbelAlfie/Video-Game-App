@@ -1,18 +1,14 @@
 package com.example.videogameapp.presentation.viewmodel
 
 import android.content.Intent
-import android.os.Build
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.example.videogameapp.Utils
+import com.example.videogameapp.domain.entity.gameentity.*
 import com.example.videogameapp.domain.interfaces.GameUseCase
-import com.example.videogameapp.domain.entity.gameentity.GameDetailedEntity
-import com.example.videogameapp.domain.entity.gameentity.GameItemEntity
-import com.example.videogameapp.domain.entity.gameentity.QueryGameItemEntity
-import com.example.videogameapp.domain.entity.gameentity.StoreEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -51,6 +47,10 @@ class HomeViewModel @Inject constructor(private val useCase: GameUseCase): ViewM
         }
     }
 
+    fun getGameDetailedScreenshoot(scope: CoroutineScope, id: Long): Flow<PagingData<ScreenShotEntity>> {
+        return useCase.getGameDetailScreenshots(id, scope)
+    }
+
     fun insertGameItem(gameItemEntity: GameItemEntity) {
         CoroutineScope(Dispatchers.IO).launch {
             useCase.insertToLibrary(gameItemEntity)
@@ -61,9 +61,7 @@ class HomeViewModel @Inject constructor(private val useCase: GameUseCase): ViewM
         return useCase.getAllGameLibrary()
     }
 
-    fun getIntent(intent: Intent): GameItemEntity? {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(Utils.OBJ_KEY, GameItemEntity::class.java)
-        } else { intent.getParcelableExtra(Utils.OBJ_KEY) }
+    fun getIntent(intent: Intent): Long {
+        return intent.getLongExtra(Utils.ID_KEY, -1)
     }
 }

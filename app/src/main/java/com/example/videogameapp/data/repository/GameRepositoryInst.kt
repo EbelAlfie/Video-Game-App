@@ -66,19 +66,7 @@ class GameRepositoryInst @Inject constructor(private val gameApiService: GameApi
         try {
             gameEntity.apply {
                 val gameData = GameItemEntity.transformDbModel(this)
-                val platformData = PlatformEntity.toPlatformModel(id, platforms)
-                val ratingData = RatingEntity.toRatingModel(id, ratings)
-                val genresData = GenresEntity.toGenreModel(id, genres)
                 libraryDbObj.gameItemDao().insertGameItem(gameData)
-                /*platformData.forEach {
-                    libraryDbObj.gameItemDao().insertGameItemPlatform(it)
-                }
-                ratingData.forEach {
-                    libraryDbObj.gameItemDao().insertGameItemRating(it)
-                }
-                genresData.forEach {
-                    libraryDbObj.gameItemDao().insertGameItemGenre(it)
-                }*/
             }
         }catch (e: Exception) {
             Log.d("test", e.message.toString())

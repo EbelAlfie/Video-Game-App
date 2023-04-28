@@ -50,11 +50,11 @@ data class GameItemModel (
                 backgroundImage = gameItemModel.backgroundImage ?: "",
                 metaCritic = gameItemModel.metaCritic,
                 playtime = gameItemModel.playtime ?: 0,
-                ratings = RatingModel.convertList(gameItemModel.ratings),
+                ratings = RatingModel.ratingString(gameItemModel.ratings),
                 reviewCount = gameItemModel.reviewCount ?: 0,
-                genres = GenresModel.convertList(gameItemModel.genres),
-                platforms = PlatformModel.convertList(gameItemModel.platforms),
-                screenShots = ScreenShotModel.convertList(gameItemModel.screenShots)
+                genres = GenresModel.genreString(gameItemModel.genres),
+                platforms = PlatformModel.platformString(gameItemModel.platforms),
+                screenShots = ScreenShotModel.screenshootString(gameItemModel.screenShots)
             )
         }
     }

@@ -85,7 +85,7 @@ class HomeFragment (private var viewModel: HomeViewModel): Fragment(),
     }
 
     override fun onItemClicked(position: Int) {
-        val intent = Utils.generateIntentScnd(requireContext(), pagingAdapter.getGameData(position), GameDetailActivity::class.java)
+        val intent = Utils.generateIntent(requireContext(), pagingAdapter.getItemId(position), GameDetailActivity::class.java)
         startActivity(intent)
     }
 

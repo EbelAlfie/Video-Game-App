@@ -8,7 +8,7 @@ import com.example.videogameapp.domain.entity.gameentity.StoreEntity
 
 class GameStoreLinkAdapter(private var storeList: MutableList<StoreEntity>, private val listener: SetOnItemClickListener): RecyclerView.Adapter<GameStoreLinkAdapter.StoreViewHolder>() {
     interface SetOnItemClickListener {
-        fun onItemClicked(position: Int)
+        fun onStoreClicked(position: Int)
     }
 
     class StoreViewHolder(val binding: ItemStoreLinkBinding): RecyclerView.ViewHolder(binding.root)
@@ -26,13 +26,12 @@ class GameStoreLinkAdapter(private var storeList: MutableList<StoreEntity>, priv
         holder.binding.apply {
             btnStoreLink.text = data.name
             root.setOnClickListener {
-                listener.onItemClicked(position)
+                listener.onStoreClicked(position)
             }
         }
     }
 
     fun addData(newStoreList: MutableList<StoreEntity>) {
-        //storeList.clear()
         storeList.addAll(newStoreList)
         notifyItemRangeChanged(0, storeList.size)
     }

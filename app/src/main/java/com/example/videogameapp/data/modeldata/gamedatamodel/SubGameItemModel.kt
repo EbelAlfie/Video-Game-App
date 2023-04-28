@@ -18,6 +18,10 @@ data class RatingModel (
                 RatingEntity(it?.ratingTitle ?: "", it?.ratingCount ?: 0, it?.percentage ?: 0)
             }
         }
+
+        fun ratingString(ratingModelList: List<RatingModel?>) : String {
+            return ratingModelList.maxBy { it?.ratingCount ?: 0 }?.ratingTitle ?: ""
+        }
     }
 }
 
@@ -66,6 +70,12 @@ data class GenresModel (
                 GenresEntity(it?.genreName ?: "")
             }
         }
+
+        fun genreString(genres: List<GenresModel?>): String {
+            return genres.map {
+                it?.genreName ?: ""
+            }.joinToString { it }
+        }
     }
 }
 
@@ -84,6 +94,12 @@ data class PlatformModel (
                 PlatformEntity(it?.platforms?.platform ?: "")
             } ?: listOf(PlatformEntity(""))
         }
+
+        fun platformString(platformModelList: List<PlatformModelResponse?>?): String {
+            return platformModelList?.map {
+                it?.platforms?.platform ?: ""
+            }?.joinToString { it } ?: ""
+        }
     }
 }
 
@@ -95,6 +111,12 @@ data class ScreenShotModel (
         fun convertList(images: List<ScreenShotModel?>): List<ScreenShotEntity> {
             return images.map {
                 ScreenShotEntity(it?.image ?: "")
+            }
+        }
+
+        fun screenshootString(images: List<ScreenShotModel?>): List<String> {
+            return images.map {
+                it?.image ?: ""
             }
         }
     }
