@@ -7,7 +7,8 @@ data class QueryGameItemEntity (
     val dates: String?,
     val platform: String?,
     val store: String?,
-    val ordering: String?
+    val ordering: String?,
+    val page: Int?
 ) {
     companion object {
         fun transform(queryGameItemEntity: QueryGameItemEntity): QueryGameItemModel {
@@ -16,7 +17,8 @@ data class QueryGameItemEntity (
                 dates = queryGameItemEntity.dates,
                 platform = queryGameItemEntity.platform,
                 store = queryGameItemEntity.store,
-                ordering = queryGameItemEntity.ordering
+                ordering = queryGameItemEntity.ordering,
+                page = queryGameItemEntity.page
             )
         }
     }

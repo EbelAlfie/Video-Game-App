@@ -31,6 +31,10 @@ class GameStoreLinkAdapter(private var storeList: MutableList<StoreEntity>, priv
         }
     }
 
+    fun getUrl(position: Int): String {
+        return storeList[position].url
+    }
+
     fun addData(newStoreList: MutableList<StoreEntity>) {
         storeList.addAll(newStoreList)
         notifyItemRangeChanged(0, storeList.size)

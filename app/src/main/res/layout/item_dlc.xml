@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/item_games_design">
+    <ImageView
+        android:id="@+id/iv_dlc_poster"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        tools:src="@drawable/baseline_broken_image_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+    <TextView
+        android:id="@+id/tv_dlc_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/iv_dlc_poster"
+        tools:text="dlc title"
+        android:layout_margin="@dimen/view_margin"
+        style="@style/tv_header_style"/>
+    <TextView
+        android:id="@+id/tv_dlc_released_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="released date:"
+        style="@style/tv_medium_game_item"
+        app:layout_constraintTop_toBottomOf="@id/tv_dlc_title"
+        app:layout_constraintStart_toStartOf="@id/tv_dlc_title"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

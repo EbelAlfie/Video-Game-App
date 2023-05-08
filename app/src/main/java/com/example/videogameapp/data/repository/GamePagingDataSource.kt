@@ -2,12 +2,13 @@ package com.example.videogameapp.data.repository
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.example.videogameapp.data.di.LocalDbModule
 import com.example.videogameapp.data.modeldata.gamedatamodel.GameItemModel
 import com.example.videogameapp.data.modeldata.gamedatamodel.QueryGameItemModel
 import com.example.videogameapp.data.onlineservices.GameApiService
 import com.example.videogameapp.domain.entity.gameentity.GameItemEntity
 
-class GamePagingDataSource(private val gameApiService: GameApiService, private val queryGameItemModel: QueryGameItemModel): PagingSource<Int, GameItemEntity>() {
+class GamePagingDataSource(private val libraryDbObj: LocalDbModule, private val gameApiService: GameApiService, private val queryGameItemModel: QueryGameItemModel): PagingSource<Int, GameItemEntity>() {
     override fun getRefreshKey(state: PagingState<Int, GameItemEntity>): Int? {
         return null
     }
@@ -18,7 +19,7 @@ class GamePagingDataSource(private val gameApiService: GameApiService, private v
             val list = getOnlineData(position)
             LoadResult.Page(
                 data = list,
-                nextKey = if (list.isEmpty()) null else position + 1,
+                nextKey = if (list.isEmpty() || queryGameItemModel.page == 5) null else position + 1,
                 prevKey = null
             )
         }catch (e: Exception) {
@@ -33,8 +34,15 @@ class GamePagingDataSource(private val gameApiService: GameApiService, private v
             store = queryGameItemModel.store,
             platform = queryGameItemModel.platform,
             ordering = queryGameItemModel.ordering,
-            page = if (position == 1) 1 else position * 10 - 10
+            page = if (position == 1 || queryGameItemModel.page == 5) 1 else position * 10 - 10,
+            pageSize = queryGameItemModel.page
         )
+
+        response.results.forEachIndexed { index, _ ->
+            val data = libraryDbObj.gameItemDao().getSpecificGame(response.results[index].id ?: -1)
+            response.results[index].isInLibrary = data != null
+        }
+
         return GameItemModel.convertList(response.results)
     }
 

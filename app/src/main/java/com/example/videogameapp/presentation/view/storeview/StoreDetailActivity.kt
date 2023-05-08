@@ -5,8 +5,6 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.GridLayoutManager
 import com.example.videogameapp.RawgApp
 import com.example.videogameapp.Utils
 import com.example.videogameapp.Utils.fromHtml
@@ -14,24 +12,24 @@ import com.example.videogameapp.databinding.ActivityStoreDetailBinding
 import com.example.videogameapp.domain.entity.gameentity.QueryGameItemEntity
 import com.example.videogameapp.domain.entity.storeentity.StoreDetailEntity
 import com.example.videogameapp.domain.entity.storeentity.StoreItemEntity
-import com.example.videogameapp.presentation.view.homeview.GameDetailActivity
 import com.example.videogameapp.presentation.view.homeview.GamePagingAdapter
+import com.example.videogameapp.presentation.view.homeview.SubGameFragment
+import com.example.videogameapp.presentation.viewmodel.HomeViewModel
 import com.example.videogameapp.presentation.viewmodel.StoreViewModel
 import com.example.videogameapp.presentation.viewmodel.ViewModelFactory
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class StoreDetailActivity : AppCompatActivity(), GamePagingAdapter.SetOnItemClicked {
+class StoreDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityStoreDetailBinding
-    private lateinit var gameAdapter: GamePagingAdapter
     private lateinit var loadingDialog: AlertDialog
 
     @Inject
     lateinit var vmFactory: ViewModelFactory
 
     private val storeDetailViewModel: StoreViewModel by viewModels { vmFactory }
+
+    private val homeViewModel: HomeViewModel by viewModels { vmFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         (application as RawgApp).appComponent.injectStoreDetail(this)
@@ -44,7 +42,7 @@ class StoreDetailActivity : AppCompatActivity(), GamePagingAdapter.SetOnItemClic
             intent.getParcelableExtra(Utils.OBJ_KEY, StoreItemEntity::class.java)
         } else { intent.getParcelableExtra(Utils.OBJ_KEY) }
 
-        setRecView()
+        setLoading()
         setObserver()
         if (id == -1L || storeItemEntity == null) return
         setViews(storeItemEntity)
@@ -52,22 +50,16 @@ class StoreDetailActivity : AppCompatActivity(), GamePagingAdapter.SetOnItemClic
         getGameList(id)
     }
 
-    private fun setRecView() {
-        binding.apply {
-            rvListGame.layoutManager = GridLayoutManager(this@StoreDetailActivity, 2)
-            gameAdapter = GamePagingAdapter(this@StoreDetailActivity)
-            rvListGame.adapter = gameAdapter
-        }
+    private fun setLoading() {
         loadingDialog = Utils.createLoading(this).create()
     }
 
     private fun getGameList(id: Long) {
-        lifecycleScope.launch {
-            storeDetailViewModel.getAllGameByStore(this, QueryGameItemEntity("", null, id.toString(), null, null)).collectLatest {
-                gameAdapter.submitData(lifecycle, it)
-                storeDetailViewModel.setStatusLoading(false)
-            }
+        binding.apply {
+            val fragmentManager = supportFragmentManager
+            fragmentManager.beginTransaction().replace(flFragmentGameList.id, SubGameFragment(homeViewModel, QueryGameItemEntity("", "", "", id.toString(), "", 5))).commit()
         }
+        storeDetailViewModel.setStatusLoading(false)
     }
 
     private fun setViews(it: StoreItemEntity) {
@@ -98,14 +90,5 @@ class StoreDetailActivity : AppCompatActivity(), GamePagingAdapter.SetOnItemClic
     private fun getDescrption(id: Long) {
         storeDetailViewModel.setStatusLoading(true)
         storeDetailViewModel.getDetailedStoreData(id)
-    }
-
-    override fun onItemClicked(position: Int) {
-        val intent = Utils.generateIntent(this, gameAdapter.getGameId(position), GameDetailActivity::class.java)
-        startActivity(intent)
-    }
-
-    override fun onLibraryAdd(position: Int) {
-        TODO("Not yet implemented")
     }
 }

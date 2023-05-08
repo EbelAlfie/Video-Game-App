@@ -4,13 +4,16 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.videogameapp.R
 import com.example.videogameapp.databinding.ItemGameBinding
 import com.example.videogameapp.domain.entity.gameentity.GameItemEntity
+import com.example.videogameapp.presentation.viewmodel.HomeViewModel
 import com.squareup.picasso.Picasso
 
 class GamePagingAdapter(private val listener: SetOnItemClicked): PagingDataAdapter<GameItemEntity, GamePagingAdapter.GameViewHolder>(
@@ -20,7 +23,7 @@ class GamePagingAdapter(private val listener: SetOnItemClicked): PagingDataAdapt
 
     interface SetOnItemClicked{
         fun onItemClicked(position: Int)
-        fun onLibraryAdd(position: Int)
+        fun onLibraryAdd(position: Int, btnLibrary: ImageButton)
     }
 
     companion object {
@@ -60,13 +63,23 @@ class GamePagingAdapter(private val listener: SetOnItemClicked): PagingDataAdapt
 
             setMetacritics(tvMetacritic, data)
 
+            setButton(btnLibrary, data.isInLibrary)
+
             root.setOnClickListener {
                 listener.onItemClicked(position)
             }
             btnLibrary.setOnClickListener {
-                listener.onLibraryAdd(position)
+                listener.onLibraryAdd(position, btnLibrary)
             }
         }
+    }
+
+    fun setButton(btnLibrary: ImageButton, inLibrary: Boolean) {
+        btnLibrary.setImageResource(if (!inLibrary) R.drawable.baseline_library_add_24 else R.drawable.baseline_check_box_24)
+    }
+
+    fun setLibraryStatus(status: Boolean, position: Int) {
+        getItem(position)?.isInLibrary = status
     }
 
     private fun setMetacritics(tvMetacritic: TextView, data: GameItemEntity) {
@@ -88,12 +101,12 @@ class GamePagingAdapter(private val listener: SetOnItemClicked): PagingDataAdapt
         )
     }
 
-    fun getGameId(position: Int): Long {
-        return getItem(position)?.id ?: 0
+    fun getGameItemId(position: Int): Long {
+        return getItem(position)?.id ?: -1L
     }
 
     fun getGameData(position: Int): GameItemEntity {
-        return getItem(position) ?: GameItemEntity(0, "", true, "", "", null, 0, 0, "", "", "", listOf())
+        return getItem(position) ?: GameItemEntity(0, "", true, "", "", null, 0, 0, "", "", "", listOf(), false)
     }
 
 }

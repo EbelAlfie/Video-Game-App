@@ -4,11 +4,13 @@ import android.os.Bundle
 import android.window.SplashScreen
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.example.videogameapp.R
 import com.example.videogameapp.RawgApp
 import com.example.videogameapp.databinding.ActivityMainBinding
 import com.example.videogameapp.presentation.viewmodel.HomeViewModel
+import com.example.videogameapp.presentation.viewmodel.MainViewModel
 import com.example.videogameapp.presentation.viewmodel.StoreViewModel
 import com.example.videogameapp.presentation.viewmodel.ViewModelFactory
 import javax.inject.Inject
@@ -23,10 +25,16 @@ class MainActivity: AppCompatActivity() {
 
     private val storeViewModel: StoreViewModel by viewModels { vmFactory }
 
+    private val mainViewModel: MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         (application as RawgApp).appComponent.injectMain(this)
+        installSplashScreen().apply {
+            setKeepOnScreenCondition {
+                mainViewModel.isLoading.value
+            }
+        }
         super.onCreate(savedInstanceState)
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setBottomNavBar()

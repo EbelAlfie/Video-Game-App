@@ -6,7 +6,6 @@ import com.example.videogameapp.R
 import com.example.videogameapp.data.modeldata.databasemodel.GameItemDbModel
 import kotlinx.parcelize.Parcelize
 
-@Parcelize
 data class GameItemEntity(
     val id: Long,
     val name: String,
@@ -20,7 +19,8 @@ data class GameItemEntity(
     val genres: String,
     val platforms: String,
     val screenShots: List<String>,
-): Parcelable{
+    var isInLibrary: Boolean
+){
     companion object {
         fun transformDbModel(gameItemEntity: GameItemEntity): GameItemDbModel {
             return GameItemDbModel(

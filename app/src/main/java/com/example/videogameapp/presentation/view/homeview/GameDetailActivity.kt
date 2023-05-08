@@ -1,7 +1,9 @@
 package com.example.videogameapp.presentation.view.homeview
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.content.res.Resources
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -10,8 +12,8 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.viewModels
-import androidx.core.view.size
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.CompositePageTransformer
@@ -36,6 +38,7 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
     private lateinit var binding: ActivityGameDetailBinding
     private lateinit var gameStoreLinkAdapter: GameStoreLinkAdapter
     private lateinit var screenShotsAdapter: GameScreenShotAdapter
+    private lateinit var dlcAdapter: DlcPagingAdapter
     private lateinit var loadingDialog: AlertDialog
 
     @Inject
@@ -52,10 +55,20 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
         setContentView(binding.root)
 
         setStoreLinkRv()
+        setDlcRv()
+        setScreenShotSlider()
         setObserver()
         val id = homeViewModel.getIntent(intent)
         if (id == -1L) return
         reqItem(id)
+    }
+
+    private fun setDlcRv() {
+        binding.apply {
+            rvListDlc.layoutManager = GridLayoutManager(this@GameDetailActivity, 2)
+            dlcAdapter = DlcPagingAdapter()
+            rvListDlc.adapter = dlcAdapter
+        }
     }
 
     private fun setStoreObserver(gameData: GameDetailedEntity) {
@@ -66,7 +79,7 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
         }
     }
 
-    private fun setScreenshootSlide(id: Long) {
+    private fun setScreenshootObserver(id: Long) {
         lifecycleScope.launch {
             homeViewModel.getGameDetailedScreenshoot(this, id).collectLatest {
                 screenShotsAdapter.submitData(lifecycle, it)
@@ -81,10 +94,19 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
         homeViewModel.getDetailedGameData().observe(this){gameData ->
             if (gameData == null) return@observe
             getStoreLink(gameData.id)
-            setScreenshootSlide(gameData.id)
+            setScreenshootObserver(gameData.id)
             setStoreObserver(gameData)
+            setDlcObserver(gameData.id)
             setView(gameData)
             homeViewModel.setStatusLoading(false)
+        }
+    }
+
+    private fun setDlcObserver(id: Long) {
+        lifecycleScope.launch {
+            homeViewModel.getGameDlc(this, id).collectLatest {
+                dlcAdapter.submitData(lifecycle, it)
+            }
         }
     }
 
@@ -102,9 +124,7 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
             setImagePoster(ivGameImage, data)
             setMetacritics(tvMetacritic, data)
 
-            setScreenShotSlider(data.screenShots)
-
-            screenShotsAdapter.updateList(data.screenShots)
+            //screenShotsAdapter.updateList(data.screenShots)
 
             tvGameReleasedDate.text = data.getReleasedDate()
             tvGameTitle.text = data.name
@@ -129,9 +149,9 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
         vpImageSlider.setPageTransformer(compositePageTransformer)
     }
 
-    private fun setScreenShotSlider(screenshoots: List<ScreenShotEntity>) {
+    private fun setScreenShotSlider() {
         binding.apply {
-            screenShotsAdapter = GameScreenShotAdapter(screenshoots.toMutableList())
+            screenShotsAdapter = GameScreenShotAdapter()
             vpImageSlider.apply{
                 offscreenPageLimit = 5
                 (getChildAt(0) as RecyclerView).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
@@ -145,11 +165,10 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
     private fun setAutoSlide() {
         val handler = Handler(Looper.getMainLooper())
         val timer = Timer()
-        var currentItem = 0
         val update = Runnable {
-            binding.vpImageSlider.setCurrentItem(currentItem, true)
-            if (currentItem == binding.vpImageSlider.size) currentItem = 0
-            else currentItem++
+            binding.apply {
+                vpImageSlider.setCurrentItem(++vpImageSlider.currentItem, true)
+            }
         }
         timer.schedule(object : TimerTask() {
             override fun run() {
@@ -186,6 +205,7 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
     }
 
     override fun onStoreClicked(position: Int) {
-
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(gameStoreLinkAdapter.getUrl(position)))
+        startActivity(intent)
     }
 }

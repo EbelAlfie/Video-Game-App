@@ -11,7 +11,7 @@ import com.example.videogameapp.domain.entity.gameentity.GameItemEntity
 import com.example.videogameapp.domain.entity.gameentity.ScreenShotEntity
 import com.squareup.picasso.Picasso
 
-class GameScreenShotAdapter(private val screenshots: MutableList<ScreenShotEntity?>): PagingDataAdapter<ScreenShotEntity, GameScreenShotAdapter.ScreenShotViewHolder>(DiffCallback) {
+class GameScreenShotAdapter: PagingDataAdapter<ScreenShotEntity, GameScreenShotAdapter.ScreenShotViewHolder>(DiffCallback) {
     companion object {
         object DiffCallback : DiffUtil.ItemCallback<ScreenShotEntity>() {
             override fun areItemsTheSame(
@@ -34,24 +34,20 @@ class GameScreenShotAdapter(private val screenshots: MutableList<ScreenShotEntit
         return ScreenShotViewHolder(ItemScreenshotBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
-    override fun getItemCount(): Int {
-        return screenshots.size
-    }
-
     override fun onBindViewHolder(holder: ScreenShotViewHolder, position: Int) {
-        val data = screenshots[position]
+        val data = getItem(position) ?: return
         holder.binding.apply {
-            Picasso.get().load(data?.image).apply {
+            Picasso.get().load(data.image).apply {
                 resize(600, 400)
                 into(ivScreenshot)
             }
         }
     }
 
-    fun updateList(newList: List<ScreenShotEntity>) {
+    /*fun updateList(newList: List<ScreenShotEntity>) {
         screenshots.clear()
         screenshots.addAll(newList)
         notifyItemRangeChanged(0, screenshots.size)
-    }
+    }*/
 
 }

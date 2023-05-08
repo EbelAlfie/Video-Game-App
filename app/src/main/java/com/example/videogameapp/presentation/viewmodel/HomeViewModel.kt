@@ -1,6 +1,7 @@
 package com.example.videogameapp.presentation.viewmodel
 
 import android.content.Intent
+import android.widget.ImageButton
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,8 +12,7 @@ import com.example.videogameapp.domain.entity.gameentity.*
 import com.example.videogameapp.domain.interfaces.GameUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,6 +26,8 @@ class HomeViewModel @Inject constructor(private val useCase: GameUseCase): ViewM
     private val _statusLoading = MutableLiveData<Boolean>()
     fun getStatusLoading(): LiveData<Boolean> = _statusLoading
     fun setStatusLoading(loading: Boolean) = run { _statusLoading.value = loading }
+
+    private val _isInLibrary = MutableLiveData<Boolean>()
 
     fun getGameDetail(id: Long) {
         viewModelScope.launch {
@@ -51,9 +53,19 @@ class HomeViewModel @Inject constructor(private val useCase: GameUseCase): ViewM
         return useCase.getGameDetailScreenshots(id, scope)
     }
 
-    fun insertGameItem(gameItemEntity: GameItemEntity) {
+
+    private fun deleteGameItem(gameData: GameItemEntity) {
         CoroutineScope(Dispatchers.IO).launch {
-            useCase.insertToLibrary(gameItemEntity)
+            useCase.deleteGameItem(gameData).collectLatest {
+                _isInLibrary.postValue(it == -1)
+            }
+        }
+    }
+    private fun insertGameItem(gameItemEntity: GameItemEntity) {
+        CoroutineScope(Dispatchers.IO).launch {
+            useCase.insertToLibrary(gameItemEntity).collectLatest {
+                _isInLibrary.postValue(it != -1L)
+            }
         }
     }
 
@@ -62,6 +74,16 @@ class HomeViewModel @Inject constructor(private val useCase: GameUseCase): ViewM
     }
 
     fun getIntent(intent: Intent): Long {
-        return intent.getLongExtra(Utils.ID_KEY, -1)
+        return intent.getLongExtra(Utils.ID_KEY, -1L)
+    }
+
+    suspend fun getGameDlc(scope: CoroutineScope, id: Long): Flow<PagingData<GameItemEntity>> {
+        return useCase.getDlcData(scope, id)
+    }
+
+    fun manageLibrary(gameData: GameItemEntity): LiveData<Boolean> {
+        if (!gameData.isInLibrary) insertGameItem(gameData)
+        else deleteGameItem(gameData)
+        return _isInLibrary
     }
 }

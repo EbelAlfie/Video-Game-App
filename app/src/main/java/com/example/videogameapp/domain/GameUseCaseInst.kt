@@ -28,12 +28,20 @@ class GameUseCaseInst @Inject constructor(private val repository: GameRepository
         return repository.getGameStoreLink(id)
     }
 
-    override suspend fun insertToLibrary(gameEntity: GameItemEntity) {
-        repository.insertToLibrary(gameEntity)
+    override suspend fun insertToLibrary(gameEntity: GameItemEntity): Flow<Long> {
+        return repository.insertToLibrary(gameEntity)
     }
 
     override suspend fun getAllGameLibrary(): Flow<List<GameItemEntity>> {
         return repository.getAllGameLibrary()
+    }
+
+    override suspend fun deleteGameItem(gameData: GameItemEntity): Flow<Int> {
+        return repository.deleteGameItem(gameData)
+    }
+
+    override suspend fun getDlcData(scope: CoroutineScope, id: Long): Flow<PagingData<GameItemEntity>> {
+        return repository.getDlcData(scope, id)
     }
 
 }

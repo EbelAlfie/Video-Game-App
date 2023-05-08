@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -16,7 +17,7 @@ import com.example.videogameapp.presentation.viewmodel.HomeViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class HomeFragment (private var viewModel: HomeViewModel): Fragment(),
+class HomeFragment (private var viewModel: HomeViewModel, private var queryParam: QueryGameItemEntity): Fragment(),
     GamePagingAdapter.SetOnItemClicked {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var pagingAdapter: GamePagingAdapter
@@ -34,7 +35,7 @@ class HomeFragment (private var viewModel: HomeViewModel): Fragment(),
         super.onViewCreated(view, savedInstanceState)
         initViews()
         setObserver()
-        getData(initQueryGameItemParam(null, null, null, null, null))
+        getData(initQueryGameItemParam(null, null, null, null, null, 10))
     }
 
     private fun setObserver() {
@@ -53,13 +54,14 @@ class HomeFragment (private var viewModel: HomeViewModel): Fragment(),
         }
     }
 
-    private fun initQueryGameItemParam(search : String?, dates: String?, platform: String?, store: String?, ordering: String?): QueryGameItemEntity {
+    private fun initQueryGameItemParam(search : String?, dates: String?, platform: String?, store: String?, ordering: String?, page: Int): QueryGameItemEntity {
         return QueryGameItemEntity(
             search = search,
             dates = dates,
             platform = platform,
             store = store,
-            ordering = ordering
+            ordering = ordering,
+            page = page
         )
     }
 
@@ -74,7 +76,7 @@ class HomeFragment (private var viewModel: HomeViewModel): Fragment(),
             searchView.setOnQueryTextListener(object: OnQueryTextListener{
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     if (query?.isNotBlank()!!) {
-                        val queryEntity = initQueryGameItemParam(query, null, null, null, null)
+                        val queryEntity = initQueryGameItemParam(query, null, null, null, null, 10)
                         getData(queryEntity)
                     }
                     return true
@@ -85,12 +87,16 @@ class HomeFragment (private var viewModel: HomeViewModel): Fragment(),
     }
 
     override fun onItemClicked(position: Int) {
-        val intent = Utils.generateIntent(requireContext(), pagingAdapter.getItemId(position), GameDetailActivity::class.java)
+        val intent = Utils.generateIntent(requireContext(), pagingAdapter.getGameItemId(position), GameDetailActivity::class.java)
         startActivity(intent)
     }
 
-    override fun onLibraryAdd(position: Int) {
+    override fun onLibraryAdd(position: Int, btnLibrary: ImageButton) {
         viewModel.setStatusLoading(true)
-        viewModel.insertGameItem(pagingAdapter.getGameData(position))
+        viewModel.manageLibrary(pagingAdapter.getGameData(position)).observe(requireActivity()) {
+            viewModel.setStatusLoading(false)
+            pagingAdapter.setLibraryStatus(it, position)
+            pagingAdapter.setButton(btnLibrary, it)
+        }
     }
 }

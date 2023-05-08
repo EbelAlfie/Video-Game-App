@@ -14,7 +14,9 @@ interface GameUseCase {
 
     fun getGameStoreLink(id: Long): Flow<List<StoreEntity>>
 
-    suspend fun insertToLibrary(gameEntity: GameItemEntity)
+    suspend fun insertToLibrary(gameEntity: GameItemEntity): Flow<Long>
 
     suspend fun getAllGameLibrary(): Flow<List<GameItemEntity>>
+    suspend fun deleteGameItem(gameData: GameItemEntity): Flow<Int>
+    suspend fun getDlcData(scope: CoroutineScope, id: Long): Flow<PagingData<GameItemEntity>>
 }

@@ -16,6 +16,7 @@ interface GameApiService {
                            @Query("platform") platform: String?,
                            @Query("store") store: String?,
                            @Query("ordering") ordering: String?,
+                           @Query("page_size") pageSize: Int?
     ): GameItemResponse
 
     @GET("games/{id}")
@@ -23,14 +24,14 @@ interface GameApiService {
                               @Query("key") apiKey: String = API_KEY
     ): GameDetailedModel
 
-    @GET("{id}/screenshots")
+    @GET("games/{id}/screenshots")
     suspend fun getGameDetailScreenshots(@Path("id") id: Long,
                                @Query("key") apiKey: String = API_KEY
     ): ScreenshotDetailResponseModel
 
     @GET("{id}/movies")
     suspend fun getTrailers(@Path("id") id: Long,
-                            @Query("key") apiKey: String = API_KEY)
+                            @Query("key") apiKey: String = API_KEY) : TrailerResponseModel
 
     @GET("games/{id}/stores")
     suspend fun getGameStoreLink(@Path("id") id: Long,
@@ -38,6 +39,6 @@ interface GameApiService {
 
     @GET("games/{id}/additions")
     suspend fun getGameDlc(@Path("id") id: Long,
-                           @Query("key") apiKey: String = API_KEY): DlcResponse
-
+                           @Query("key") apiKey: String = API_KEY
+    ): DlcResponse
 }

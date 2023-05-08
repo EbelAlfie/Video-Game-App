@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="230dp"
+    android:layout_height="400dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/item_games_design"
@@ -10,11 +10,11 @@
     android:paddingBottom="@dimen/detail_padding">
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/iv_poster"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="230dp"
+        android:layout_height="150dp"
         android:scaleType="fitXY"
         app:shapeAppearanceOverlay="@style/upper_corner_rounded_image"
-        tools:src="@drawable/ic_launcher_background"
+        android:src="@drawable/baseline_broken_image_24"
         tools:ignore="contentDescription"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -48,6 +48,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/platform"
+        android:maxLines="2"
+        android:ellipsize="end"
         style="@style/tv_medium_game_item"
         app:layout_constraintTop_toBottomOf="@id/tv_metacritic"
         app:layout_constraintStart_toStartOf="@id/tv_metacritic"/>

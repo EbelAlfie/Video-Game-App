@@ -33,6 +33,7 @@ data class GameItemModel (
     val platforms: List<PlatformModelResponse?>,
     @SerializedName("short_screenshots")
     val screenShots: List<ScreenShotModel?>,
+    var isInLibrary: Boolean
 ) {
     companion object {
         fun convertList(listGameItemModel: List<GameItemModel?>): List<GameItemEntity> {
@@ -54,7 +55,8 @@ data class GameItemModel (
                 reviewCount = gameItemModel.reviewCount ?: 0,
                 genres = GenresModel.genreString(gameItemModel.genres),
                 platforms = PlatformModel.platformString(gameItemModel.platforms),
-                screenShots = ScreenShotModel.screenshootString(gameItemModel.screenShots)
+                screenShots = ScreenShotModel.screenshootString(gameItemModel.screenShots),
+                isInLibrary = gameItemModel.isInLibrary
             )
         }
     }

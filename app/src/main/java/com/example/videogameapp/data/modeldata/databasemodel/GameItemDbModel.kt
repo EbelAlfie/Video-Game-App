@@ -8,9 +8,7 @@ import kotlinx.coroutines.flow.*
 
 @Entity(tableName = "game_database")
 data class GameItemDbModel(
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo("id")
-    var id: Int = 0,
+    @PrimaryKey(autoGenerate = false)
     @ColumnInfo("game_id")
     val gameId: Long?,
     @ColumnInfo("name")
@@ -38,7 +36,7 @@ data class GameItemDbModel(
         fun convertList(item: List<GameItemDbModel>): List<GameItemEntity> {
             return item.map {
                         GameItemEntity(
-                            id = it.gameId ?: 0,
+                            id = it.gameId ?: -1,
                             name = it.name ?: "",
                             tbaStatus = it.tbaStatus ?: true,
                             dateReleased = it.dateReleased ?: "",
@@ -49,7 +47,8 @@ data class GameItemDbModel(
                             ratings = it.ratings,
                             genres = it.genres,
                             platforms = it.platforms,
-                            screenShots = listOf()
+                            screenShots = listOf(),
+                            isInLibrary = true
                         )
             }
         }

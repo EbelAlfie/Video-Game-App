@@ -4,5 +4,5 @@ import com.google.gson.annotations.SerializedName
 
 data class DlcResponse (
     @SerializedName("results")
-    val dlc: GameItemModel
+    val dlc: List<GameItemModel>
     )

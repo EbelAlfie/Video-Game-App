@@ -14,6 +14,7 @@ import com.example.videogameapp.domain.entity.gameentity.*
 import com.example.videogameapp.domain.interfaces.GameRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -25,7 +26,7 @@ class GameRepositoryInst @Inject constructor(private val gameApiService: GameApi
         return Pager(config = PagingConfig(
             pageSize = 10
         )) {
-            GamePagingDataSource(gameApiService, QueryGameItemEntity.transform(queryGameItemEntity))
+            GamePagingDataSource(libraryDbObj, gameApiService, QueryGameItemEntity.transform(queryGameItemEntity))
         }.flow.cachedIn(scope)
     }
 
@@ -38,7 +39,6 @@ class GameRepositoryInst @Inject constructor(private val gameApiService: GameApi
                 Log.d("TAG", e.message.toString())
                 emit(GameDetailedEntity(0, "", "", false, "", "", null, 0, "", "", listOf(),listOf(),listOf(), listOf(), listOf(), listOf(), listOf()))
             }
-
         }
     }
 
@@ -62,15 +62,19 @@ class GameRepositoryInst @Inject constructor(private val gameApiService: GameApi
         }
     }
 
-    override suspend fun insertToLibrary(gameEntity: GameItemEntity) {
-        try {
-            gameEntity.apply {
-                val gameData = GameItemEntity.transformDbModel(this)
-                libraryDbObj.gameItemDao().insertGameItem(gameData)
+    override suspend fun insertToLibrary(gameEntity: GameItemEntity): Flow<Long> {
+        return flow{
+            try {
+                gameEntity.apply {
+                    val gameData = GameItemEntity.transformDbModel(this)
+                    val response = libraryDbObj.gameItemDao().insertGameItem(gameData)
+                    emit(response)
+                }
+            }catch (e: Exception) {
+                Log.d("test", e.message.toString())
+                emit(-1)
             }
-        }catch (e: Exception) {
-            Log.d("test", e.message.toString())
-        }
+        }.flowOn(IO)
     }
 
     override suspend fun getAllGameLibrary(): Flow<List<GameItemEntity>> {
@@ -82,8 +86,26 @@ class GameRepositoryInst @Inject constructor(private val gameApiService: GameApi
                 Log.d("TAG", e.message.toString())
                 emit(listOf())
             }
-        }.flowOn(Dispatchers.IO)
+        }.flowOn(IO)
     }
 
+    override suspend fun deleteGameItem(gameData: GameItemEntity): Flow<Int> {
+        return flow {
+            try {
+                val data = GameItemEntity.transformDbModel(gameData)
+                val response = libraryDbObj.gameItemDao().deleteGameItem(data)
+                emit(response)
+            }catch (e : Exception) {
+                emit(0)
+            }
+        }.flowOn(IO)
+    }
 
+    override suspend fun getDlcData(scope: CoroutineScope, id: Long): Flow<PagingData<GameItemEntity>> {
+        return Pager(config = PagingConfig(
+            pageSize = 10
+        )) {
+            DlcPagingDataSource(id, gameApiService)
+        }.flow.cachedIn(scope)
+    }
 }

@@ -7,4 +7,5 @@
     <dimen name="detail_padding">10dp</dimen>
     <dimen name="image_corner">20dp</dimen>
     <dimen name="card_margin">20dp</dimen>
+    <dimen name="loading_margin">15dp</dimen>
 </resources>

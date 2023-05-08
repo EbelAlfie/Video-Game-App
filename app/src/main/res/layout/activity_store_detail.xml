@@ -50,8 +50,8 @@
             style="@style/tv_header_style"
             android:layout_below="@id/tv_store_desc"/>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_list_game"
+        <FrameLayout
+            android:id="@+id/fl_fragment_game_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_store_game_list"/>

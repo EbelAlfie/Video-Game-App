@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="splash_screen">
-        <item name="android:windowSplashScreenBackground">@color/dark_background</item>
+    <style name="Theme.AppCompat.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/item_color</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/appicon</item>
+        <item name="postSplashScreenTheme">@style/Theme.VideoGameApp</item>
     </style>
 </resources>
