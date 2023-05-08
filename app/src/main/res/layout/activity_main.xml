@@ -28,6 +28,7 @@
         app:itemIconTint="@color/bottom_navbar_icontint"
         app:itemTextColor="@color/bottom_navbar_icontint"
         android:background="@color/dark_background"
+        android:overScrollMode="never"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@id/app_container"
         app:layout_constraintEnd_toEndOf="@id/app_container"/>
