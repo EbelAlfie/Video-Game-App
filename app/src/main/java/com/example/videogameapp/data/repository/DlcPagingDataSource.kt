@@ -15,19 +15,15 @@ class DlcPagingDataSource(private val id: Long, private val apiService: GameApiS
         val position = params.key ?: 1
 
         return try {
-            val data = getOnlineData()
+            val response = apiService.getGameDlc(id)
+            val data = GameItemModel.convertList(response.dlc)
             LoadResult.Page (
                 data = data,
-                nextKey = if (data.isEmpty()) null else position + 1,
+                nextKey = if (data.isEmpty() || response.next.isNullOrEmpty()) null else position + 1,
                 prevKey = null
             )
         } catch(e: Exception) {
             LoadResult.Error(e)
         }
-    }
-
-    private suspend fun getOnlineData(): List<GameItemEntity> {
-        val response = apiService.getGameDlc(id)
-        return GameItemModel.convertList(response.dlc)
     }
 }

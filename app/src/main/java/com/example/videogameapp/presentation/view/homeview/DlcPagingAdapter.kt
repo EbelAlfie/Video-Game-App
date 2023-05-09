@@ -30,9 +30,11 @@ class DlcPagingAdapter: PagingDataAdapter<GameItemEntity, DlcPagingAdapter.DlcVi
     override fun onBindViewHolder(holder: DlcViewHolder, position: Int) {
         val data = getItem(position) ?: return
         holder.binding.apply {
-            Picasso.get().load(data.backgroundImage).apply{
-                resize(100,100)
-                into(ivDlcPoster)
+            if (data.backgroundImage.isNotBlank()) {
+                Picasso.get().load(data.backgroundImage).apply{
+                    resize(100,100)
+                    into(ivDlcPoster)
+                }
             }
             tvDlcTitle.text = data.name
             tvDlcReleasedDate.text = data.dateReleased

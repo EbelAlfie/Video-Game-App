@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_margin="@dimen/view_margin"
     android:background="@drawable/item_games_design">
     <ImageView
         android:id="@+id/iv_dlc_poster"
@@ -19,9 +20,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@id/iv_dlc_poster"
+        app:layout_constraintTop_toTopOf="parent"
         tools:text="dlc title"
         android:layout_margin="@dimen/view_margin"
-        style="@style/tv_header_style"/>
+        style="@style/tv_medium_game_item"/>
     <TextView
         android:id="@+id/tv_dlc_released_date"
         android:layout_width="wrap_content"

@@ -3,7 +3,6 @@ package com.example.videogameapp.presentation.view
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.videogameapp.presentation.view.homeview.HomeFragment
-import com.example.videogameapp.presentation.view.homeview.HomeFragment2
 import com.example.videogameapp.presentation.view.libraryview.LibraryFragment
 import com.example.videogameapp.presentation.view.storeview.StoreFragment
 import com.example.videogameapp.presentation.viewmodel.HomeViewModel
@@ -16,10 +15,10 @@ class FragmentAdapter (activity: MainActivity, private val homeViewModel: HomeVi
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
-            0 -> HomeFragment2(homeViewModel)
+            0 -> HomeFragment(homeViewModel)
             1 -> StoreFragment(storeViewModel)
             2 -> LibraryFragment(homeViewModel)
-            else -> HomeFragment2(homeViewModel)
+            else -> HomeFragment(homeViewModel)
         }
     }
 }

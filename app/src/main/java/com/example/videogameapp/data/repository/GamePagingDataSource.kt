@@ -1,5 +1,6 @@
 package com.example.videogameapp.data.repository
 
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.videogameapp.data.di.LocalDbModule
@@ -23,6 +24,7 @@ class GamePagingDataSource(private val libraryDbObj: LocalDbModule, private val 
                 prevKey = null
             )
         }catch (e: Exception) {
+            Log.d("ERROR", e.message.toString())
             LoadResult.Error(e)
         }
     }

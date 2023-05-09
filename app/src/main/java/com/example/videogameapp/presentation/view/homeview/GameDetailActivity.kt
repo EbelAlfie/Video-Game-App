@@ -13,7 +13,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.CompositePageTransformer
@@ -65,7 +64,7 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
 
     private fun setDlcRv() {
         binding.apply {
-            rvListDlc.layoutManager = GridLayoutManager(this@GameDetailActivity, 2)
+            rvListDlc.layoutManager = LinearLayoutManager(this@GameDetailActivity)
             dlcAdapter = DlcPagingAdapter()
             rvListDlc.adapter = dlcAdapter
         }
@@ -123,8 +122,6 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
         binding.apply {
             setImagePoster(ivGameImage, data)
             setMetacritics(tvMetacritic, data)
-
-            //screenShotsAdapter.updateList(data.screenShots)
 
             tvGameReleasedDate.text = data.getReleasedDate()
             tvGameTitle.text = data.name

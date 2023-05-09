@@ -49,6 +49,7 @@ class LibraryAdapter(private val gameLibraryList: MutableList<GameItemEntity>, p
 
             setMetacritics(tvMetacritic, data)
 
+
             root.setOnClickListener {
                 listener.onItemClicked(position)
             }

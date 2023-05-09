@@ -19,8 +19,8 @@ data class RatingModel (
             }
         }
 
-        fun ratingString(ratingModelList: List<RatingModel?>) : String {
-            return ratingModelList.maxBy { it?.ratingCount ?: 0 }?.ratingTitle ?: ""
+        fun ratingString(ratingModelList: List<RatingModel>?) : String {
+            return ratingModelList?.maxBy { it.ratingCount ?: 0 }?.ratingTitle ?: ""
         }
     }
 }
@@ -71,10 +71,10 @@ data class GenresModel (
             }
         }
 
-        fun genreString(genres: List<GenresModel?>): String {
-            return genres.map {
-                it?.genreName ?: ""
-            }.joinToString { it }
+        fun genreString(genres: List<GenresModel>?): String {
+            return genres?.map {
+                it.genreName ?: ""
+            }?.joinToString { it } ?: "-"
         }
     }
 }
@@ -114,10 +114,10 @@ data class ScreenShotModel (
             }
         }
 
-        fun screenshootString(images: List<ScreenShotModel?>): List<String> {
-            return images.map {
-                it?.image ?: ""
-            }
+        fun screenshootString(images: List<ScreenShotModel>?): List<String> {
+            return images?.map {
+                it.image ?: ""
+            } ?: listOf()
         }
     }
 }

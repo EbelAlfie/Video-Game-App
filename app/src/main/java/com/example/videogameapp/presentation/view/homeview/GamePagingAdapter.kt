@@ -6,14 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.videogameapp.R
 import com.example.videogameapp.databinding.ItemGameBinding
 import com.example.videogameapp.domain.entity.gameentity.GameItemEntity
-import com.example.videogameapp.presentation.viewmodel.HomeViewModel
 import com.squareup.picasso.Picasso
 
 class GamePagingAdapter(private val listener: SetOnItemClicked): PagingDataAdapter<GameItemEntity, GamePagingAdapter.GameViewHolder>(
@@ -106,7 +104,7 @@ class GamePagingAdapter(private val listener: SetOnItemClicked): PagingDataAdapt
     }
 
     fun getGameData(position: Int): GameItemEntity {
-        return getItem(position) ?: GameItemEntity(0, "", true, "", "", null, 0, 0, "", "", "", listOf(), false)
+        return getItem(position) ?: GameItemEntity(-1, "", true, "", "", null, 0, 0, "", "", "", listOf(), false)
     }
 
 }

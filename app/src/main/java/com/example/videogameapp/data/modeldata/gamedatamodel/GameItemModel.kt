@@ -24,15 +24,15 @@ data class GameItemModel (
     @SerializedName("playtime")
     val playtime: Int?,
     @SerializedName("ratings")
-    val ratings: List<RatingModel?>,
+    val ratings: List<RatingModel>?,
     @SerializedName("reviews_count")
     val reviewCount: Int?,
     @SerializedName("genres")
-    val genres: List<GenresModel?>,
+    val genres: List<GenresModel>?,
     @SerializedName("platforms")
-    val platforms: List<PlatformModelResponse?>,
+    val platforms: List<PlatformModelResponse>?,
     @SerializedName("short_screenshots")
-    val screenShots: List<ScreenShotModel?>,
+    val screenShots: List<ScreenShotModel>?,
     var isInLibrary: Boolean
 ) {
     companion object {

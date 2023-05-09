@@ -17,7 +17,7 @@ import com.example.videogameapp.presentation.viewmodel.HomeViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class HomeFragment (private var viewModel: HomeViewModel, private var queryParam: QueryGameItemEntity): Fragment(),
+class HomeFragment (private var viewModel: HomeViewModel, private var queryParam: QueryGameItemEntity = QueryGameItemEntity(null, null, null, null, null, 10)): Fragment(),
     GamePagingAdapter.SetOnItemClicked {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var pagingAdapter: GamePagingAdapter
@@ -35,7 +35,7 @@ class HomeFragment (private var viewModel: HomeViewModel, private var queryParam
         super.onViewCreated(view, savedInstanceState)
         initViews()
         setObserver()
-        getData(initQueryGameItemParam(null, null, null, null, null, 10))
+        getData(queryParam)
     }
 
     private fun setObserver() {
@@ -51,6 +51,9 @@ class HomeFragment (private var viewModel: HomeViewModel, private var queryParam
                 viewModel.setStatusLoading(false)
                 pagingAdapter.submitData(lifecycle, it)
             }
+        }
+        viewModel.getStatusLoading().observe(requireActivity()) {
+            if (it) loadingDialog.show() else loadingDialog.dismiss()
         }
     }
 
