@@ -13,9 +13,10 @@
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/iv_store_poster"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/baseline_broken_image_24"
             style="@style/shapeable_image_view_style"
-            tools:src="@drawable/ic_launcher_background"
             tools:ignore="contentDescription"/>
 
         <TextView

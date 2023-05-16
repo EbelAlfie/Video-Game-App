@@ -4,7 +4,10 @@ import android.content.Context
 import android.os.Parcelable
 import com.example.videogameapp.R
 import com.example.videogameapp.data.modeldata.databasemodel.GameItemDbModel
+import com.example.videogameapp.data.modeldata.gamedatamodel.GenresModel
+import com.example.videogameapp.domain.entity.storeentity.GameEntity
 import kotlinx.parcelize.Parcelize
+import okhttp3.internal.platform.Platform
 
 data class GameItemEntity(
     val id: Long,
@@ -22,6 +25,23 @@ data class GameItemEntity(
     var isInLibrary: Boolean
 ){
     companion object {
+        fun transformFromDetail(gameDetailedEntity: GameDetailedEntity): GameItemEntity {
+            return GameItemEntity(
+                id = gameDetailedEntity.id,
+                name = gameDetailedEntity.name,
+                tbaStatus = gameDetailedEntity.tbaStatus,
+                dateReleased = gameDetailedEntity.dateReleased,
+                backgroundImage = gameDetailedEntity.poster ?: "",
+                metaCritic = gameDetailedEntity.metaCritic,
+                playtime = gameDetailedEntity.playtime,
+                reviewCount = 1,
+                ratings = RatingEntity.ratingString(gameDetailedEntity.ratings),
+                genres = GenresEntity.genreString(gameDetailedEntity.genres),
+                platforms = PlatformEntity.platformString(gameDetailedEntity.platforms),
+                screenShots = gameDetailedEntity.screenShots.map {it.image},
+                isInLibrary = gameDetailedEntity.isInLibrary
+            )
+        }
         fun transformDbModel(gameItemEntity: GameItemEntity): GameItemDbModel {
             return GameItemDbModel(
                 gameId = gameItemEntity.id,

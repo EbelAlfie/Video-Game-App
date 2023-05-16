@@ -38,25 +38,25 @@ data class GameItemModel (
     companion object {
         fun convertList(listGameItemModel: List<GameItemModel?>): List<GameItemEntity> {
             return listGameItemModel.map {
-                convertItem(it ?: return emptyList())
+                convertItem(it)
             }
         }
 
-        private fun convertItem(gameItemModel: GameItemModel): GameItemEntity {
+        private fun convertItem(gameItemModel: GameItemModel?): GameItemEntity {
             return GameItemEntity(
-                id = gameItemModel.id ?: 0,
-                name = gameItemModel.name ?: "",
-                tbaStatus = gameItemModel.tbaStatus ?: true,
-                dateReleased = gameItemModel.dateReleased ?: "",
-                backgroundImage = gameItemModel.backgroundImage ?: "",
-                metaCritic = gameItemModel.metaCritic,
-                playtime = gameItemModel.playtime ?: 0,
-                ratings = RatingModel.ratingString(gameItemModel.ratings),
-                reviewCount = gameItemModel.reviewCount ?: 0,
-                genres = GenresModel.genreString(gameItemModel.genres),
-                platforms = PlatformModel.platformString(gameItemModel.platforms),
-                screenShots = ScreenShotModel.screenshootString(gameItemModel.screenShots),
-                isInLibrary = gameItemModel.isInLibrary
+                id = gameItemModel?.id ?: 0,
+                name = gameItemModel?.name ?: "",
+                tbaStatus = gameItemModel?.tbaStatus ?: true,
+                dateReleased = gameItemModel?.dateReleased ?: "",
+                backgroundImage = gameItemModel?.backgroundImage ?: "",
+                metaCritic = gameItemModel?.metaCritic,
+                playtime = gameItemModel?.playtime ?: 0,
+                reviewCount = gameItemModel?.reviewCount ?: 0,
+                genres = GenresModel.genreString(gameItemModel?.genres),
+                platforms = PlatformModel.platformString(gameItemModel?.platforms),
+                screenShots = ScreenShotModel.screenshootString(gameItemModel?.screenShots),
+                ratings = RatingModel.ratingString(gameItemModel?.ratings ?: listOf()),
+                isInLibrary = gameItemModel?.isInLibrary ?: false
             )
         }
     }

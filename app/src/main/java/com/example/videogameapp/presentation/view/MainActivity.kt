@@ -1,7 +1,6 @@
 package com.example.videogameapp.presentation.view
 
 import android.os.Bundle
-import android.window.SplashScreen
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen

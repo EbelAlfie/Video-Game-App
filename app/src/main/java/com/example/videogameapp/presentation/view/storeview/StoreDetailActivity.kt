@@ -12,7 +12,6 @@ import com.example.videogameapp.databinding.ActivityStoreDetailBinding
 import com.example.videogameapp.domain.entity.gameentity.QueryGameItemEntity
 import com.example.videogameapp.domain.entity.storeentity.StoreDetailEntity
 import com.example.videogameapp.domain.entity.storeentity.StoreItemEntity
-import com.example.videogameapp.presentation.view.homeview.GamePagingAdapter
 import com.example.videogameapp.presentation.view.homeview.SubGameFragment
 import com.example.videogameapp.presentation.viewmodel.HomeViewModel
 import com.example.videogameapp.presentation.viewmodel.StoreViewModel
@@ -36,21 +35,27 @@ class StoreDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityStoreDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val id = intent.getLongExtra(Utils.ID_KEY, -1L)
 
         val storeItemEntity = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(Utils.OBJ_KEY, StoreItemEntity::class.java)
         } else { intent.getParcelableExtra(Utils.OBJ_KEY) }
 
-        setLoading()
+        val id = storeDetailViewModel.getStoreId(intent)
+
+        createLoadingProgress()
         setObserver()
         if (id == -1L || storeItemEntity == null) return
+        setLoading(true)
         setViews(storeItemEntity)
         getDescrption(id)
         getGameList(id)
     }
 
-    private fun setLoading() {
+    private fun setLoading(status: Boolean) {
+        storeDetailViewModel.setStatusLoading(status)
+    }
+
+    private fun createLoadingProgress() {
         loadingDialog = Utils.createLoading(this).create()
     }
 
@@ -59,13 +64,11 @@ class StoreDetailActivity : AppCompatActivity() {
             val fragmentManager = supportFragmentManager
             fragmentManager.beginTransaction().replace(flFragmentGameList.id, SubGameFragment(homeViewModel, QueryGameItemEntity("", "", "", id.toString(), "", 5))).commit()
         }
-        storeDetailViewModel.setStatusLoading(false)
     }
 
     private fun setViews(it: StoreItemEntity) {
         binding.apply {
             Picasso.get().load(it.image).apply{
-                resize(300,300)
                 into(ivStorePoster)
             }
             tvStoreTitle.text = it.name
@@ -80,6 +83,7 @@ class StoreDetailActivity : AppCompatActivity() {
         storeDetailViewModel.getStoreDetailData().observe(this) {
             if (it == null) return@observe
             setDesc(it)
+            setLoading(false)
         }
     }
 
@@ -88,7 +92,6 @@ class StoreDetailActivity : AppCompatActivity() {
     }
 
     private fun getDescrption(id: Long) {
-        storeDetailViewModel.setStatusLoading(true)
         storeDetailViewModel.getDetailedStoreData(id)
     }
 }

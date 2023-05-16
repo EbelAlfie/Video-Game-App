@@ -12,6 +12,8 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.viewModels
+import androidx.appcompat.widget.AppCompatButton
+import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -37,6 +39,7 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
     private lateinit var binding: ActivityGameDetailBinding
     private lateinit var gameStoreLinkAdapter: GameStoreLinkAdapter
     private lateinit var screenShotsAdapter: GameScreenShotAdapter
+    private lateinit var videoAdapter: TrailerAdapter
     private lateinit var dlcAdapter: DlcPagingAdapter
     private lateinit var loadingDialog: AlertDialog
 
@@ -53,13 +56,27 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
         binding = ActivityGameDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setStoreLinkRv()
-        setDlcRv()
-        setScreenShotSlider()
+        setRecyclerViews()
         setObserver()
         val id = homeViewModel.getIntent(intent)
         if (id == -1L) return
         reqItem(id)
+    }
+
+    private fun setRecyclerViews() {
+        setStoreLinkRv()
+        setDlcRv()
+        setScreenShotSlider()
+        setVideoSlider()
+    }
+
+    private fun setStoreLinkRv() {
+        binding.apply{
+            rvListStore.layoutManager = LinearLayoutManager(this@GameDetailActivity, LinearLayoutManager.HORIZONTAL, false)
+            gameStoreLinkAdapter = GameStoreLinkAdapter(mutableListOf(), this@GameDetailActivity)
+            rvListStore.adapter = gameStoreLinkAdapter
+        }
+        loadingDialog = Utils.createLoading(this).create()
     }
 
     private fun setDlcRv() {
@@ -68,6 +85,18 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
             dlcAdapter = DlcPagingAdapter()
             rvListDlc.adapter = dlcAdapter
         }
+    }
+    private fun setVideoSlider() {
+        binding.apply {
+            videoAdapter = TrailerAdapter(mutableListOf())
+            vpVideoPreviewSlider.apply{
+                offscreenPageLimit = 5
+                (getChildAt(0) as RecyclerView).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
+                setTransformation(this)
+                adapter = videoAdapter
+            }
+        }
+        setAutoSlide()
     }
 
     private fun setStoreObserver(gameData: GameDetailedEntity) {
@@ -90,14 +119,24 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
         homeViewModel.getStatusLoading().observe(this) {
             if (it) loadingDialog.show() else loadingDialog.cancel()
         }
+
         homeViewModel.getDetailedGameData().observe(this){gameData ->
             if (gameData == null) return@observe
             getStoreLink(gameData.id)
             setScreenshootObserver(gameData.id)
             setStoreObserver(gameData)
             setDlcObserver(gameData.id)
+            setVideoObserver(gameData.id)
             setView(gameData)
             homeViewModel.setStatusLoading(false)
+        }
+    }
+
+    private fun setVideoObserver(id: Long) {
+        lifecycleScope.launch {
+            homeViewModel.getTrailers(id).collectLatest {
+                videoAdapter.submitData(it)
+            }
         }
     }
 
@@ -109,19 +148,11 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
         }
     }
 
-    private fun setStoreLinkRv() {
-        binding.apply{
-            rvListStore.layoutManager = LinearLayoutManager(this@GameDetailActivity, LinearLayoutManager.HORIZONTAL, false)
-            gameStoreLinkAdapter = GameStoreLinkAdapter(mutableListOf(), this@GameDetailActivity)
-            rvListStore.adapter = gameStoreLinkAdapter
-        }
-        loadingDialog = Utils.createLoading(this).create()
-    }
-
     private fun setView(data: GameDetailedEntity) {
         binding.apply {
             setImagePoster(ivGameImage, data)
             setMetacritics(tvMetacritic, data)
+            setLibraryBtn(btnLibrary, data.isInLibrary)
 
             tvGameReleasedDate.text = data.getReleasedDate()
             tvGameTitle.text = data.name
@@ -133,7 +164,25 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
             tvGamePublisher.text = data.publishers.joinToString { it.publisher }
             tvGameTags.text = data.tags.joinToString { it.tagName }
 
+            btnLibrary.setOnClickListener {
+                homeViewModel.setStatusLoading(true)
+                homeViewModel.manageLibrary(GameItemEntity.transformFromDetail(data)).observe(this@GameDetailActivity) {
+                    data.isInLibrary = it
+                    setLibraryBtn(btnLibrary, data.isInLibrary)
+                    homeViewModel.setStatusLoading(false)
+                }
+            }
         }
+    }
+
+    private fun setLibraryBtn(btnLibrary: AppCompatButton, inLibrary: Boolean) {
+        btnLibrary.text = getString(if (inLibrary) R.string.added_to_library else R.string.add_to_library)
+        btnLibrary.setCompoundDrawablesWithIntrinsicBounds(
+            if (inLibrary) R.drawable.baseline_check_box_24 else R.drawable.baseline_library_add_24,
+            0,
+            0,
+            0
+        )
     }
 
     private fun setTransformation(vpImageSlider: ViewPager2) {
@@ -176,12 +225,10 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
 
 
     private fun setImagePoster(ivGameImage: ImageView, data: GameDetailedEntity) {
-        if (data.poster != null && data.poster!!.isNotBlank()) {
-            Picasso.get().load(data.poster).apply {
-                //resize(300, 100)
-                into(ivGameImage)
-            }
-        }else ivGameImage.setImageResource(R.drawable.baseline_broken_image_24)
+        Picasso.get().load(data.poster).apply {
+            placeholder(R.drawable.baseline_broken_image_24)
+            into(ivGameImage)
+        }
     }
 
     private fun setMetacritics(tvMetacritic: TextView, data: GameDetailedEntity) {

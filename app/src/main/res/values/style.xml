@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="general_tv_style">
-        <item name="android:layout_margin">@dimen/view_margin</item>
         <item name="android:textColor">@color/white</item>
+        <item name="android:layout_marginStart">@dimen/view_margin</item>
     </style>
 
     <style name="tv_header_style" parent="@style/general_tv_style">
@@ -13,11 +13,11 @@
     <style name="tv_medium_style">
         <item name="android:textColor">@color/gray</item>
         <item name="android:textSize">@dimen/medium_text</item>
+        <item name="android:layout_marginStart">@dimen/view_margin</item>
     </style>
 
     <style name="tv_small_style" parent="@style/general_tv_style">
         <item name="android:textSize">@dimen/small_text</item>
-        <item name="android:layout_margin">@dimen/view_margin</item>
     </style>
 
     <style name="tv_medium_game_item">

@@ -47,5 +47,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="loading">Loading...</string>
+    <string name="refresh">refresh</string>
+    <string name="add_to_library">Add to Library</string>
+    <string name="added_to_library">Added to Library</string>
 
 </resources>

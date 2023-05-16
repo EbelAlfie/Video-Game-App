@@ -21,7 +21,6 @@ class GamePagingAdapter(private val listener: SetOnItemClicked): PagingDataAdapt
 
     interface SetOnItemClicked{
         fun onItemClicked(position: Int)
-        fun onLibraryAdd(position: Int, btnLibrary: ImageButton)
     }
 
     companion object {
@@ -66,18 +65,11 @@ class GamePagingAdapter(private val listener: SetOnItemClicked): PagingDataAdapt
             root.setOnClickListener {
                 listener.onItemClicked(position)
             }
-            btnLibrary.setOnClickListener {
-                listener.onLibraryAdd(position, btnLibrary)
-            }
         }
     }
 
     fun setButton(btnLibrary: ImageButton, inLibrary: Boolean) {
         btnLibrary.setImageResource(if (!inLibrary) R.drawable.baseline_library_add_24 else R.drawable.baseline_check_box_24)
-    }
-
-    fun setLibraryStatus(status: Boolean, position: Int) {
-        getItem(position)?.isInLibrary = status
     }
 
     private fun setMetacritics(tvMetacritic: TextView, data: GameItemEntity) {

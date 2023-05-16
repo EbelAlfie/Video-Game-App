@@ -7,7 +7,9 @@ import com.google.gson.annotations.SerializedName
 
 data class ScreenshotDetailResponseModel(
     @SerializedName("results")
-    val screenshotList: List<ScreenShotModel>
+    val screenshotList: List<ScreenShotModel>?,
+    @SerializedName("next")
+    val next: Int?
 )
 
 data class DeveloperDetailModel (

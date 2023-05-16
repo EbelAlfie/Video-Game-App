@@ -11,7 +11,7 @@ import com.example.videogameapp.domain.entity.gameentity.GameItemEntity
 import com.example.videogameapp.domain.entity.gameentity.ScreenShotEntity
 import com.squareup.picasso.Picasso
 
-class GameScreenShotAdapter: PagingDataAdapter<ScreenShotEntity, GameScreenShotAdapter.ScreenShotViewHolder>(DiffCallback) {
+class GameScreenShotAdapter(): PagingDataAdapter<ScreenShotEntity, GameScreenShotAdapter.ScreenShotViewHolder>(DiffCallback) {
     companion object {
         object DiffCallback : DiffUtil.ItemCallback<ScreenShotEntity>() {
             override fun areItemsTheSame(
@@ -43,11 +43,4 @@ class GameScreenShotAdapter: PagingDataAdapter<ScreenShotEntity, GameScreenShotA
             }
         }
     }
-
-    /*fun updateList(newList: List<ScreenShotEntity>) {
-        screenshots.clear()
-        screenshots.addAll(newList)
-        notifyItemRangeChanged(0, screenshots.size)
-    }*/
-
 }

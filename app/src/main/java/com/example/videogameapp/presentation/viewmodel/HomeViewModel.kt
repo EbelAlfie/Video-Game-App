@@ -1,7 +1,6 @@
 package com.example.videogameapp.presentation.viewmodel
 
 import android.content.Intent
-import android.widget.ImageButton
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -85,5 +84,9 @@ class HomeViewModel @Inject constructor(private val useCase: GameUseCase): ViewM
         if (!gameData.isInLibrary) insertGameItem(gameData)
         else deleteGameItem(gameData)
         return _isInLibrary
+    }
+
+    suspend fun getTrailers(id: Long): Flow<List<TrailerEntity>> {
+        return useCase.getTrailers(id)
     }
 }

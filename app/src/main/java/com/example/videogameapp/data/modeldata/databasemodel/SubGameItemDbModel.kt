@@ -14,7 +14,7 @@ data class RatingDbModel (
     @ColumnInfo("count")
     val ratingCount: Int,
     @ColumnInfo("percentage")
-    val percentage: Int
+    val percentage: Float
 )
 
 @Entity(tableName = "genre_db")

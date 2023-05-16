@@ -1,9 +1,11 @@
 package com.example.videogameapp.presentation.viewmodel
 
+import android.content.Intent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagingData
+import com.example.videogameapp.Utils
 import com.example.videogameapp.domain.entity.gameentity.GameItemEntity
 import com.example.videogameapp.domain.entity.gameentity.QueryGameItemEntity
 import com.example.videogameapp.domain.entity.storeentity.StoreDetailEntity
@@ -31,6 +33,10 @@ class StoreViewModel @Inject constructor(private val storeUseCase: StoreUseCase,
 
     fun getAllGameByStore(scope: CoroutineScope, queryGameItemEntity: QueryGameItemEntity): Flow<PagingData<GameItemEntity>> {
         return gameUseCase.getGameList(scope, queryGameItemEntity)
+    }
+
+    fun getStoreId(intent: Intent): Long {
+        return intent.getLongExtra(Utils.ID_KEY, -1L)
     }
 
     fun getDetailedStoreData(id: Long) {

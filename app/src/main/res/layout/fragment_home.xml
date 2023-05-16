@@ -10,10 +10,18 @@
         style="@style/search_bar_style"
         app:iconifiedByDefault="false" />
 
+    <TextView
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Popular games"
+        style="@style/tv_header_style"
+        android:layout_below="@id/search_view"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_game_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/search_view"/>
+        android:layout_below="@id/header"/>
 
 </RelativeLayout>

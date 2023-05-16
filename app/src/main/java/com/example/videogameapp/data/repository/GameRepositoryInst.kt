@@ -9,11 +9,11 @@ import com.example.videogameapp.data.di.LocalDbModule
 import com.example.videogameapp.data.modeldata.databasemodel.GameItemDbModel
 import com.example.videogameapp.data.modeldata.gamedatamodel.GameDetailedModel
 import com.example.videogameapp.data.modeldata.gamedatamodel.GameStoreModel
+import com.example.videogameapp.data.modeldata.gamedatamodel.TrailerModel
 import com.example.videogameapp.data.onlineservices.GameApiService
 import com.example.videogameapp.domain.entity.gameentity.*
 import com.example.videogameapp.domain.interfaces.GameRepository
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -34,10 +34,12 @@ class GameRepositoryInst @Inject constructor(private val gameApiService: GameApi
         return flow{
             try {
                 val data = gameApiService.getGameDetail(id)
+                val libraryStatus = libraryDbObj.gameItemDao().getSpecificGame(data.id ?: -1)
+                data.isInLibrary = (libraryStatus != null)
                 emit(GameDetailedModel.convert(data))
             }catch (e: Exception) {
                 Log.d("TAG", e.message.toString())
-                emit(GameDetailedEntity(0, "", "", false, "", "", null, 0, "", "", listOf(),listOf(),listOf(), listOf(), listOf(), listOf(), listOf()))
+                emit(GameDetailedEntity(0, "", "", false, "", "", null, 0, "", "", listOf(), listOf(),listOf(),listOf(), listOf(), listOf(), listOf(), listOf(), false))
             }
         }
     }
@@ -96,6 +98,7 @@ class GameRepositoryInst @Inject constructor(private val gameApiService: GameApi
                 val response = libraryDbObj.gameItemDao().deleteGameItem(data)
                 emit(response)
             }catch (e : Exception) {
+                Log.d("ErrDel", e.toString())
                 emit(0)
             }
         }.flowOn(IO)
@@ -107,5 +110,16 @@ class GameRepositoryInst @Inject constructor(private val gameApiService: GameApi
         )) {
             DlcPagingDataSource(id, gameApiService)
         }.flow.cachedIn(scope)
+    }
+
+    override suspend fun getTrailers(id: Long): Flow<List<TrailerEntity>> {
+        return flow {
+            try{
+                val response = gameApiService.getTrailers(id)
+                emit(TrailerModel.convert(response.results))
+            }catch (e: Exception) {
+                emit(listOf())
+            }
+        }
     }
 }

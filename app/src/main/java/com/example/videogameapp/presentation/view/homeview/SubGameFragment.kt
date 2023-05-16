@@ -60,15 +60,4 @@ class SubGameFragment (private val viewModel: HomeViewModel, private val queryGa
         val intent = Utils.generateIntent(requireContext(), gameAdapter.getGameItemId(position), GameDetailActivity::class.java)
         startActivity(intent)
     }
-
-    override fun onLibraryAdd(position: Int, btnLibrary: ImageButton) {
-        viewModel.setStatusLoading(true)
-        viewModel.manageLibrary(gameAdapter.getGameData(position)).observe(requireActivity()) {
-            viewModel.setStatusLoading(false)
-            gameAdapter.setLibraryStatus(it, position)
-            //gameAdapter.getGameData(position).isInLibrary = it
-            gameAdapter.setButton(btnLibrary, it)
-            gameAdapter.notifyItemChanged(position)
-        }
-    }
 }

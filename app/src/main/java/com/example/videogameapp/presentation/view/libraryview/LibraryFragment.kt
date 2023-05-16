@@ -1,10 +1,11 @@
 package com.example.videogameapp.presentation.view.libraryview
 
+import android.app.AlertDialog
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.videogameapp.Utils
@@ -17,6 +18,8 @@ import kotlinx.coroutines.launch
 class LibraryFragment(private val viewModel: HomeViewModel) : Fragment(), LibraryAdapter.SetOnItemClicked {
     private lateinit var binding: FragmentLibraryBinding
     private lateinit var libraryAdapter: LibraryAdapter
+    private lateinit var dialogConfirmation: AlertDialog
+    private lateinit var loadingDialog: AlertDialog
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,17 +33,27 @@ class LibraryFragment(private val viewModel: HomeViewModel) : Fragment(), Librar
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setRecView()
+        setDialog()
     }
 
     override fun onResume() {
         super.onResume()
+        viewModel.setStatusLoading(true)
         getData()
     }
 
+    private fun setDialog() {
+        loadingDialog = Utils.createLoading(requireContext()).create()
+        viewModel.getStatusLoading().observe(requireActivity()) {
+            if (it) loadingDialog.show() else loadingDialog.dismiss()
+        }
+        //TODO(DIAlOG
+    }
     private fun getData() {
         lifecycleScope.launch {
             viewModel.getLibraryData().collectLatest {
                 libraryAdapter.updateList(it)
+                viewModel.setStatusLoading(false)
             }
         }
     }
@@ -48,7 +61,7 @@ class LibraryFragment(private val viewModel: HomeViewModel) : Fragment(), Librar
     private fun setRecView() {
         binding.apply {
             rvGameList.layoutManager = GridLayoutManager(requireContext(), 2)
-            libraryAdapter = LibraryAdapter(mutableListOf(), this@LibraryFragment)
+            libraryAdapter = LibraryAdapter(this@LibraryFragment)
             rvGameList.adapter = libraryAdapter
         }
     }
@@ -59,6 +72,9 @@ class LibraryFragment(private val viewModel: HomeViewModel) : Fragment(), Librar
     }
 
     override fun onLibraryDelete(position: Int) {
-        TODO("Not yet implemented")
+        viewModel.setStatusLoading(true)
+        viewModel.manageLibrary(libraryAdapter.getGameItem(position)).observe(this){
+            getData()
+        }
     }
 }

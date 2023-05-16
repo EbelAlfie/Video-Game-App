@@ -1,5 +1,6 @@
 package com.example.videogameapp.data.modeldata.gamedatamodel
 
+import android.media.Rating
 import com.example.videogameapp.domain.entity.gameentity.*
 import com.google.gson.annotations.SerializedName
 
@@ -24,6 +25,8 @@ data class GameDetailedModel (
         val dateReleased: String?,
     @SerializedName("developers")
         val developer: List<DeveloperDetailModel?>,
+    @SerializedName("ratings")
+        val ratings: List<RatingModel>,
     @SerializedName("publishers")
         val publishers: List<PublisherDetailModel?>,
     @SerializedName("esrb_rating")
@@ -36,6 +39,7 @@ data class GameDetailedModel (
         var genres: List<GenresModel>,
     @SerializedName("platforms")
         var platforms: List<PlatformModelResponse>,
+        var isInLibrary: Boolean = false
         ) {
         companion object {
                 fun convert(it: GameDetailedModel): GameDetailedEntity {
@@ -53,10 +57,12 @@ data class GameDetailedModel (
                         developer = DeveloperDetailModel.convertList(it.developer),
                         publishers = PublisherDetailModel.convertList(it.publishers),
                         genres = GenresModel.convertList(it.genres),
+                        ratings = RatingModel.convertList(it.ratings),
                         tags = TagsModel.convertList(it.tags),
                         store = StoreDetailResponseModel.convertList(it.stores),
                         screenShots = listOf(),
-                        poster = it.poster
+                        poster = it.poster,
+                        isInLibrary = it.isInLibrary
                     )
                 }
         }

@@ -14,13 +14,15 @@ data class GameDetailedEntity (
     var playtime: Int,
     var poster: String?,
     val ageRating: String,
+    val ratings: List<RatingEntity>,
     var genres: List<GenresEntity>,
     var platforms: List<PlatformEntity>,
     val developer: List<DeveloperDetailEntity>,
     val publishers: List<PublisherDetailEntity>,
     val tags: List<TagsEntity>,
     var screenShots: List<ScreenShotEntity>,
-    val store: List<StoreEntity>
+    val store: List<StoreEntity>,
+    var isInLibrary: Boolean
     ){
     fun getMetacritics(): String {
         return metaCritic?.toString() ?: ""

@@ -93,13 +93,4 @@ class HomeFragment (private var viewModel: HomeViewModel, private var queryParam
         val intent = Utils.generateIntent(requireContext(), pagingAdapter.getGameItemId(position), GameDetailActivity::class.java)
         startActivity(intent)
     }
-
-    override fun onLibraryAdd(position: Int, btnLibrary: ImageButton) {
-        viewModel.setStatusLoading(true)
-        viewModel.manageLibrary(pagingAdapter.getGameData(position)).observe(requireActivity()) {
-            viewModel.setStatusLoading(false)
-            pagingAdapter.setLibraryStatus(it, position)
-            pagingAdapter.setButton(btnLibrary, it)
-        }
-    }
 }

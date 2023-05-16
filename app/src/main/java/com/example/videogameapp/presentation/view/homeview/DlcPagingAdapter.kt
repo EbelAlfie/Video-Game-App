@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.example.videogameapp.R
 import com.example.videogameapp.databinding.ItemDlcBinding
 import com.example.videogameapp.domain.entity.gameentity.GameItemEntity
 import com.squareup.picasso.Picasso
@@ -31,7 +32,7 @@ class DlcPagingAdapter: PagingDataAdapter<GameItemEntity, DlcPagingAdapter.DlcVi
         val data = getItem(position) ?: return
         holder.binding.apply {
             if (data.backgroundImage.isNotBlank()) {
-                Picasso.get().load(data.backgroundImage).apply{
+                Picasso.get().load(data.backgroundImage).placeholder(R.drawable.baseline_broken_image_24).apply{
                     resize(100,100)
                     into(ivDlcPoster)
                 }

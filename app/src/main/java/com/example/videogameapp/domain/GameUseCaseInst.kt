@@ -44,4 +44,8 @@ class GameUseCaseInst @Inject constructor(private val repository: GameRepository
         return repository.getDlcData(scope, id)
     }
 
+    override suspend fun getTrailers(id: Long): Flow<List<TrailerEntity>> {
+        return repository.getTrailers(id)
+    }
+
 }

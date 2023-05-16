@@ -11,20 +11,20 @@ class ScreenShotPagingDataSource (private val gameApiService: GameApiService, pr
         return null
     }
 
-    private suspend fun getOnlineData(id: Long): List<ScreenShotEntity> {
+    private suspend fun getOnlineData(id: Long, page: Int): List<ScreenShotEntity> {
         val response = gameApiService.getGameDetailScreenshots(id)
-        return ScreenShotModel.convertList(response.screenshotList)
+        return ScreenShotModel.convertList(response.screenshotList ?: listOf())
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ScreenShotEntity> {
         val position = params.key ?: 1
         return try {
-            val list = getOnlineData(id)
+            val list = getOnlineData(id, position)
 
             LoadResult.Page (
                 data = list,
-                prevKey = null,
-                nextKey = if (list.isEmpty()) null else position + 1
+                prevKey = if (position == 0) list.size else position - 1,
+                nextKey = position + 1
             )
         }catch (e: Exception) {
             LoadResult.Error(e)

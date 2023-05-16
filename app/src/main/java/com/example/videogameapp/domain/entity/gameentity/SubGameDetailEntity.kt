@@ -1,5 +1,6 @@
 package com.example.videogameapp.domain.entity.gameentity
 
+import com.example.videogameapp.data.modeldata.gamedatamodel.VideoData
 import com.google.gson.annotations.SerializedName
 
 data class DeveloperDetailEntity (
@@ -21,4 +22,11 @@ data class StoreEntity (
     val id: Int,
     var name: String,
     val url: String
+    )
+
+data class TrailerEntity (
+    val id: Long,
+    val name: String,
+    val previewImage: String,
+    val data: String
     )

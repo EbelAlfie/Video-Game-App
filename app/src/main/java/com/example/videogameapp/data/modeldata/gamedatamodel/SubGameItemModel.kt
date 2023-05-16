@@ -9,18 +9,18 @@ data class RatingModel (
     val ratingTitle: String?,
     @SerializedName("count")
     val ratingCount: Int?,
-    @SerializedName("percentage")
-    val percentage: Int?
+    @SerializedName("percent")
+    val percentage: Float?
     ) {
     companion object {
         fun convertList(ratingModelList: List<RatingModel?>) : List<RatingEntity> {
             return ratingModelList.map {
-                RatingEntity(it?.ratingTitle ?: "", it?.ratingCount ?: 0, it?.percentage ?: 0)
+                RatingEntity(it?.ratingTitle ?: "", it?.ratingCount ?: 0, it?.percentage ?: 0f)
             }
         }
 
-        fun ratingString(ratingModelList: List<RatingModel>?) : String {
-            return ratingModelList?.maxBy { it.ratingCount ?: 0 }?.ratingTitle ?: ""
+        fun ratingString(ratingModelList: List<RatingModel>) : String {
+            return if (ratingModelList.isEmpty()) "" else ratingModelList.maxBy { it.ratingCount ?: 0 }.ratingTitle ?: ""
         }
     }
 }
@@ -74,7 +74,7 @@ data class GenresModel (
         fun genreString(genres: List<GenresModel>?): String {
             return genres?.map {
                 it.genreName ?: ""
-            }?.joinToString { it } ?: "-"
+            }?.joinToString { it } ?: ""
         }
     }
 }

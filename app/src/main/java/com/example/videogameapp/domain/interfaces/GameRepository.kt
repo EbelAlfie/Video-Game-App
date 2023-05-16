@@ -18,4 +18,6 @@ interface GameRepository {
     suspend fun getAllGameLibrary(): Flow<List<GameItemEntity>>
     suspend fun deleteGameItem(gameData: GameItemEntity): Flow<Int>
     suspend fun getDlcData(scope: CoroutineScope, id: Long): Flow<PagingData<GameItemEntity>>
+
+    suspend fun getTrailers(id: Long): Flow<List<TrailerEntity>>
 }
