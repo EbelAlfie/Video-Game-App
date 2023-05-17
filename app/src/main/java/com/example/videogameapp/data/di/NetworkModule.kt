@@ -1,6 +1,7 @@
 package com.example.videogameapp.data.di
 
 import com.example.videogameapp.data.onlineservices.GameApiService
+import com.example.videogameapp.data.onlineservices.QueryParamService
 import com.example.videogameapp.data.onlineservices.StoreApiService
 import dagger.Module
 import dagger.Provides
@@ -11,7 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class NetworkModule {
     private val GAME_BASE_URL = "https://api.rawg.io/api/"
     @Provides
-    fun serviceInstance(): GameApiService {
+    fun gameServiceInstance(): GameApiService {
         return Retrofit.Builder().apply {
             baseUrl(GAME_BASE_URL)
             addConverterFactory(GsonConverterFactory.create())
@@ -24,5 +25,13 @@ class NetworkModule {
             baseUrl(GAME_BASE_URL)
             addConverterFactory(GsonConverterFactory.create())
         }.build().create(StoreApiService::class.java)
+    }
+
+    @Provides
+    fun queryParamServiceInstance(): QueryParamService {
+        return Retrofit.Builder().apply {
+            baseUrl(GAME_BASE_URL)
+            addConverterFactory(GsonConverterFactory.create())
+        }.build().create(QueryParamService::class.java)
     }
 }
