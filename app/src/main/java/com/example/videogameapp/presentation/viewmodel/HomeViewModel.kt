@@ -8,14 +8,22 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.example.videogameapp.Utils
 import com.example.videogameapp.domain.entity.gameentity.*
+import com.example.videogameapp.domain.entity.queryentity.QueryEntity
 import com.example.videogameapp.domain.interfaces.GameUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class HomeViewModel @Inject constructor(private val useCase: GameUseCase): ViewModel() {
+    private val _platformSpinnerData = MutableLiveData<List<QueryEntity>>()
+    private val _genresSpinnerData = MutableLiveData<List<QueryEntity>>()
+
+    val getPlatformSpinnerData: LiveData<List<QueryEntity>> = _platformSpinnerData
+    val getGenresSpinnerData: LiveData<List<QueryEntity>> = _genresSpinnerData
+
     private val _detailedGameData = MutableLiveData<GameDetailedEntity>()
     fun getDetailedGameData(): LiveData<GameDetailedEntity> = _detailedGameData
 
@@ -27,6 +35,11 @@ class HomeViewModel @Inject constructor(private val useCase: GameUseCase): ViewM
     fun setStatusLoading(loading: Boolean) = run { _statusLoading.value = loading }
 
     private val _isInLibrary = MutableLiveData<Boolean>()
+
+    init {
+        getSpinnerGenres()
+        getSpinnerPlatform()
+    }
 
     fun getGameDetail(id: Long) {
         viewModelScope.launch {
@@ -88,5 +101,21 @@ class HomeViewModel @Inject constructor(private val useCase: GameUseCase): ViewM
 
     suspend fun getTrailers(id: Long): Flow<List<TrailerEntity>> {
         return useCase.getTrailers(id)
+    }
+
+    private fun getSpinnerPlatform() {
+        CoroutineScope(IO).launch {
+            useCase.getSpinnerPlatform().collectLatest {
+                _platformSpinnerData.postValue(it)
+            }
+        }
+    }
+
+    private fun getSpinnerGenres() {
+        CoroutineScope(IO).launch {
+            useCase.getSpinnerGenres().collectLatest {
+                _genresSpinnerData.postValue(it)
+            }
+        }
     }
 }

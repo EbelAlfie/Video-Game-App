@@ -1,6 +1,7 @@
 package com.example.videogameapp.data.onlineservices
 
 import com.example.videogameapp.data.modeldata.gamedatamodel.*
+import com.example.videogameapp.data.modeldata.querymodel.QueryResponseModel
 import com.example.videogameapp.data.onlineservices.ServiceUtils.API_KEY
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -41,4 +42,10 @@ interface GameApiService {
     suspend fun getGameDlc(@Path("id") id: Long,
                            @Query("key") apiKey: String = API_KEY
     ): DlcResponse
+
+    @GET("platforms")
+    suspend fun getSpinnerPlatform(@Query("ordering") order:String, @Query("page") page: Int, @Query("page_size") size: Int, @Query("key") apiKey: String = API_KEY): QueryResponseModel
+    @GET("genres")
+    suspend fun getSpinnerGenres(@Query("ordering") order:String, @Query("page") page: Int, @Query("page_size") size: Int, @Query("key") apiKey: String = API_KEY): QueryResponseModel
+
 }

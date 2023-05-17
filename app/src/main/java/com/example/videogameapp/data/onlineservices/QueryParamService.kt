@@ -5,10 +5,10 @@ import retrofit2.http.Query
 
 interface QueryParamService {
     @GET("platforms")
-    suspend fun getPlatforms(@Query("key") apiKey: String = ServiceUtils.API_KEY)
+    suspend fun getPlatforms(@Query("ordering") order: String, @Query("key") apiKey: String = ServiceUtils.API_KEY)
 
     @GET("genres")
-    suspend fun getGenres(@Query("key") apiKey: String = ServiceUtils.API_KEY)
+    suspend fun getGenres(@Query("ordering") order: String, @Query("key") apiKey: String = ServiceUtils.API_KEY)
 
 
 }

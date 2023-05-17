@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/dark_background">
 
     <androidx.appcompat.widget.SearchView
@@ -10,13 +11,44 @@
         style="@style/search_bar_style"
         app:iconifiedByDefault="false" />
 
+    <Spinner
+        android:id="@+id/sp_order_by"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        tools:text="test"
+        android:layout_below="@id/search_view"
+        android:layout_margin="@dimen/view_margin"
+        android:background="@drawable/search_bar_design"
+        />
+
+    <Spinner
+        android:id="@+id/sp_platform"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/search_view"
+        android:layout_margin="@dimen/view_margin"
+        android:layout_toEndOf="@id/search_view"
+
+        />
+
+    <Spinner
+        android:id="@+id/sp_genre"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        tools:text="genre"
+        android:layout_below="@id/search_view"
+        android:layout_toEndOf="@id/sp_platform"
+        android:layout_margin="@dimen/view_margin"
+        android:background="@drawable/search_bar_design"
+        />
+
     <TextView
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Popular games"
         style="@style/tv_header_style"
-        android:layout_below="@id/search_view"/>
+        android:layout_below="@id/sp_order_by"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_game_list"

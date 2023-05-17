@@ -11,7 +11,7 @@ import dagger.Provides
 
 
 @Module
-@Database(entities = [GameItemDbModel::class, RatingDbModel::class, PlatformDbModel::class, GenresDbModel::class, ScreenShotDbModel::class], version = 1)
+@Database(entities = [GameItemDbModel::class], version = 1)
 abstract class LocalDbModule: RoomDatabase() {
     abstract fun gameItemDao() : GameItemDao
     companion object {

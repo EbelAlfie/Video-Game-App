@@ -2,6 +2,7 @@ package com.example.videogameapp.domain
 
 import androidx.paging.PagingData
 import com.example.videogameapp.domain.entity.gameentity.*
+import com.example.videogameapp.domain.entity.queryentity.QueryEntity
 import com.example.videogameapp.domain.interfaces.GameRepository
 import com.example.videogameapp.domain.interfaces.GameUseCase
 import kotlinx.coroutines.CoroutineScope
@@ -46,6 +47,14 @@ class GameUseCaseInst @Inject constructor(private val repository: GameRepository
 
     override suspend fun getTrailers(id: Long): Flow<List<TrailerEntity>> {
         return repository.getTrailers(id)
+    }
+
+    override suspend fun getSpinnerPlatform(): Flow<List<QueryEntity>> {
+        return repository.getSpinnerPlatform()
+    }
+
+    override suspend fun getSpinnerGenres(): Flow<List<QueryEntity>> {
+        return repository.getSpinnerGenres()
     }
 
 }

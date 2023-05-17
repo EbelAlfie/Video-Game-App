@@ -2,6 +2,7 @@ package com.example.videogameapp.domain.interfaces
 
 import androidx.paging.PagingData
 import com.example.videogameapp.domain.entity.gameentity.*
+import com.example.videogameapp.domain.entity.queryentity.QueryEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 
@@ -20,4 +21,8 @@ interface GameRepository {
     suspend fun getDlcData(scope: CoroutineScope, id: Long): Flow<PagingData<GameItemEntity>>
 
     suspend fun getTrailers(id: Long): Flow<List<TrailerEntity>>
+
+    suspend fun getSpinnerPlatform(): Flow<List<QueryEntity>>
+
+    suspend fun getSpinnerGenres(): Flow<List<QueryEntity>>
 }

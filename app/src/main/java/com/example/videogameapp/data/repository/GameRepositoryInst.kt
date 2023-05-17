@@ -10,8 +10,13 @@ import com.example.videogameapp.data.modeldata.databasemodel.GameItemDbModel
 import com.example.videogameapp.data.modeldata.gamedatamodel.GameDetailedModel
 import com.example.videogameapp.data.modeldata.gamedatamodel.GameStoreModel
 import com.example.videogameapp.data.modeldata.gamedatamodel.TrailerModel
+import com.example.videogameapp.data.modeldata.querymodel.QueryDataModel
 import com.example.videogameapp.data.onlineservices.GameApiService
+import com.example.videogameapp.data.onlineservices.ServiceUtils.ORDERING
+import com.example.videogameapp.data.onlineservices.ServiceUtils.SPINNER_PAGE
+import com.example.videogameapp.data.onlineservices.ServiceUtils.SPINNER_SIZE
 import com.example.videogameapp.domain.entity.gameentity.*
+import com.example.videogameapp.domain.entity.queryentity.QueryEntity
 import com.example.videogameapp.domain.interfaces.GameRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -117,6 +122,28 @@ class GameRepositoryInst @Inject constructor(private val gameApiService: GameApi
             try{
                 val response = gameApiService.getTrailers(id)
                 emit(TrailerModel.convert(response.results))
+            }catch (e: Exception) {
+                emit(listOf())
+            }
+        }
+    }
+
+    override suspend fun getSpinnerPlatform(): Flow<List<QueryEntity>> {
+        return flow {
+            try {
+                val response = gameApiService.getSpinnerPlatform(ORDERING, SPINNER_PAGE, SPINNER_SIZE)
+                emit(QueryDataModel.convertList(response.result))
+            }catch (e: Exception) {
+                emit(listOf())
+            }
+        }
+    }
+
+    override suspend fun getSpinnerGenres(): Flow<List<QueryEntity>> {
+        return flow {
+            try {
+                val response = gameApiService.getSpinnerGenres(ORDERING, SPINNER_PAGE, SPINNER_SIZE)
+                emit(QueryDataModel.convertList(response.result))
             }catch (e: Exception) {
                 emit(listOf())
             }

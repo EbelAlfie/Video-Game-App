@@ -7,6 +7,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.text.Html
 import android.text.Spanned
+import android.view.LayoutInflater
 import android.view.View
 
 object Utils {
@@ -23,6 +24,12 @@ object Utils {
             setView(View.inflate(context, R.layout.loading_layout, null))
         }
     }
+
+//    fun setUpSearchDialog(context: Context): AlertDialog.Builder {
+//        return AlertDialog.Builder(context).apply {
+//            setView(SearchDialogBinding.inflate(LayoutInflater.from(context)).root)
+//        }
+//    }
 
     fun setUpAlertDialog(title: String, message: String, context: Context): AlertDialog.Builder {
         return AlertDialog.Builder(context).apply {
