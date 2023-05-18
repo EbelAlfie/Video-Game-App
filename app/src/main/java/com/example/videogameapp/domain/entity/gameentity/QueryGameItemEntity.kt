@@ -3,12 +3,12 @@ package com.example.videogameapp.domain.entity.gameentity
 import com.example.videogameapp.data.modeldata.gamedatamodel.QueryGameItemModel
 
 data class QueryGameItemEntity (
-    val search: String?,
-    val dates: String?,
-    val platform: String?,
-    val store: String?,
-    val ordering: String?,
-    val page: Int?
+    var search: String?,
+    var dates: String?,
+    var platform: String?,
+    var store: String?,
+    var ordering: String?,
+    var page: Int?
 ) {
     companion object {
         fun transform(queryGameItemEntity: QueryGameItemEntity): QueryGameItemModel {

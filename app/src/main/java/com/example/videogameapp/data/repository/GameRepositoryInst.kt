@@ -12,7 +12,7 @@ import com.example.videogameapp.data.modeldata.gamedatamodel.GameStoreModel
 import com.example.videogameapp.data.modeldata.gamedatamodel.TrailerModel
 import com.example.videogameapp.data.modeldata.querymodel.QueryDataModel
 import com.example.videogameapp.data.onlineservices.GameApiService
-import com.example.videogameapp.data.onlineservices.ServiceUtils.ORDERING
+import com.example.videogameapp.data.onlineservices.ServiceUtils.ORDER_POPULAR
 import com.example.videogameapp.data.onlineservices.ServiceUtils.SPINNER_PAGE
 import com.example.videogameapp.data.onlineservices.ServiceUtils.SPINNER_SIZE
 import com.example.videogameapp.domain.entity.gameentity.*
@@ -131,7 +131,7 @@ class GameRepositoryInst @Inject constructor(private val gameApiService: GameApi
     override suspend fun getSpinnerPlatform(): Flow<List<QueryEntity>> {
         return flow {
             try {
-                val response = gameApiService.getSpinnerPlatform(ORDERING, SPINNER_PAGE, SPINNER_SIZE)
+                val response = gameApiService.getSpinnerPlatform(ORDER_POPULAR, SPINNER_PAGE, SPINNER_SIZE)
                 emit(QueryDataModel.convertList(response.result))
             }catch (e: Exception) {
                 emit(listOf())
@@ -142,7 +142,7 @@ class GameRepositoryInst @Inject constructor(private val gameApiService: GameApi
     override suspend fun getSpinnerGenres(): Flow<List<QueryEntity>> {
         return flow {
             try {
-                val response = gameApiService.getSpinnerGenres(ORDERING, SPINNER_PAGE, SPINNER_SIZE)
+                val response = gameApiService.getSpinnerGenres(ORDER_POPULAR, SPINNER_PAGE, SPINNER_SIZE)
                 emit(QueryDataModel.convertList(response.result))
             }catch (e: Exception) {
                 emit(listOf())

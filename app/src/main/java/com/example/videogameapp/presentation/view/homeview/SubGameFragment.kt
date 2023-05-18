@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -13,7 +12,6 @@ import com.example.videogameapp.Utils
 import com.example.videogameapp.databinding.FragmentSubGameItemBinding
 import com.example.videogameapp.domain.entity.gameentity.QueryGameItemEntity
 import com.example.videogameapp.presentation.viewmodel.HomeViewModel
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class SubGameFragment (private val viewModel: HomeViewModel, private val queryGameItemEntity: QueryGameItemEntity): Fragment(), GamePagingAdapter.SetOnItemClicked {
@@ -33,13 +31,14 @@ class SubGameFragment (private val viewModel: HomeViewModel, private val queryGa
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         loadingDialog = Utils.createLoading(requireContext()).create()
+        viewModel.initQueryGameItemParam(queryGameItemEntity.search, queryGameItemEntity.dates, queryGameItemEntity.platform, queryGameItemEntity.store, queryGameItemEntity.ordering, queryGameItemEntity.page ?: 10)
         setRv()
         setObserver()
     }
 
     private fun setObserver() {
         lifecycleScope.launch {
-            viewModel.getGameList(this, queryGameItemEntity).collectLatest {
+            viewModel.getListGameData(this).observe(requireActivity()) {
                 gameAdapter.submitData(lifecycle, it)
             }
         }

@@ -1,19 +1,16 @@
 package com.example.videogameapp.presentation.viewmodel
 
 import android.content.Intent
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.paging.PagingData
 import com.example.videogameapp.Utils
 import com.example.videogameapp.domain.entity.gameentity.*
 import com.example.videogameapp.domain.entity.queryentity.QueryEntity
 import com.example.videogameapp.domain.interfaces.GameUseCase
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,6 +24,8 @@ class HomeViewModel @Inject constructor(private val useCase: GameUseCase): ViewM
     private val _detailedGameData = MutableLiveData<GameDetailedEntity>()
     fun getDetailedGameData(): LiveData<GameDetailedEntity> = _detailedGameData
 
+    fun getListGameData(scope: CoroutineScope): LiveData<PagingData<GameItemEntity>> = _queryParamModel.switchMap { getGameList(scope, it) }
+
     private val _storeLiveData = MutableLiveData<List<StoreEntity>>()
     fun getStoreLiveData() : LiveData<List<StoreEntity>> = _storeLiveData
 
@@ -35,6 +34,8 @@ class HomeViewModel @Inject constructor(private val useCase: GameUseCase): ViewM
     fun setStatusLoading(loading: Boolean) = run { _statusLoading.value = loading }
 
     private val _isInLibrary = MutableLiveData<Boolean>()
+
+    private val _queryParamModel = MutableLiveData<QueryGameItemEntity>()
 
     init {
         getSpinnerGenres()
@@ -49,12 +50,23 @@ class HomeViewModel @Inject constructor(private val useCase: GameUseCase): ViewM
         }
     }
 
-    fun getGameList(scope: CoroutineScope, queryGameItemEntity: QueryGameItemEntity): Flow<PagingData<GameItemEntity>> {
-        return useCase.getGameList(scope, queryGameItemEntity)
+    fun initQueryGameItemParam(search : String?, dates: String?, platform: String?, store: String?, ordering: String?, page: Int) {
+        _queryParamModel.value =  QueryGameItemEntity(
+            search = search,
+            dates = dates,
+            platform = platform,
+            store = store,
+            ordering = ordering,
+            page = page
+        )
+    }
+
+    private fun getGameList(scope: CoroutineScope, queryGameItemEntity: QueryGameItemEntity): LiveData<PagingData<GameItemEntity>> {
+        return useCase.getGameList(scope, queryGameItemEntity).asLiveData()
     }
 
     fun getGameStoreLink(id: Long) {
-        CoroutineScope(Dispatchers.IO).launch{
+        CoroutineScope(IO).launch{
             useCase.getGameStoreLink(id).collectLatest {
                 _storeLiveData.postValue(it)
             }
@@ -67,14 +79,14 @@ class HomeViewModel @Inject constructor(private val useCase: GameUseCase): ViewM
 
 
     private fun deleteGameItem(gameData: GameItemEntity) {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(IO).launch {
             useCase.deleteGameItem(gameData).collectLatest {
                 _isInLibrary.postValue(it == -1)
             }
         }
     }
     private fun insertGameItem(gameItemEntity: GameItemEntity) {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(IO).launch {
             useCase.insertToLibrary(gameItemEntity).collectLatest {
                 _isInLibrary.postValue(it != -1L)
             }

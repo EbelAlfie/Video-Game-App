@@ -7,8 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -18,7 +16,6 @@ import com.example.videogameapp.databinding.FragmentHomeBinding
 import com.example.videogameapp.domain.entity.gameentity.QueryGameItemEntity
 import com.example.videogameapp.domain.entity.queryentity.QueryEntity
 import com.example.videogameapp.presentation.viewmodel.HomeViewModel
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class HomeFragment (private var viewModel: HomeViewModel, private var queryParam: QueryGameItemEntity = QueryGameItemEntity(null, null, null, null, null, 10)): Fragment(),
@@ -43,63 +40,45 @@ class HomeFragment (private var viewModel: HomeViewModel, private var queryParam
         initViews()
         setObserver()
         setSpinner()
-        setSpinnerData()
-        getData(queryParam)
+        viewModel.initQueryGameItemParam(null, null, null, null, binding.spOrderBy.selectedItem.toString(), 10)
+        /*setSpinnerData()*/
     }
 
-    private fun setSpinnerData() {
+    /*private fun setSpinnerData() {
         viewModel.getGenresSpinnerData.observe(requireActivity()) {
             genresAdapter.addAll(it)
         }
         viewModel.getPlatformSpinnerData.observe(requireActivity()) {
             platformAdapter.addAll(it)
         }
-    }
+    }*/
 
     private fun setSpinner() {
         binding.apply {
             orderAdapter = ArrayAdapter.createFromResource(
-                requireActivity(),
+                requireContext(),
                 R.array.order_by,
                 android.R.layout.simple_spinner_item
             )
-            genresAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item)
-            platformAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item)
+            /*genresAdapter =
+            platformAdapter =*/
             spOrderBy.adapter = orderAdapter
-            spPlatform.adapter = platformAdapter
-            spGenre.adapter = genresAdapter
+            /*spPlatform.adapter = platformAdapter
+            spGenre.adapter = genresAdapter*/
         }
 
     }
 
     private fun setObserver() {
-        viewModel.getStatusLoading().observe(requireActivity()) {
-            if (it) loadingDialog.show() else loadingDialog.cancel()
-        }
-    }
-
-    private fun getData(queryParam: QueryGameItemEntity) {
         viewModel.setStatusLoading(true)
         lifecycleScope.launch {
-            viewModel.getGameList(this, queryParam).collectLatest {
+            viewModel.getListGameData(this).observe(requireActivity()) {
                 viewModel.setStatusLoading(false)
                 pagingAdapter.submitData(lifecycle, it)
             }
         }
-        viewModel.getStatusLoading().observe(requireActivity()) {
-            if (it) loadingDialog.show() else loadingDialog.dismiss()
-        }
-    }
+        viewModel.getStatusLoading().observe(requireActivity()) { if (it) loadingDialog.show() else loadingDialog.dismiss() }
 
-    private fun initQueryGameItemParam(search : String?, dates: String?, platform: String?, store: String?, ordering: String?, page: Int): QueryGameItemEntity {
-        return QueryGameItemEntity(
-            search = search,
-            dates = dates,
-            platform = platform,
-            store = store,
-            ordering = ordering,
-            page = page
-        )
     }
 
     private fun initViews() {
@@ -113,8 +92,7 @@ class HomeFragment (private var viewModel: HomeViewModel, private var queryParam
             searchView.setOnQueryTextListener(object: OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     if (query?.isNotBlank()!!) {
-                        val queryEntity = initQueryGameItemParam(query, null, null, null, null, 10)
-                        getData(queryEntity)
+                        viewModel.initQueryGameItemParam(query, null, null, null, binding.spOrderBy.selectedItem.toString(), 10)
                     }
                     return true
                 }
