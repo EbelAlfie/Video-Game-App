@@ -46,7 +46,7 @@ class GamePagingAdapter(private val listener: SetOnItemClicked): PagingDataAdapt
         holder.binding.apply {
             if (data.backgroundImage.isNotBlank()) {
                 Picasso.get().load(data.backgroundImage).apply {
-                    resize(300,300)
+                    //resize(250, 250)
                     into(ivPoster)
                 }
             }else ivPoster.setImageResource(R.drawable.baseline_broken_image_24)
@@ -60,16 +60,10 @@ class GamePagingAdapter(private val listener: SetOnItemClicked): PagingDataAdapt
 
             setMetacritics(tvMetacritic, data)
 
-            setButton(btnLibrary, data.isInLibrary)
-
             root.setOnClickListener {
                 listener.onItemClicked(position)
             }
         }
-    }
-
-    fun setButton(btnLibrary: ImageButton, inLibrary: Boolean) {
-        btnLibrary.setImageResource(if (!inLibrary) R.drawable.baseline_library_add_24 else R.drawable.baseline_check_box_24)
     }
 
     private fun setMetacritics(tvMetacritic: TextView, data: GameItemEntity) {
@@ -93,10 +87,6 @@ class GamePagingAdapter(private val listener: SetOnItemClicked): PagingDataAdapt
 
     fun getGameItemId(position: Int): Long {
         return getItem(position)?.id ?: -1L
-    }
-
-    fun getGameData(position: Int): GameItemEntity {
-        return getItem(position) ?: GameItemEntity(-1, "", true, "", "", null, 0, 0, "", "", "", listOf(), false)
     }
 
 }

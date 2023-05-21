@@ -17,9 +17,13 @@ data class QueryGameItemEntity (
                 dates = queryGameItemEntity.dates,
                 platform = queryGameItemEntity.platform,
                 store = queryGameItemEntity.store,
-                ordering = queryGameItemEntity.ordering,
+                ordering = convertOrdering(queryGameItemEntity.ordering ?: ""),
                 page = queryGameItemEntity.page
             )
+        }
+
+        fun convertOrdering(ordering: String): String {
+            return ordering
         }
     }
 }

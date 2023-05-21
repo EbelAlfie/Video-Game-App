@@ -24,7 +24,7 @@ class HomeViewModel @Inject constructor(private val useCase: GameUseCase): ViewM
     private val _detailedGameData = MutableLiveData<GameDetailedEntity>()
     fun getDetailedGameData(): LiveData<GameDetailedEntity> = _detailedGameData
 
-    fun getListGameData(scope: CoroutineScope): LiveData<PagingData<GameItemEntity>> = _queryParamModel.switchMap { getGameList(scope, it) }
+    fun getListGameData(): LiveData<PagingData<GameItemEntity>> = _queryParamModel.switchMap { getGameList(it) }
 
     private val _storeLiveData = MutableLiveData<List<StoreEntity>>()
     fun getStoreLiveData() : LiveData<List<StoreEntity>> = _storeLiveData
@@ -61,8 +61,8 @@ class HomeViewModel @Inject constructor(private val useCase: GameUseCase): ViewM
         )
     }
 
-    private fun getGameList(scope: CoroutineScope, queryGameItemEntity: QueryGameItemEntity): LiveData<PagingData<GameItemEntity>> {
-        return useCase.getGameList(scope, queryGameItemEntity).asLiveData()
+    private fun getGameList(queryGameItemEntity: QueryGameItemEntity): LiveData<PagingData<GameItemEntity>> {
+        return useCase.getGameList(queryGameItemEntity).asLiveData()
     }
 
     fun getGameStoreLink(id: Long) {

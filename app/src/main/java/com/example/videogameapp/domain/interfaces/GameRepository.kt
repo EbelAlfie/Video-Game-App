@@ -1,5 +1,6 @@
 package com.example.videogameapp.domain.interfaces
 
+import androidx.lifecycle.LiveDataScope
 import androidx.paging.PagingData
 import com.example.videogameapp.domain.entity.gameentity.*
 import com.example.videogameapp.domain.entity.queryentity.QueryEntity
@@ -7,7 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 
 interface GameRepository {
-    fun getGameList(scope: CoroutineScope, queryGameItemEntity: QueryGameItemEntity): Flow<PagingData<GameItemEntity>>
+    fun getGameList(queryGameItemEntity: QueryGameItemEntity): Flow<PagingData<GameItemEntity>>
 
     fun getGameDetail(id: Long): Flow<GameDetailedEntity>
 

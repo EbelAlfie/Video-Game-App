@@ -1,6 +1,7 @@
 package com.example.videogameapp.data.repository
 
 import android.util.Log
+import androidx.lifecycle.LiveDataScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -27,12 +28,12 @@ import javax.inject.Inject
 
 class GameRepositoryInst @Inject constructor(private val gameApiService: GameApiService, private val libraryDbObj : LocalDbModule):
     GameRepository {
-    override fun getGameList(scope: CoroutineScope, queryGameItemEntity: QueryGameItemEntity): Flow<PagingData<GameItemEntity>> {
+    override fun getGameList(queryGameItemEntity: QueryGameItemEntity): Flow<PagingData<GameItemEntity>> {
         return Pager(config = PagingConfig(
             pageSize = 10
         )) {
             GamePagingDataSource(libraryDbObj, gameApiService, QueryGameItemEntity.transform(queryGameItemEntity))
-        }.flow.cachedIn(scope)
+        }.flow
     }
 
     override fun getGameDetail(id: Long): Flow<GameDetailedEntity> {
@@ -100,7 +101,7 @@ class GameRepositoryInst @Inject constructor(private val gameApiService: GameApi
         return flow {
             try {
                 val data = GameItemEntity.transformDbModel(gameData)
-                val response = libraryDbObj.gameItemDao().deleteGameItem(data)
+                val response = libraryDbObj.gameItemDao().deleteGameItem(data.gameId ?: -1)
                 emit(response)
             }catch (e : Exception) {
                 Log.d("ErrDel", e.toString())

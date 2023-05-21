@@ -1,5 +1,6 @@
 package com.example.videogameapp.domain
 
+import androidx.lifecycle.LiveDataScope
 import androidx.paging.PagingData
 import com.example.videogameapp.domain.entity.gameentity.*
 import com.example.videogameapp.domain.entity.queryentity.QueryEntity
@@ -10,8 +11,8 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GameUseCaseInst @Inject constructor(private val repository: GameRepository): GameUseCase {
-    override fun getGameList(scope: CoroutineScope, queryGameItemEntity: QueryGameItemEntity): Flow<PagingData<GameItemEntity>> {
-        return repository.getGameList(scope, queryGameItemEntity)
+    override fun getGameList(queryGameItemEntity: QueryGameItemEntity): Flow<PagingData<GameItemEntity>> {
+        return repository.getGameList(queryGameItemEntity)
     }
 
     override fun getGameDetail(id: Long): Flow<GameDetailedEntity> {

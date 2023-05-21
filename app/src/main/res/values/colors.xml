@@ -4,6 +4,8 @@
     <color name="dark_background">#28384b</color>
     <color name="item_store_color">#07AFF4</color>
 
+    <color name="transparent">#00FFFFFF</color>
+
     <color name="center_color">#021639</color>
     <color name="end_color">#052C70</color>
     <color name="purple_start">#391A8D</color>

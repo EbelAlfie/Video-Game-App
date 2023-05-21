@@ -47,13 +47,13 @@ class LibraryFragment(private val viewModel: HomeViewModel) : Fragment(), Librar
         viewModel.getStatusLoading().observe(requireActivity()) {
             if (it) loadingDialog.show() else loadingDialog.dismiss()
         }
-        //TODO(DIAlOG
     }
     private fun getData() {
         lifecycleScope.launch {
             viewModel.getLibraryData().collectLatest {
-                libraryAdapter.updateList(it)
                 viewModel.setStatusLoading(false)
+                if (it.isEmpty()) return@collectLatest
+                libraryAdapter.updateList(it.toMutableList())
             }
         }
     }

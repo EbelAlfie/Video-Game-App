@@ -12,14 +12,12 @@ data class QueryDataModel (
     @SerializedName("id")
     val id: Int?,
     @SerializedName("name")
-    val name: String?,
-    @SerializedName("games_count")
-    val games: Long?
+    val name: String?
     ) {
     companion object {
         fun convertList (it: List<QueryDataModel>): List<QueryEntity> {
             return it.map {
-                QueryEntity(it.id ?: 0, it.name ?: "", it.games ?: 0)
+                QueryEntity(it.id ?: 0, it.name ?: "")
             }
         }
     }

@@ -15,6 +15,7 @@ import com.example.videogameapp.Utils
 import com.example.videogameapp.databinding.FragmentHomeBinding
 import com.example.videogameapp.domain.entity.gameentity.QueryGameItemEntity
 import com.example.videogameapp.domain.entity.queryentity.QueryEntity
+import com.example.videogameapp.presentation.view.searchadapter.CustomSpinnerAdapter
 import com.example.videogameapp.presentation.viewmodel.HomeViewModel
 import kotlinx.coroutines.launch
 
@@ -24,8 +25,8 @@ class HomeFragment (private var viewModel: HomeViewModel, private var queryParam
     private lateinit var pagingAdapter: GamePagingAdapter
     private lateinit var loadingDialog: AlertDialog
     private lateinit var orderAdapter: ArrayAdapter<CharSequence>
-    private lateinit var platformAdapter: ArrayAdapter<QueryEntity>
-    private lateinit var genresAdapter: ArrayAdapter<QueryEntity>
+    private lateinit var platformAdapter: CustomSpinnerAdapter
+    private lateinit var genresAdapter: CustomSpinnerAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,30 +42,33 @@ class HomeFragment (private var viewModel: HomeViewModel, private var queryParam
         setObserver()
         setSpinner()
         viewModel.initQueryGameItemParam(null, null, null, null, binding.spOrderBy.selectedItem.toString(), 10)
-        /*setSpinnerData()*/
+        setSpinnerData()
     }
 
-    /*private fun setSpinnerData() {
+    private fun setSpinnerData() {
         viewModel.getGenresSpinnerData.observe(requireActivity()) {
             genresAdapter.addAll(it)
+            genresAdapter.notifyDataSetChanged()
         }
         viewModel.getPlatformSpinnerData.observe(requireActivity()) {
             platformAdapter.addAll(it)
+            platformAdapter.notifyDataSetChanged()
         }
-    }*/
+    }
 
     private fun setSpinner() {
         binding.apply {
             orderAdapter = ArrayAdapter.createFromResource(
                 requireContext(),
                 R.array.order_by,
-                android.R.layout.simple_spinner_item
+                R.layout.custom_spinner
             )
-            /*genresAdapter =
-            platformAdapter =*/
+            genresAdapter = CustomSpinnerAdapter(requireContext(), R.layout.custom_spinner, mutableListOf())
+            platformAdapter = CustomSpinnerAdapter(requireContext(), R.layout.custom_spinner, mutableListOf())
+
+            spPlatform.adapter = platformAdapter
+            spGenre.adapter = genresAdapter
             spOrderBy.adapter = orderAdapter
-            /*spPlatform.adapter = platformAdapter
-            spGenre.adapter = genresAdapter*/
         }
 
     }
@@ -72,7 +76,7 @@ class HomeFragment (private var viewModel: HomeViewModel, private var queryParam
     private fun setObserver() {
         viewModel.setStatusLoading(true)
         lifecycleScope.launch {
-            viewModel.getListGameData(this).observe(requireActivity()) {
+            viewModel.getListGameData().observe(requireActivity()) {
                 viewModel.setStatusLoading(false)
                 pagingAdapter.submitData(lifecycle, it)
             }
@@ -96,7 +100,12 @@ class HomeFragment (private var viewModel: HomeViewModel, private var queryParam
                     }
                     return true
                 }
-                override fun onQueryTextChange(newText: String?): Boolean { return true }
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    if (newText?.isBlank() == true) {
+                        viewModel.initQueryGameItemParam(null, null, null, null, binding.spOrderBy.selectedItem.toString(), 10)
+                    }
+                    return true
+                }
             })
         }
     }

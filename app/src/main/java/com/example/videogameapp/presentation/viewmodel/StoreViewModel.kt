@@ -31,8 +31,8 @@ class StoreViewModel @Inject constructor(private val storeUseCase: StoreUseCase,
         return storeUseCase.getAllStore(scope)
     }
 
-    fun getAllGameByStore(scope: CoroutineScope, queryGameItemEntity: QueryGameItemEntity): Flow<PagingData<GameItemEntity>> {
-        return gameUseCase.getGameList(scope, queryGameItemEntity)
+    fun getAllGameByStore(queryGameItemEntity: QueryGameItemEntity): Flow<PagingData<GameItemEntity>> {
+        return gameUseCase.getGameList(queryGameItemEntity)
     }
 
     fun getStoreId(intent: Intent): Long {

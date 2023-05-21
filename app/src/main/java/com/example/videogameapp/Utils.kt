@@ -9,6 +9,7 @@ import android.text.Html
 import android.text.Spanned
 import android.view.LayoutInflater
 import android.view.View
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 
 object Utils {
 
@@ -30,6 +31,13 @@ object Utils {
 //            setView(SearchDialogBinding.inflate(LayoutInflater.from(context)).root)
 //        }
 //    }
+
+    fun createLoadingImage(context: Context): CircularProgressDrawable {
+        val loading = CircularProgressDrawable(context)
+        loading.strokeWidth = 0.1f
+        loading.setColorSchemeColors(R.color.green)
+        return loading
+    }
 
     fun setUpAlertDialog(title: String, message: String, context: Context): AlertDialog.Builder {
         return AlertDialog.Builder(context).apply {

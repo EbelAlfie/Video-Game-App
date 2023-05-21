@@ -25,7 +25,7 @@
             tools:ignore="ContentDescription"/>
         <TextView
             android:id="@+id/tv_game_title"
-            android:layout_width="wrap_content"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             tools:text="Title"
             style="@style/tv_header_style"
@@ -53,7 +53,7 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_library"
-            android:layout_width="wrap_content"
+            android:layout_width="130dp"
             android:layout_height="wrap_content"
             android:background="@drawable/btn_add_library_design"
             android:text="@string/add_to_library"

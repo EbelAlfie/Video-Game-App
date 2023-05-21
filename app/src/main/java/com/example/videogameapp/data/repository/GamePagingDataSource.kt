@@ -24,7 +24,7 @@ class GamePagingDataSource(private val libraryDbObj: LocalDbModule, private val 
                 prevKey = null
             )
         }catch (e: Exception) {
-            Log.d("ERROR", e.message.toString())
+            Log.d("ERROR", e.toString())
             LoadResult.Error(e)
         }
     }

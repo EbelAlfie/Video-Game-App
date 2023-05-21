@@ -38,13 +38,11 @@ class SubGameFragment (private val viewModel: HomeViewModel, private val queryGa
 
     private fun setObserver() {
         lifecycleScope.launch {
-            viewModel.getListGameData(this).observe(requireActivity()) {
+            viewModel.getListGameData().observe(requireActivity()) {
                 gameAdapter.submitData(lifecycle, it)
             }
         }
-        viewModel.getStatusLoading().observe(requireActivity()){
-            if (it) loadingDialog.show() else loadingDialog.dismiss()
-        }
+        viewModel.getStatusLoading().observe(requireActivity()){ if (it) loadingDialog.show() else loadingDialog.dismiss() }
     }
 
     private fun setRv() {

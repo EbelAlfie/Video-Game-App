@@ -2,13 +2,16 @@ package com.example.videogameapp.data.modeldata.databasemodel
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.example.videogameapp.domain.entity.gameentity.GameItemEntity
 import kotlinx.coroutines.flow.*
 
-@Entity(tableName = "game_database")
+@Entity(tableName = "game_database", indices = [Index("game_id")])
 data class GameItemDbModel(
-    @PrimaryKey(autoGenerate = false)
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo("db_id")
+    val dbId: Long = 0,
     @ColumnInfo("game_id")
     val gameId: Long?,
     @ColumnInfo("name")

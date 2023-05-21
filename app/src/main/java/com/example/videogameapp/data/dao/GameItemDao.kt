@@ -15,7 +15,7 @@ interface GameItemDao {
     @Query("SELECT * FROM game_database WHERE game_id=:id")
     suspend fun getSpecificGame(id: Long): GameItemDbModel?
 
-    @Delete
-    suspend fun deleteGameItem(gameItemDbModel: GameItemDbModel): Int
+    @Query("DELETE FROM game_database WHERE game_id=:id")
+    suspend fun deleteGameItem(id: Long): Int
 
 }

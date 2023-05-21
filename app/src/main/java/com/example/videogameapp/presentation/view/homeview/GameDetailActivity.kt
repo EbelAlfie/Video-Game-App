@@ -13,7 +13,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.widget.AppCompatButton
-import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -35,7 +34,7 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.math.abs
 
-class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemClickListener {
+class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemClickListener, GameScreenShotAdapter.SetOnImageClickListener {
     private lateinit var binding: ActivityGameDetailBinding
     private lateinit var gameStoreLinkAdapter: GameStoreLinkAdapter
     private lateinit var screenShotsAdapter: GameScreenShotAdapter
@@ -96,7 +95,7 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
                 adapter = videoAdapter
             }
         }
-        setAutoSlide()
+        /*setAutoSlide()*/
     }
 
     private fun setStoreObserver(gameData: GameDetailedEntity) {
@@ -116,9 +115,7 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
     }
 
     private fun setObserver() {
-        homeViewModel.getStatusLoading().observe(this) {
-            if (it) loadingDialog.show() else loadingDialog.cancel()
-        }
+        homeViewModel.getStatusLoading().observe(this) { if (it) loadingDialog.show() else loadingDialog.cancel() }
 
         homeViewModel.getDetailedGameData().observe(this){gameData ->
             if (gameData == null) return@observe
@@ -197,7 +194,7 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
 
     private fun setScreenShotSlider() {
         binding.apply {
-            screenShotsAdapter = GameScreenShotAdapter()
+            screenShotsAdapter = GameScreenShotAdapter(this@GameDetailActivity)
             vpImageSlider.apply{
                 offscreenPageLimit = 5
                 (getChildAt(0) as RecyclerView).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
@@ -205,10 +202,10 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
                 adapter = screenShotsAdapter
             }
         }
-        setAutoSlide()
+        /*setAutoSlide()*/
     }
 
-    private fun setAutoSlide() {
+    /*private fun setAutoSlide() {
         val handler = Handler(Looper.getMainLooper())
         val timer = Timer()
         val update = Runnable {
@@ -221,7 +218,7 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
                 handler.post(update)
             }
         }, Utils.DELAY_TIME, Utils.PERIODE_TIME)
-    }
+    }*/
 
 
     private fun setImagePoster(ivGameImage: ImageView, data: GameDetailedEntity) {
@@ -251,5 +248,9 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
     override fun onStoreClicked(position: Int) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(gameStoreLinkAdapter.getUrl(position)))
         startActivity(intent)
+    }
+
+    override fun onImageClick(position: Int) {
+        screenShotsAdapter.zoomIn(position, this)
     }
 }

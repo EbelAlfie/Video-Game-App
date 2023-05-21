@@ -1,59 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="@color/dark_background">
 
     <androidx.appcompat.widget.SearchView
         android:id="@+id/search_view"
         style="@style/search_bar_style"
-        app:iconifiedByDefault="false" />
+        app:iconifiedByDefault="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:queryHint="@string/search" />
 
     <Spinner
         android:id="@+id/sp_order_by"
-        android:layout_width="150dp"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
-        tools:text="test"
-        android:layout_below="@id/search_view"
         android:layout_margin="@dimen/view_margin"
-        android:background="@drawable/search_bar_design"
-        />
+        android:background="@drawable/spinner_design"
+        app:layout_constraintEnd_toStartOf="@+id/sp_platform"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search_view"
+        tools:text="test" />
 
     <Spinner
         android:id="@+id/sp_platform"
-        android:layout_width="150dp"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/search_view"
         android:layout_margin="@dimen/view_margin"
-        android:layout_toEndOf="@id/search_view"
-
-        />
+        android:background="@drawable/spinner_design"
+        app:layout_constraintEnd_toStartOf="@+id/sp_genre"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/sp_order_by"
+        app:layout_constraintTop_toBottomOf="@id/search_view" />
 
     <Spinner
         android:id="@+id/sp_genre"
-        android:layout_width="150dp"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
-        tools:text="genre"
         android:layout_below="@id/search_view"
-        android:layout_toEndOf="@id/sp_platform"
         android:layout_margin="@dimen/view_margin"
-        android:background="@drawable/search_bar_design"
-        />
+        android:background="@drawable/spinner_design"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/sp_platform"
+        app:layout_constraintTop_toBottomOf="@id/search_view"
+        tools:text="genre" />
 
     <TextView
         android:id="@+id/header"
+        style="@style/tv_header_style"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Popular games"
-        style="@style/tv_header_style"
-        android:layout_below="@id/sp_order_by"/>
+        android:layout_margin="@dimen/view_margin"
+        android:text="@string/popular_games"
+        app:layout_constraintTop_toBottomOf="@id/sp_order_by" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_game_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/header"/>
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header" />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
