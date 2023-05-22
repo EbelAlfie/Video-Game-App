@@ -62,7 +62,7 @@ class StoreDetailActivity : AppCompatActivity() {
     private fun getGameList(id: Long) {
         binding.apply {
             val fragmentManager = supportFragmentManager
-            fragmentManager.beginTransaction().replace(flFragmentGameList.id, SubGameFragment(homeViewModel, QueryGameItemEntity("", "", "", id.toString(), "", 5))).commit()
+            fragmentManager.beginTransaction().replace(flFragmentGameList.id, SubGameFragment(homeViewModel, QueryGameItemEntity("", "", "", id.toString(), "", "", 5))).commit()
         }
     }
 

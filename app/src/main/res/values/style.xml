@@ -45,4 +45,8 @@
         <item name="cornerSizeTopLeft">@dimen/image_corner</item>
         <item name="cornerSizeTopRight">@dimen/image_corner</item>
     </style>
+
+    <style name="spinner_style">
+        <item name="android:background">@drawable/spinner_mode</item>
+    </style>
 </resources>

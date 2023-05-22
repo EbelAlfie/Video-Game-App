@@ -6,5 +6,5 @@
     android:textColor="@color/white"
     tools:text="test"
     android:padding="@dimen/view_margin"
-    android:background="@drawable/spinner_mode"
+    android:background="@drawable/spinner_design"
     xmlns:tools="http://schemas.android.com/tools" />

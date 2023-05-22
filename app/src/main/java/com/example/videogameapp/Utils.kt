@@ -7,7 +7,6 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.text.Html
 import android.text.Spanned
-import android.view.LayoutInflater
 import android.view.View
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 
@@ -16,8 +15,8 @@ object Utils {
     const val ID_KEY = "id"
     const val OBJ_KEY = "Object"
 
-    const val DELAY_TIME: Long = 2500
-    const val PERIODE_TIME: Long = 8000
+    /*const val DELAY_TIME: Long = 2500
+    const val PERIODE_TIME: Long = 8000*/
 
     fun createLoading(context: Context): AlertDialog.Builder {
         return AlertDialog.Builder(context).apply {

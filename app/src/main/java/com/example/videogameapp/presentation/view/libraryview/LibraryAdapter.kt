@@ -8,16 +8,17 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.videogameapp.R
 import com.example.videogameapp.databinding.ItemGameBinding
 import com.example.videogameapp.domain.entity.gameentity.GameItemEntity
 import com.squareup.picasso.Picasso
 
-class LibraryAdapter(private val listener: SetOnItemClicked): ListAdapter<GameItemEntity, LibraryAdapter.LibraryViewHolder>(DiffComparator()) {
+class LibraryAdapter(private var inList: MutableList<GameItemEntity>, private val listener: SetOnItemClicked): Adapter<LibraryAdapter.LibraryViewHolder>() {
     private lateinit var context: Context
 
-    /*private class DiffUtilCallback(private var oldList: MutableList<GameItemEntity>, private var newList: MutableList<GameItemEntity>): DiffUtil.Callback(){
+    private class DiffUtilCallback(private var oldList: MutableList<GameItemEntity>, private var newList: MutableList<GameItemEntity>): DiffUtil.Callback(){
         override fun getOldListSize(): Int {
             return oldList.size
         }
@@ -34,9 +35,9 @@ class LibraryAdapter(private val listener: SetOnItemClicked): ListAdapter<GameIt
             return oldList[oldItemPosition].id == newList[newItemPosition].id
         }
 
-    }*/
+    }
 
-    class DiffComparator: DiffUtil.ItemCallback<GameItemEntity>() {
+    /*class DiffComparator: DiffUtil.ItemCallback<GameItemEntity>() {
         override fun areItemsTheSame(oldItem: GameItemEntity, newItem: GameItemEntity): Boolean {
             return oldItem.id == newItem.id
         }
@@ -45,7 +46,7 @@ class LibraryAdapter(private val listener: SetOnItemClicked): ListAdapter<GameIt
             return oldItem == newItem
         }
 
-    }
+    }*/
 
     class LibraryViewHolder(val binding: ItemGameBinding): ViewHolder(binding.root)
 
@@ -59,8 +60,12 @@ class LibraryAdapter(private val listener: SetOnItemClicked): ListAdapter<GameIt
         return LibraryViewHolder(ItemGameBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
+    override fun getItemCount(): Int {
+        return inList.size
+    }
+
     override fun onBindViewHolder(holder: LibraryViewHolder, position: Int) {
-        val data = getItem(position) ?: return
+        val data = inList[position]
         holder.binding.apply {
             Picasso.get().load(data.backgroundImage).apply {
                 resize(300, 300).placeholder(R.drawable.baseline_broken_image_24)
@@ -101,15 +106,18 @@ class LibraryAdapter(private val listener: SetOnItemClicked): ListAdapter<GameIt
     }
 
     fun getGameId(position: Int): Long {
-        return getItem(position).id
+        return inList[position].id
     }
 
     fun updateList(newList: MutableList<GameItemEntity>) {
-        this.submitList(newList)
+        val diffutil = DiffUtilCallback(inList, newList)
+        val result = DiffUtil.calculateDiff(diffutil)
+        inList = newList
+        result.dispatchUpdatesTo(this)
     }
 
     fun getGameItem(position: Int): GameItemEntity {
-        return getItem(position)
+        return inList[position]
     }
 
 }

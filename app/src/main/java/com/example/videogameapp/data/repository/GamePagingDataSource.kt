@@ -3,6 +3,7 @@ package com.example.videogameapp.data.repository
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import androidx.room.util.query
 import com.example.videogameapp.data.di.LocalDbModule
 import com.example.videogameapp.data.modeldata.gamedatamodel.GameItemModel
 import com.example.videogameapp.data.modeldata.gamedatamodel.QueryGameItemModel
@@ -35,6 +36,7 @@ class GamePagingDataSource(private val libraryDbObj: LocalDbModule, private val 
             search = queryGameItemModel.search,
             store = queryGameItemModel.store,
             platform = queryGameItemModel.platform,
+            genres = queryGameItemModel.genres,
             ordering = queryGameItemModel.ordering,
             page = if (position == 1 || queryGameItemModel.page == 5) 1 else position * 10 - 10,
             pageSize = queryGameItemModel.page

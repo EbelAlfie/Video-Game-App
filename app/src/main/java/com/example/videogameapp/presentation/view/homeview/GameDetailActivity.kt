@@ -4,14 +4,12 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.content.res.Resources
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,13 +22,13 @@ import com.example.videogameapp.RawgApp
 import com.example.videogameapp.Utils
 import com.example.videogameapp.Utils.fromHtml
 import com.example.videogameapp.databinding.ActivityGameDetailBinding
-import com.example.videogameapp.domain.entity.gameentity.*
+import com.example.videogameapp.domain.entity.gameentity.GameDetailedEntity
+import com.example.videogameapp.domain.entity.gameentity.GameItemEntity
 import com.example.videogameapp.presentation.viewmodel.HomeViewModel
 import com.example.videogameapp.presentation.viewmodel.ViewModelFactory
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.util.*
 import javax.inject.Inject
 import kotlin.math.abs
 
@@ -147,6 +145,13 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
 
     private fun setView(data: GameDetailedEntity) {
         binding.apply {
+
+            homeViewModel.updateLiveData().observe(this@GameDetailActivity) {
+                data.isInLibrary = it
+                setLibraryBtn(btnLibrary, data.isInLibrary)
+                homeViewModel.setStatusLoading(false)
+            }
+
             setImagePoster(ivGameImage, data)
             setMetacritics(tvMetacritic, data)
             setLibraryBtn(btnLibrary, data.isInLibrary)
@@ -163,11 +168,8 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
 
             btnLibrary.setOnClickListener {
                 homeViewModel.setStatusLoading(true)
-                homeViewModel.manageLibrary(GameItemEntity.transformFromDetail(data)).observe(this@GameDetailActivity) {
-                    data.isInLibrary = it
-                    setLibraryBtn(btnLibrary, data.isInLibrary)
-                    homeViewModel.setStatusLoading(false)
-                }
+
+                homeViewModel.manageLibrary(GameItemEntity.transformFromDetail(data))
             }
         }
     }

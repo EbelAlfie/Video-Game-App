@@ -49,6 +49,9 @@ class LibraryFragment(private val viewModel: HomeViewModel) : Fragment(), Librar
         }
     }
     private fun getData() {
+        viewModel.updateLiveData().observe(requireActivity()) {
+            getData()
+        }
         lifecycleScope.launch {
             viewModel.getLibraryData().collectLatest {
                 viewModel.setStatusLoading(false)
@@ -61,7 +64,7 @@ class LibraryFragment(private val viewModel: HomeViewModel) : Fragment(), Librar
     private fun setRecView() {
         binding.apply {
             rvGameList.layoutManager = GridLayoutManager(requireContext(), 2)
-            libraryAdapter = LibraryAdapter(this@LibraryFragment)
+            libraryAdapter = LibraryAdapter(mutableListOf(), this@LibraryFragment)
             rvGameList.adapter = libraryAdapter
         }
     }
@@ -73,8 +76,6 @@ class LibraryFragment(private val viewModel: HomeViewModel) : Fragment(), Librar
 
     override fun onLibraryDelete(position: Int) {
         viewModel.setStatusLoading(true)
-        viewModel.manageLibrary(libraryAdapter.getGameItem(position)).observe(this){
-            getData()
-        }
+        viewModel.manageLibrary(libraryAdapter.getGameItem(position))
     }
 }

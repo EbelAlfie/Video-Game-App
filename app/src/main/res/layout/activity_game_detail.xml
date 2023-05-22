@@ -30,7 +30,8 @@
             tools:text="Title"
             style="@style/tv_header_style"
             app:layout_constraintTop_toBottomOf="@id/iv_game_image"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_library"/>
 
         <TextView
             android:id="@+id/tv_metacritic"

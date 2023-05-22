@@ -3,12 +3,13 @@ package com.example.videogameapp.domain.entity.gameentity
 import com.example.videogameapp.data.modeldata.gamedatamodel.QueryGameItemModel
 
 data class QueryGameItemEntity (
-    var search: String?,
-    var dates: String?,
-    var platform: String?,
-    var store: String?,
-    var ordering: String?,
-    var page: Int?
+    var search: String? = null,
+    var dates: String? = null,
+    var platform: String? = null,
+    var store: String? = null,
+    var genres: String? = null,
+    var ordering: String? = null,
+    var page: Int? = null
 ) {
     companion object {
         fun transform(queryGameItemEntity: QueryGameItemEntity): QueryGameItemModel {
@@ -17,6 +18,7 @@ data class QueryGameItemEntity (
                 dates = queryGameItemEntity.dates,
                 platform = queryGameItemEntity.platform,
                 store = queryGameItemEntity.store,
+                genres = queryGameItemEntity.genres,
                 ordering = convertOrdering(queryGameItemEntity.ordering ?: ""),
                 page = queryGameItemEntity.page
             )

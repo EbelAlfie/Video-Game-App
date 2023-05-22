@@ -14,8 +14,9 @@ interface GameApiService {
                            @Query("dates") dates: String?,
                            @Query("search") search: String?,
                            @Query("page") page: Int?,
-                           @Query("platform") platform: String?,
-                           @Query("store") store: String?,
+                           @Query("platforms") platform: String?,
+                           @Query("stores") store: String?,
+                           @Query("genres") genres: String?,
                            @Query("ordering") ordering: String?,
                            @Query("page_size") pageSize: Int?
     ): GameItemResponse

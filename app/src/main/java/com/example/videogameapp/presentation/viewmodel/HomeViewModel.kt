@@ -29,7 +29,7 @@ class HomeViewModel @Inject constructor(private val useCase: GameUseCase): ViewM
     private val _storeLiveData = MutableLiveData<List<StoreEntity>>()
     fun getStoreLiveData() : LiveData<List<StoreEntity>> = _storeLiveData
 
-    private val _statusLoading = MutableLiveData<Boolean>()
+    private val _statusLoading = MutableLiveData<Boolean>(false)
     fun getStatusLoading(): LiveData<Boolean> = _statusLoading
     fun setStatusLoading(loading: Boolean) = run { _statusLoading.value = loading }
 
@@ -50,15 +50,17 @@ class HomeViewModel @Inject constructor(private val useCase: GameUseCase): ViewM
         }
     }
 
-    fun initQueryGameItemParam(search : String?, dates: String?, platform: String?, store: String?, ordering: String?, page: Int) {
-        _queryParamModel.value =  QueryGameItemEntity(
+    fun initQueryGameItemParam(queryGameItemEntity: QueryGameItemEntity) {
+        setStatusLoading(true)
+        _queryParamModel.value = queryGameItemEntity
+    /*QueryGameItemEntity(
             search = search,
             dates = dates,
             platform = platform,
             store = store,
             ordering = ordering,
             page = page
-        )
+        ) search : String?, dates: String?, platform: String?, store: String?, ordering: String?, page: Int*/
     }
 
     private fun getGameList(queryGameItemEntity: QueryGameItemEntity): LiveData<PagingData<GameItemEntity>> {
@@ -105,11 +107,12 @@ class HomeViewModel @Inject constructor(private val useCase: GameUseCase): ViewM
         return useCase.getDlcData(scope, id)
     }
 
-    fun manageLibrary(gameData: GameItemEntity): LiveData<Boolean> {
+    fun manageLibrary(gameData: GameItemEntity) {
         if (!gameData.isInLibrary) insertGameItem(gameData)
         else deleteGameItem(gameData)
-        return _isInLibrary
     }
+
+    fun updateLiveData(): LiveData<Boolean> = _isInLibrary
 
     suspend fun getTrailers(id: Long): Flow<List<TrailerEntity>> {
         return useCase.getTrailers(id)

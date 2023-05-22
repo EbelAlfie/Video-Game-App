@@ -31,7 +31,9 @@ class SubGameFragment (private val viewModel: HomeViewModel, private val queryGa
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         loadingDialog = Utils.createLoading(requireContext()).create()
-        viewModel.initQueryGameItemParam(queryGameItemEntity.search, queryGameItemEntity.dates, queryGameItemEntity.platform, queryGameItemEntity.store, queryGameItemEntity.ordering, queryGameItemEntity.page ?: 10)
+        queryGameItemEntity.apply {
+            viewModel.initQueryGameItemParam(QueryGameItemEntity(search, dates, platform, store, genres, ordering, page ?: 10))
+        }
         setRv()
         setObserver()
     }

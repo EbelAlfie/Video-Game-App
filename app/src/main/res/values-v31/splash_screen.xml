@@ -3,7 +3,7 @@
 
     <style name="splash_screen">
         <item name="android:windowSplashScreenBackground">@color/dark_background</item>
-        <item name="android:windowSplashScreenAnimatedIcon">@drawable/appicon</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/splashscreen</item>
 
     </style>
 </resources>
