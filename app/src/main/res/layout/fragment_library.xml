@@ -5,15 +5,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/dark_background">
 
-    <androidx.appcompat.widget.SearchView
+    <!--<androidx.appcompat.widget.SearchView
         android:id="@+id/search_view"
         style="@style/search_bar_style"
-        app:iconifiedByDefault="false" />
+        app:iconifiedByDefault="false" />-->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_game_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/search_view"/>
+        android:layout_height="match_parent" />
 
+    <TextView
+        android:id="@+id/tv_no_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/no_data_available"
+        style="@style/no_data_style"
+        android:visibility="gone"
+        android:layout_centerInParent="true"/>
 </RelativeLayout>

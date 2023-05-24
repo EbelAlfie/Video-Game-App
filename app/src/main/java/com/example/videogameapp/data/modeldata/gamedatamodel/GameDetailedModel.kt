@@ -65,5 +65,23 @@ data class GameDetailedModel (
                         isInLibrary = it.isInLibrary
                     )
                 }
+
+            fun convertToGameItem(gameDetail: GameDetailedModel?): GameItemEntity {
+                return GameItemEntity(
+                    id = gameDetail?.id ?: 0,
+                    name = gameDetail?.name ?: "",
+                    tbaStatus = gameDetail?.tbaStatus ?: true,
+                    dateReleased = gameDetail?.dateReleased ?: "",
+                    backgroundImage = gameDetail?.poster ?: "",
+                    metaCritic = gameDetail?.metacritic,
+                    playtime = gameDetail?.playtime ?: 0,
+                    reviewCount = 1,
+                    genres = GenresModel.genreString(gameDetail?.genres),
+                    platforms = PlatformModel.platformString(gameDetail?.platforms),
+                    screenShots = listOf(),
+                    ratings = RatingModel.ratingString(gameDetail?.ratings ?: listOf()),
+                    isInLibrary = gameDetail?.isInLibrary ?: false
+                )
+            }
         }
 }

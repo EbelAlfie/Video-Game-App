@@ -24,7 +24,7 @@ import com.example.videogameapp.Utils.fromHtml
 import com.example.videogameapp.databinding.ActivityGameDetailBinding
 import com.example.videogameapp.domain.entity.gameentity.GameDetailedEntity
 import com.example.videogameapp.domain.entity.gameentity.GameItemEntity
-import com.example.videogameapp.presentation.viewmodel.HomeViewModel
+import com.example.videogameapp.presentation.viewmodel.GameDetailViewModel
 import com.example.videogameapp.presentation.viewmodel.ViewModelFactory
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.flow.collectLatest
@@ -43,9 +43,7 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
     @Inject
     lateinit var vmFactory: ViewModelFactory
 
-    private val homeViewModel: HomeViewModel by viewModels {
-        vmFactory
-    }
+    private val gameDetailViewModel: GameDetailViewModel by viewModels { vmFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         (application as RawgApp).appComponent.injectDetailed(this)
@@ -55,9 +53,9 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
 
         setRecyclerViews()
         setObserver()
-        val id = homeViewModel.getIntent(intent)
+        val id = gameDetailViewModel.getIntent(intent)
         if (id == -1L) return
-        reqItem(id)
+        gameDetailViewModel.checkNetworkState(this, id, fun(id) { reqItem(id) })
     }
 
     private fun setRecyclerViews() {
@@ -93,11 +91,10 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
                 adapter = videoAdapter
             }
         }
-        /*setAutoSlide()*/
     }
 
     private fun setStoreObserver(gameData: GameDetailedEntity) {
-        homeViewModel.getStoreLiveData().observe(this) {storeEntity ->
+        gameDetailViewModel.getStoreLiveData().observe(this) { storeEntity ->
             if (storeEntity.isEmpty() || gameData.store.isEmpty()) return@observe
             storeEntity.forEachIndexed { index, item -> item.name = gameData.store[index].name }
             gameStoreLinkAdapter.addData(storeEntity.toMutableList())
@@ -106,16 +103,16 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
 
     private fun setScreenshootObserver(id: Long) {
         lifecycleScope.launch {
-            homeViewModel.getGameDetailedScreenshoot(this, id).collectLatest {
-                screenShotsAdapter.submitData(lifecycle, it)
+            gameDetailViewModel.getGameDetailedScreenshoot(id).collectLatest {
+                screenShotsAdapter.updateData(it)
             }
         }
     }
 
     private fun setObserver() {
-        homeViewModel.getStatusLoading().observe(this) { if (it) loadingDialog.show() else loadingDialog.cancel() }
+        gameDetailViewModel.getStatusLoading().observe(this) { if (it) loadingDialog.show() else loadingDialog.dismiss() }
 
-        homeViewModel.getDetailedGameData().observe(this){gameData ->
+        gameDetailViewModel.getDetailedGameData().observe(this){ gameData ->
             if (gameData == null) return@observe
             getStoreLink(gameData.id)
             setScreenshootObserver(gameData.id)
@@ -123,13 +120,13 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
             setDlcObserver(gameData.id)
             setVideoObserver(gameData.id)
             setView(gameData)
-            homeViewModel.setStatusLoading(false)
+            gameDetailViewModel.setStatusLoading(false)
         }
     }
 
     private fun setVideoObserver(id: Long) {
         lifecycleScope.launch {
-            homeViewModel.getTrailers(id).collectLatest {
+            gameDetailViewModel.getTrailers(id).collectLatest {
                 videoAdapter.submitData(it)
             }
         }
@@ -137,7 +134,7 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
 
     private fun setDlcObserver(id: Long) {
         lifecycleScope.launch {
-            homeViewModel.getGameDlc(this, id).collectLatest {
+            gameDetailViewModel.getGameDlc(this, id).collectLatest {
                 dlcAdapter.submitData(lifecycle, it)
             }
         }
@@ -146,30 +143,29 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
     private fun setView(data: GameDetailedEntity) {
         binding.apply {
 
-            homeViewModel.updateLiveData().observe(this@GameDetailActivity) {
+            gameDetailViewModel.getLibraryStatus().observe(this@GameDetailActivity) {
                 data.isInLibrary = it
                 setLibraryBtn(btnLibrary, data.isInLibrary)
-                homeViewModel.setStatusLoading(false)
+                gameDetailViewModel.setStatusLoading(false)
             }
 
             setImagePoster(ivGameImage, data)
             setMetacritics(tvMetacritic, data)
             setLibraryBtn(btnLibrary, data.isInLibrary)
 
-            tvGameReleasedDate.text = data.getReleasedDate()
+            tvGameReleasedDate.text = data.getDetailReleasedDate()
             tvGameTitle.text = data.name
             tvGameDesc.text = data.desc.fromHtml()
-            tvGameAgeRating.text = data.ageRating
-            tvGameGenre.text = data.genres.joinToString { it.genreName }
-            tvGamePlatform.text = data.platforms.joinToString { it.platform }
-            tvGameDeveloper.text = data.developer.joinToString { it.name }
-            tvGamePublisher.text = data.publishers.joinToString { it.publisher }
-            tvGameTags.text = data.tags.joinToString { it.tagName }
+            tvGameAgeRating.text = GameDetailedEntity.getNullableString(data.ageRating)
+            tvGameGenre.text = GameDetailedEntity.getNullableString(data.genres.joinToString { it.genreName })
+            tvGamePlatform.text = GameDetailedEntity.getNullableString(data.platforms.joinToString { it.platform })
+            tvGameDeveloper.text = GameDetailedEntity.getNullableString(data.developer.joinToString { it.name })
+            tvGamePublisher.text = GameDetailedEntity.getNullableString(data.publishers.joinToString { it.publisher })
+            tvGameTags.text = GameDetailedEntity.getNullableString(data.tags.joinToString { it.tagName })
 
             btnLibrary.setOnClickListener {
-                homeViewModel.setStatusLoading(true)
-
-                homeViewModel.manageLibrary(GameItemEntity.transformFromDetail(data))
+                gameDetailViewModel.setStatusLoading(true)
+                gameDetailViewModel.manageLibrary(GameItemEntity.transformFromDetail(data))
             }
         }
     }
@@ -204,28 +200,12 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
                 adapter = screenShotsAdapter
             }
         }
-        /*setAutoSlide()*/
     }
-
-    /*private fun setAutoSlide() {
-        val handler = Handler(Looper.getMainLooper())
-        val timer = Timer()
-        val update = Runnable {
-            binding.apply {
-                vpImageSlider.setCurrentItem(++vpImageSlider.currentItem, true)
-            }
-        }
-        timer.schedule(object : TimerTask() {
-            override fun run() {
-                handler.post(update)
-            }
-        }, Utils.DELAY_TIME, Utils.PERIODE_TIME)
-    }*/
-
 
     private fun setImagePoster(ivGameImage: ImageView, data: GameDetailedEntity) {
         Picasso.get().load(data.poster).apply {
-            placeholder(R.drawable.baseline_broken_image_24)
+            placeholder(Utils.createLoadingImage(this@GameDetailActivity))
+            error(R.drawable.baseline_broken_image_24)
             into(ivGameImage)
         }
     }
@@ -234,17 +214,17 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
         val metaCritic = data.getMetacritics()
         if (metaCritic.isBlank()) return
         tvMetacritic.visibility = View.VISIBLE
-        tvMetacritic.text = getString(R.string.metacritic, data.metaCritic)
+        tvMetacritic.text = getString(R.string.metacritic, GameItemEntity.getNullableString(data.metaCritic.toString()))
         tvMetacritic.setTextColor(getColor(data.getMetacriticColor()))
     }
 
     private fun getStoreLink(id: Long) {
-        homeViewModel.getGameStoreLink(id)
+        gameDetailViewModel.getGameStoreLink(id)
     }
 
     private fun reqItem(id: Long) {
-        homeViewModel.setStatusLoading(true)
-        homeViewModel.getGameDetail(id)
+        gameDetailViewModel.setStatusLoading(true)
+        gameDetailViewModel.getGameDetail(id)
     }
 
     override fun onStoreClicked(position: Int) {

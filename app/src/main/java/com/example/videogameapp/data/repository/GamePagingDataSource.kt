@@ -18,11 +18,14 @@ class GamePagingDataSource(private val libraryDbObj: LocalDbModule, private val 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, GameItemEntity> {
         val position = params.key ?: 1
         return try {
-            val list = getOnlineData(position)
+            val responseEntity = getOnlineData(position)
+            val list = responseEntity.third
+            val next = responseEntity.first
+            //val prev = responseEntity.second
             LoadResult.Page(
                 data = list,
-                nextKey = if (list.isEmpty() || queryGameItemModel.page == 5) null else position + 1,
-                prevKey = null
+                nextKey = if (next == null || list.isEmpty() || queryGameItemModel.pageSize == 5) null else position + 1,
+                prevKey = null /*if (prev == null || list.isEmpty() || queryGameItemModel.pageSize == 5) null else position - 1*/
             )
         }catch (e: Exception) {
             Log.d("ERROR", e.toString())
@@ -30,7 +33,7 @@ class GamePagingDataSource(private val libraryDbObj: LocalDbModule, private val 
         }
     }
 
-    private suspend fun getOnlineData(position: Int): List<GameItemEntity> {
+    private suspend fun getOnlineData(position: Int): Triple<String?, String?, List<GameItemEntity>> {
         val response = gameApiService.getAllGame(
             dates = queryGameItemModel.dates,
             search = queryGameItemModel.search,
@@ -38,16 +41,16 @@ class GamePagingDataSource(private val libraryDbObj: LocalDbModule, private val 
             platform = queryGameItemModel.platform,
             genres = queryGameItemModel.genres,
             ordering = queryGameItemModel.ordering,
-            page = if (position == 1 || queryGameItemModel.page == 5) 1 else position * 10 - 10,
-            pageSize = queryGameItemModel.page
+            page = if (position == 1 || queryGameItemModel.pageSize == 5) 1 else position + 1,
+            pageSize = queryGameItemModel.pageSize
         )
 
         response.results.forEachIndexed { index, _ ->
             val data = libraryDbObj.gameItemDao().getSpecificGame(response.results[index].id ?: -1)
             response.results[index].isInLibrary = data != null
-        }//TODO
+        }
 
-        return GameItemModel.convertList(response.results)
+        return Triple(response.next, response.prev, GameItemModel.convertList(response.results))
     }
 
 }

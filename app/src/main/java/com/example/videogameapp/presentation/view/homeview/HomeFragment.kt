@@ -10,22 +10,29 @@ import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.videogameapp.R
 import com.example.videogameapp.Utils
 import com.example.videogameapp.databinding.FragmentHomeBinding
 import com.example.videogameapp.domain.entity.gameentity.QueryGameItemEntity
+import com.example.videogameapp.presentation.view.MainActivity
 import com.example.videogameapp.presentation.view.searchadapter.CustomSpinnerAdapter
 import com.example.videogameapp.presentation.viewmodel.HomeViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 
-class HomeFragment (private var viewModel: HomeViewModel, private var queryParam: QueryGameItemEntity = QueryGameItemEntity(null, null, null, null, null, null, 10)): Fragment(),
+class HomeFragment: Fragment(),
     GamePagingAdapter.SetOnItemClicked {
+    private var queryParam: QueryGameItemEntity = QueryGameItemEntity(null, null, null, null, null, null, pageSize = Utils.MODE_ALL_PAGE)
     private lateinit var binding: FragmentHomeBinding
     private lateinit var pagingAdapter: GamePagingAdapter
     private lateinit var loadingDialog: AlertDialog
     private lateinit var orderAdapter: ArrayAdapter<CharSequence>
     private lateinit var platformAdapter: CustomSpinnerAdapter
     private lateinit var genresAdapter: CustomSpinnerAdapter
+    private lateinit var viewModel: HomeViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,22 +44,36 @@ class HomeFragment (private var viewModel: HomeViewModel, private var queryParam
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        loadingDialog = Utils.createLoading(requireContext()).create()
+        fetchViewModel()
         initViews()
-        setObserver()
         setSpinner()
-        viewModel.initQueryGameItemParam(queryParam)
-        setSpinnerData()
+        setObserver()
+        setSpinnerObserver()
+        viewModel.checkNetworkState(requireContext(), queryParam, fun(queryParam) {getData(queryParam)})
     }
 
-    private fun setSpinnerData() {
-        viewModel.getGenresSpinnerData.observe(requireActivity()) {
-            genresAdapter.addAll(it)
-            genresAdapter.notifyDataSetChanged()
-        }
-        viewModel.getPlatformSpinnerData.observe(requireActivity()) {
-            platformAdapter.addAll(it)
-            platformAdapter.notifyDataSetChanged()
-            setSpinnerListener()
+    private fun fetchViewModel() {
+        viewModel = (requireActivity() as MainActivity).fetchHomeViewModel()
+    }
+
+    private fun getData(queryParam: QueryGameItemEntity) {
+        viewModel.getSpinnerPlatform()
+        viewModel.getSpinnerGenres()
+        getListData(queryParam)
+    }
+
+    private fun getListData(queryParam: QueryGameItemEntity) {
+        lifecycleScope.launch {
+            queryParam.apply {
+                viewModel.initQueryGameItemParam(
+                    search = search,
+                    ordering = ordering,
+                    platform = platform,
+                    genres = genres,
+                    pageSize = pageSize
+                )
+            }
         }
     }
 
@@ -64,25 +85,42 @@ class HomeFragment (private var viewModel: HomeViewModel, private var queryParam
                 R.layout.custom_spinner
             )
             orderAdapter.setDropDownViewResource(R.layout.custom_spinner_dropdown)
-            genresAdapter = CustomSpinnerAdapter(requireContext(), R.layout.custom_spinner, mutableListOf())
-            platformAdapter = CustomSpinnerAdapter(requireContext(), R.layout.custom_spinner, mutableListOf())
+            genresAdapter = CustomSpinnerAdapter(requireContext(), mutableListOf())
+            platformAdapter = CustomSpinnerAdapter(requireContext(), mutableListOf())
 
             spPlatform.adapter = platformAdapter
             spGenre.adapter = genresAdapter
             spOrderBy.adapter = orderAdapter
+            setSpinnerOrderListener()
         }
+    }
 
+    private fun setSpinnerObserver() {
+        viewModel.getGenresSpinnerData.observe(requireActivity()) {
+            genresAdapter.addAll(it)
+            genresAdapter.notifyDataSetChanged()
+            setSpinnerGenreListener()
+        }
+        viewModel.getPlatformSpinnerData.observe(requireActivity()) {
+            platformAdapter.addAll(it)
+            platformAdapter.notifyDataSetChanged()
+            setSpinnerPlatformListener()
+        }
     }
 
     private fun setObserver() {
-        loadingDialog = Utils.createLoading(requireContext()).create()
         viewModel.getStatusLoading().observe(requireActivity()) {
             if (it) loadingDialog.show() else loadingDialog.dismiss()
         }
-
-        viewModel.getListGameData().observe(requireActivity()) {
-            pagingAdapter.submitData(lifecycle, it)
-            viewModel.setStatusLoading(false)
+        CoroutineScope(IO).launch{
+            viewModel.getListGameData(this, requireActivity().resources).observe(requireActivity()) {
+                binding.apply {
+                    tvNoData.visibility = if (it != null) View.GONE else View.VISIBLE
+                    rvGameList.visibility = if (it != null) View.VISIBLE else View.GONE
+                }
+                pagingAdapter.submitData(lifecycle, it)
+                viewModel.setStatusLoading(false)
+            }
         }
     }
 
@@ -92,17 +130,28 @@ class HomeFragment (private var viewModel: HomeViewModel, private var queryParam
             pagingAdapter = GamePagingAdapter(this@HomeFragment)
             rvGameList.adapter = pagingAdapter
 
-
             searchView.setOnQueryTextListener(object: OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     if (query?.isNotBlank()!!) {
-                        queryData(query)
+                        queryParam.apply {
+                            search = query
+                            ordering = binding.spOrderBy.selectedItem.toString()
+                            platform = platformAdapter.getQueryItem(binding.spPlatform.selectedItemPosition)
+                            genres = genresAdapter.getQueryItem(binding.spGenre.selectedItemPosition)
+                        }
+                        queryData()
                     }
                     return true
                 }
                 override fun onQueryTextChange(newText: String?): Boolean {
                     if (newText?.isBlank() == true) {
-                        queryData("")
+                        queryParam.apply {
+                            search = null
+                            ordering = binding.spOrderBy.selectedItem.toString()
+                            platform = platformAdapter.getQueryItem(binding.spPlatform.selectedItemPosition)
+                            genres = genresAdapter.getQueryItem(binding.spGenre.selectedItemPosition)
+                        }
+                        queryData()
                     }
                     return true
                 }
@@ -110,35 +159,47 @@ class HomeFragment (private var viewModel: HomeViewModel, private var queryParam
         }
     }
 
-    private fun setSpinnerListener() {
+    private fun setSpinnerOrderListener() {
         binding.apply {
             spOrderBy.onItemSelectedListener = object: OnItemSelectedListener{
-                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) { queryData(searchView.query.toString()) }
-                override fun onNothingSelected(p0: AdapterView<*>?) {}
-            }
-
-            spGenre.onItemSelectedListener = object: OnItemSelectedListener{
-                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) { queryData(searchView.query.toString()) }
-                override fun onNothingSelected(p0: AdapterView<*>?) {}
-            }
-
-            spPlatform.onItemSelectedListener = object: OnItemSelectedListener{
-                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) { queryData(searchView.query.toString()) }
+                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
+                    queryParam.search = searchView.query.toString()
+                    queryParam.ordering = binding.spOrderBy.selectedItem.toString()
+                    queryData()
+                }
                 override fun onNothingSelected(p0: AdapterView<*>?) {}
             }
         }
     }
 
-    private fun queryData(search: String) {
-        binding.apply {
-            viewModel.initQueryGameItemParam(QueryGameItemEntity(
-                search = search,
-                ordering = binding.spOrderBy.selectedItem.toString(),
-                platform = platformAdapter.getQueryItem(binding.spPlatform.selectedItemPosition),
-                genres = genresAdapter.getQueryItem(binding.spGenre.selectedItemPosition),
-                page = 10
-            ))
+    private fun setSpinnerPlatformListener() {
+        binding.apply{
+            spPlatform.onItemSelectedListener = object: OnItemSelectedListener{
+                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
+                    queryParam.search = searchView.query.toString()
+                    queryParam.platform = platformAdapter.getQueryItem(position)
+                    queryData()
+                }
+                override fun onNothingSelected(p0: AdapterView<*>?) {}
+            }
         }
+    }
+
+    private fun setSpinnerGenreListener() {
+        binding.apply {
+            spGenre.onItemSelectedListener = object: OnItemSelectedListener{
+                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
+                    queryParam.search = searchView.query.toString()
+                    queryParam.genres = genresAdapter.getQueryItem(position)
+                    queryData()
+                }
+                override fun onNothingSelected(p0: AdapterView<*>?) {}
+            }
+        }
+    }
+
+    private fun queryData() {
+        viewModel.checkNetworkState(requireContext(), queryParam, fun(queryParam) {getListData(queryParam)})
     }
 
     override fun onItemClicked(position: Int) {

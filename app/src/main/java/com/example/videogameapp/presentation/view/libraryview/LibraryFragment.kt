@@ -10,17 +10,18 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.videogameapp.Utils
 import com.example.videogameapp.databinding.FragmentLibraryBinding
+import com.example.videogameapp.presentation.view.MainActivity
 import com.example.videogameapp.presentation.view.homeview.GameDetailActivity
-import com.example.videogameapp.presentation.viewmodel.HomeViewModel
+import com.example.videogameapp.presentation.viewmodel.LibraryViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class LibraryFragment(private val viewModel: HomeViewModel) : Fragment(), LibraryAdapter.SetOnItemClicked {
+class LibraryFragment : Fragment(), LibraryAdapter.SetOnItemClicked {
     private lateinit var binding: FragmentLibraryBinding
     private lateinit var libraryAdapter: LibraryAdapter
     private lateinit var dialogConfirmation: AlertDialog
     private lateinit var loadingDialog: AlertDialog
-
+    private lateinit var viewModel: LibraryViewModel
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -32,8 +33,13 @@ class LibraryFragment(private val viewModel: HomeViewModel) : Fragment(), Librar
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        fetchViewModel()
         setRecView()
         setDialog()
+    }
+
+    private fun fetchViewModel() {
+        viewModel = (requireActivity() as MainActivity).fetchLibraryViewModel()
     }
 
     override fun onResume() {
@@ -49,13 +55,9 @@ class LibraryFragment(private val viewModel: HomeViewModel) : Fragment(), Librar
         }
     }
     private fun getData() {
-        viewModel.updateLiveData().observe(requireActivity()) {
-            getData()
-        }
         lifecycleScope.launch {
             viewModel.getLibraryData().collectLatest {
                 viewModel.setStatusLoading(false)
-                if (it.isEmpty()) return@collectLatest
                 libraryAdapter.updateList(it.toMutableList())
             }
         }
@@ -77,5 +79,8 @@ class LibraryFragment(private val viewModel: HomeViewModel) : Fragment(), Librar
     override fun onLibraryDelete(position: Int) {
         viewModel.setStatusLoading(true)
         viewModel.manageLibrary(libraryAdapter.getGameItem(position))
+        viewModel.getLibraryStatus.observe(requireActivity()) {
+            getData()
+        }
     }
 }

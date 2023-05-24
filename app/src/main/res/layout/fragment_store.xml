@@ -7,6 +7,15 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_store_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/tv_no_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/no_data_available"
+        style="@style/no_data_style"
+        android:layout_centerInParent="true" />
 
 </RelativeLayout>

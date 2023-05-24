@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:textColor="@color/white"
-    tools:text="test"
     android:padding="@dimen/view_margin"
-    android:background="@drawable/spinner_mode"
-    xmlns:tools="http://schemas.android.com/tools" />
+    android:background="@drawable/spinner_design"
+    xmlns:app="http://schemas.android.com/apk/res-auto" />

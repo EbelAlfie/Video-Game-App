@@ -8,10 +8,7 @@ import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.example.videogameapp.R
 import com.example.videogameapp.RawgApp
 import com.example.videogameapp.databinding.ActivityMainBinding
-import com.example.videogameapp.presentation.viewmodel.HomeViewModel
-import com.example.videogameapp.presentation.viewmodel.MainViewModel
-import com.example.videogameapp.presentation.viewmodel.StoreViewModel
-import com.example.videogameapp.presentation.viewmodel.ViewModelFactory
+import com.example.videogameapp.presentation.viewmodel.*
 import javax.inject.Inject
 
 class MainActivity: AppCompatActivity() {
@@ -23,6 +20,8 @@ class MainActivity: AppCompatActivity() {
     private val homeViewModel: HomeViewModel by viewModels { vmFactory }
 
     private val storeViewModel: StoreViewModel by viewModels { vmFactory }
+
+    private val libraryViewModel: LibraryViewModel by viewModels { vmFactory }
 
     private val mainViewModel: MainViewModel by viewModels()
 
@@ -41,7 +40,7 @@ class MainActivity: AppCompatActivity() {
 
     private fun setBottomNavBar() {
         binding.apply {
-            fragmentViewPager.adapter = FragmentAdapter(this@MainActivity, homeViewModel, storeViewModel)
+            fragmentViewPager.adapter = FragmentAdapter(this@MainActivity)
 
             viewNavbar.setOnItemSelectedListener{
                 fragmentViewPager.currentItem = when (it.itemId) {
@@ -61,5 +60,17 @@ class MainActivity: AppCompatActivity() {
                 ) { viewNavbar.menu.getItem(position).isChecked = true }
             })
         }
+    }
+
+    fun fetchStoreViewModel(): StoreViewModel {
+        return storeViewModel
+    }
+
+    fun fetchHomeViewModel(): HomeViewModel {
+        return homeViewModel
+    }
+
+    fun fetchLibraryViewModel(): LibraryViewModel {
+        return libraryViewModel
     }
 }

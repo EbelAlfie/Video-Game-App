@@ -12,6 +12,8 @@ class ViewModelFactory @Inject constructor(private val gameUseCase: GameUseCase,
         return when {
             modelClass.isAssignableFrom(HomeViewModel::class.java) -> HomeViewModel(gameUseCase) as T
             modelClass.isAssignableFrom(StoreViewModel::class.java) -> StoreViewModel(storeUseCase, gameUseCase) as T
+            modelClass.isAssignableFrom(GameDetailViewModel::class.java) -> GameDetailViewModel(gameUseCase) as T
+            modelClass.isAssignableFrom(LibraryViewModel::class.java) -> LibraryViewModel(gameUseCase) as T
             else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
         }
     }

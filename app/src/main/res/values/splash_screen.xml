@@ -2,7 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Theme.AppCompat.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/item_color</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/splashscreen</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/inset_splash</item>
         <item name="postSplashScreenTheme">@style/Theme.VideoGameApp</item>
     </style>
 </resources>

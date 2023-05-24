@@ -1,6 +1,8 @@
 package com.example.videogameapp.domain.entity.gameentity
 
 import com.example.videogameapp.R
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 data class GameDetailedEntity (
@@ -24,12 +26,14 @@ data class GameDetailedEntity (
     val store: List<StoreEntity>,
     var isInLibrary: Boolean
     ){
-    fun getMetacritics(): String {
-        return metaCritic?.toString() ?: ""
+    companion object {
+        fun getNullableString(string: String): String {
+            return string.ifBlank { "-" }
+        }
     }
 
-    fun getReleasedDate(): String {
-        return if (!tbaStatus) dateReleased else "TBA"
+    fun getMetacritics(): String {
+        return metaCritic?.toString() ?: ""
     }
 
     fun getMetacriticColor(): Int {
@@ -39,5 +43,13 @@ data class GameDetailedEntity (
             in 70..100 -> R.color.green
             else -> R.color.red
         }
+    }
+
+    fun getDetailReleasedDate(): String {
+        if (tbaStatus) return "TBA"
+        return try {
+            val formater = SimpleDateFormat("yyyy-mm-dd", Locale.CANADA).parse(dateReleased)
+            if (formater != null) SimpleDateFormat("dd MMM yyyy", Locale.CANADA).format(formater) else "-"
+        }catch (e: Exception) { "-" }
     }
 }

@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.videogameapp.R
@@ -18,7 +17,7 @@ import com.squareup.picasso.Picasso
 class LibraryAdapter(private var inList: MutableList<GameItemEntity>, private val listener: SetOnItemClicked): Adapter<LibraryAdapter.LibraryViewHolder>() {
     private lateinit var context: Context
 
-    private class DiffUtilCallback(private var oldList: MutableList<GameItemEntity>, private var newList: MutableList<GameItemEntity>): DiffUtil.Callback(){
+    /*private class DiffUtilCallback(val oldList: MutableList<GameItemEntity>, val newList: MutableList<GameItemEntity>): DiffUtil.Callback(){
         override fun getOldListSize(): Int {
             return oldList.size
         }
@@ -32,10 +31,10 @@ class LibraryAdapter(private var inList: MutableList<GameItemEntity>, private va
         }
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldList[oldItemPosition].id == newList[newItemPosition].id
+            return oldList[oldItemPosition] == newList[newItemPosition]
         }
 
-    }
+    }*/
 
     /*class DiffComparator: DiffUtil.ItemCallback<GameItemEntity>() {
         override fun areItemsTheSame(oldItem: GameItemEntity, newItem: GameItemEntity): Boolean {
@@ -101,7 +100,7 @@ class LibraryAdapter(private var inList: MutableList<GameItemEntity>, private va
         val metacritic = data.getMetacritics()
         if (metacritic.isBlank()) return
         tvMetacritic.visibility = View.VISIBLE
-        tvMetacritic.text = context.getString(R.string.metacritic, data.metaCritic)
+        tvMetacritic.text = context.getString(R.string.metacritic, GameItemEntity.getNullableString(metacritic))
         tvMetacritic.setTextColor(context.getColor(data.getMetacriticColor()))
     }
 
@@ -110,10 +109,9 @@ class LibraryAdapter(private var inList: MutableList<GameItemEntity>, private va
     }
 
     fun updateList(newList: MutableList<GameItemEntity>) {
-        val diffutil = DiffUtilCallback(inList, newList)
-        val result = DiffUtil.calculateDiff(diffutil)
-        inList = newList
-        result.dispatchUpdatesTo(this)
+        inList.clear()
+        inList.addAll(newList)
+        notifyDataSetChanged()
     }
 
     fun getGameItem(position: Int): GameItemEntity {

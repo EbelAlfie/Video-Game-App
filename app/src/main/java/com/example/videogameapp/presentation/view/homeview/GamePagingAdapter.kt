@@ -1,6 +1,7 @@
 package com.example.videogameapp.presentation.view.homeview
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.videogameapp.R
+import com.example.videogameapp.Utils
 import com.example.videogameapp.databinding.ItemGameBinding
 import com.example.videogameapp.domain.entity.gameentity.GameItemEntity
 import com.squareup.picasso.Picasso
@@ -34,7 +36,9 @@ class GamePagingAdapter(private val listener: SetOnItemClicked): PagingDataAdapt
             override fun areContentsTheSame(
                 oldItem: GameItemEntity,
                 newItem: GameItemEntity
-            ) = oldItem == newItem
+            ): Boolean {
+                return (oldItem.id == newItem.id)
+            }
         }
     }
 
@@ -45,16 +49,18 @@ class GamePagingAdapter(private val listener: SetOnItemClicked): PagingDataAdapt
         holder.binding.apply {
             if (data.backgroundImage.isNotBlank()) {
                 Picasso.get().load(data.backgroundImage).apply {
-                    //resize(250, 250)
+                    placeholder(Utils.createLoadingImage(context))
+                    error(R.drawable.baseline_broken_image_24)
+                    resize(300, 300)
                     into(ivPoster)
                 }
             }else ivPoster.setImageResource(R.drawable.baseline_broken_image_24)
 
             tvGameTitle.text = data.name
-            tvRatings.text = context.getString(R.string.rating, data.ratings)
+            tvRatings.text = context.getString(R.string.rating, GameItemEntity.getNullableString(data.ratings))
             tvRatings.setTextColor(context.getColor(data.getReviewColor(context)))
-            tvGenres.text = context.getString(R.string.genre_genrenya, data.genres)
-            tvPlatforms.text = context.getString(R.string.platform, data.platforms)
+            tvGenres.text = context.getString(R.string.genre_genrenya, GameItemEntity.getNullableString(data.genres))
+            tvPlatforms.text = context.getString(R.string.platform, GameItemEntity.getNullableString(data.platforms))
             tvReleasedDate.text = context.getString(R.string.released_date, data.getReleasedDate())
 
             setMetacritics(tvMetacritic, data)
@@ -69,7 +75,7 @@ class GamePagingAdapter(private val listener: SetOnItemClicked): PagingDataAdapt
         val metacritic = data.getMetacritics()
         if (metacritic.isBlank()) return
         tvMetacritic.visibility = View.VISIBLE
-        tvMetacritic.text = context.getString(R.string.metacritic, data.metaCritic)
+        tvMetacritic.text = context.getString(R.string.metacritic, GameItemEntity.getNullableString(metacritic))
         tvMetacritic.setTextColor(context.getColor(data.getMetacriticColor()))
     }
 
@@ -85,7 +91,7 @@ class GamePagingAdapter(private val listener: SetOnItemClicked): PagingDataAdapt
     }
 
     fun getGameItemId(position: Int): Long {
+        Log.d("TestId", getItem(position)?.id.toString())
         return getItem(position)?.id ?: -1L
     }
-
 }

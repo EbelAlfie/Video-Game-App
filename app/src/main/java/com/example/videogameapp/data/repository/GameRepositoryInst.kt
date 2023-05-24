@@ -1,5 +1,6 @@
 package com.example.videogameapp.data.repository
 
+import android.content.res.Resources
 import android.util.Log
 import androidx.lifecycle.LiveDataScope
 import androidx.paging.Pager
@@ -10,6 +11,7 @@ import com.example.videogameapp.data.di.LocalDbModule
 import com.example.videogameapp.data.modeldata.databasemodel.GameItemDbModel
 import com.example.videogameapp.data.modeldata.gamedatamodel.GameDetailedModel
 import com.example.videogameapp.data.modeldata.gamedatamodel.GameStoreModel
+import com.example.videogameapp.data.modeldata.gamedatamodel.ScreenShotModel
 import com.example.videogameapp.data.modeldata.gamedatamodel.TrailerModel
 import com.example.videogameapp.data.modeldata.querymodel.QueryDataModel
 import com.example.videogameapp.data.onlineservices.GameApiService
@@ -28,12 +30,12 @@ import javax.inject.Inject
 
 class GameRepositoryInst @Inject constructor(private val gameApiService: GameApiService, private val libraryDbObj : LocalDbModule):
     GameRepository {
-    override fun getGameList(queryGameItemEntity: QueryGameItemEntity): Flow<PagingData<GameItemEntity>> {
+    override fun getGameList(scope: CoroutineScope, resources: Resources, queryGameItemEntity: QueryGameItemEntity): Flow<PagingData<GameItemEntity>> {
         return Pager(config = PagingConfig(
             pageSize = 10
         )) {
-            GamePagingDataSource(libraryDbObj, gameApiService, QueryGameItemEntity.transform(queryGameItemEntity))
-        }.flow
+            GamePagingDataSource(libraryDbObj, gameApiService, QueryGameItemEntity.transform(resources, queryGameItemEntity))
+        }.flow.cachedIn(scope)
     }
 
     override fun getGameDetail(id: Long): Flow<GameDetailedEntity> {
@@ -50,12 +52,15 @@ class GameRepositoryInst @Inject constructor(private val gameApiService: GameApi
         }
     }
 
-    override fun getGameDetailScreenshots(id: Long, scope: CoroutineScope): Flow<PagingData<ScreenShotEntity>> {
-        return Pager(config = PagingConfig(
-            pageSize = 10
-        )) {
-            ScreenShotPagingDataSource(gameApiService, id)
-        }.flow.cachedIn(scope)
+    override fun getGameDetailScreenshots(id: Long): Flow<List<ScreenShotEntity>> {
+        return flow {
+            try {
+                val response = gameApiService.getGameDetailScreenshots(id)
+                emit (ScreenShotModel.convertList(response.screenshotList ?: listOf()))
+            } catch(e: Exception) {
+                emit(listOf())
+            }
+        }
     }
 
     override fun getGameStoreLink(id: Long): Flow<List<StoreEntity>> {
@@ -88,8 +93,13 @@ class GameRepositoryInst @Inject constructor(private val gameApiService: GameApi
     override suspend fun getAllGameLibrary(): Flow<List<GameItemEntity>> {
         return flow{
             try {
-                val data = libraryDbObj.gameItemDao().getAllGameLibrary()
-                emit(GameItemDbModel.convertList(data))
+                val data = GameItemDbModel.convertList(libraryDbObj.gameItemDao().getAllGameLibrary())
+                val updatedData = data.map {
+                    val fromNet = gameApiService.getGameDetail(it.id)
+                    fromNet.isInLibrary = true
+                    GameDetailedModel.convertToGameItem(fromNet)
+                }
+                emit(updatedData)
             }catch (e: Exception) {
                 Log.d("TAG", e.message.toString())
                 emit(listOf())
@@ -143,7 +153,7 @@ class GameRepositoryInst @Inject constructor(private val gameApiService: GameApi
     override suspend fun getSpinnerGenres(): Flow<List<QueryEntity>> {
         return flow {
             try {
-                val response = gameApiService.getSpinnerGenres(ORDER_POPULAR, SPINNER_PAGE, SPINNER_SIZE)
+                val response = gameApiService.getSpinnerGenres(ORDER_POPULAR, 1, 20)
                 emit(QueryDataModel.convertList(response.result))
             }catch (e: Exception) {
                 emit(listOf())

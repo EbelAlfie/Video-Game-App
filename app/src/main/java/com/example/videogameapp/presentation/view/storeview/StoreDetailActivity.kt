@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.example.videogameapp.R
 import com.example.videogameapp.RawgApp
 import com.example.videogameapp.Utils
 import com.example.videogameapp.Utils.fromHtml
@@ -27,8 +28,6 @@ class StoreDetailActivity : AppCompatActivity() {
     lateinit var vmFactory: ViewModelFactory
 
     private val storeDetailViewModel: StoreViewModel by viewModels { vmFactory }
-
-    private val homeViewModel: HomeViewModel by viewModels { vmFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         (application as RawgApp).appComponent.injectStoreDetail(this)
@@ -62,13 +61,15 @@ class StoreDetailActivity : AppCompatActivity() {
     private fun getGameList(id: Long) {
         binding.apply {
             val fragmentManager = supportFragmentManager
-            fragmentManager.beginTransaction().replace(flFragmentGameList.id, SubGameFragment(homeViewModel, QueryGameItemEntity("", "", "", id.toString(), "", "", 5))).commit()
+            fragmentManager.beginTransaction().replace(flFragmentGameList.id, SubGameFragment(QueryGameItemEntity(store = id.toString(), pageSize = Utils.MODE_SUB_PAGE))).commit()
         }
     }
 
     private fun setViews(it: StoreItemEntity) {
         binding.apply {
             Picasso.get().load(it.image).apply{
+                placeholder(Utils.createLoadingImage(this@StoreDetailActivity))
+                error(R.drawable.baseline_broken_image_24)
                 into(ivStorePoster)
             }
             tvStoreTitle.text = it.name
@@ -77,13 +78,13 @@ class StoreDetailActivity : AppCompatActivity() {
 
     private fun setObserver() {
         storeDetailViewModel.getStatusLoading().observe(this) {
-            if (it) loadingDialog.show() else loadingDialog.cancel()
+            if (it) loadingDialog.show() else loadingDialog.dismiss()
         }
 
         storeDetailViewModel.getStoreDetailData().observe(this) {
+            setLoading(false)
             if (it == null) return@observe
             setDesc(it)
-            setLoading(false)
         }
     }
 
@@ -92,6 +93,10 @@ class StoreDetailActivity : AppCompatActivity() {
     }
 
     private fun getDescrption(id: Long) {
-        storeDetailViewModel.getDetailedStoreData(id)
+        storeDetailViewModel.checkNetworkState(this, fun() { storeDetailViewModel.getDetailedStoreData(id) })
+    }
+
+    fun provideViewModel(): StoreViewModel {
+        return storeDetailViewModel
     }
 }

@@ -4,10 +4,10 @@
 
     <string name="released_date">Released date: %s</string>
     <string name="genre_genrenya">Genre: %s</string>
-    <string name="playtime">Playtime: %d hour</string>
+    <string name="playtime">Playtime: %s hour</string>
     <string name="platform">Platform: %s</string>
     <string name="rating">Rating: %s</string>
-    <string name="metacritic">Metacritic Score: %d</string>
+    <string name="metacritic">Metacritic Score: %s</string>
 
     <string name="overview_title">Overview</string>
     <string name="genres_title">Genres</string>
@@ -38,16 +38,17 @@
 
     <string-array name="order_by">
         <item>Relevance</item>
+        <item>Popularity</item>
         <item>Date added</item>
         <item>Name</item>
         <item>Release date</item>
-        <item>Popularity</item>
-        <item>Average rating</item>
+        <item>Rating</item>
     </string-array>
 
-    <string name="loading">Loading...</string>
+    <string name="loading">Loading…</string>
     <string name="refresh">refresh</string>
     <string name="add_to_library">Add to Library</string>
     <string name="added_to_library">Added</string>
+    <string name="no_data_available">No Data Available</string>
 
 </resources>

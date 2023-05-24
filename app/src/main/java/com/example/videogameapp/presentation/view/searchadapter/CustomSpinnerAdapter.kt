@@ -9,7 +9,7 @@ import com.example.videogameapp.databinding.CustomSpinnerBinding
 import com.example.videogameapp.databinding.CustomSpinnerDropdownBinding
 import com.example.videogameapp.domain.entity.queryentity.QueryEntity
 
-class CustomSpinnerAdapter (context: Context, resource: Int, private val listItem: MutableList<QueryEntity>): ArrayAdapter<QueryEntity>(context, resource, listItem) {
+class CustomSpinnerAdapter (context: Context, private val listItem: MutableList<QueryEntity>): ArrayAdapter<QueryEntity>(context, 0, listItem) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val binding: CustomSpinnerBinding =
@@ -30,10 +30,10 @@ class CustomSpinnerAdapter (context: Context, resource: Int, private val listIte
     }
 
     override fun getItem(position: Int): QueryEntity? {
-        return if (listItem.isEmpty()) null else listItem[position]
+        return if (listItem.isEmpty() || position < 0) null else listItem[position]
     }
 
-    fun getQueryItem(position: Int): String {
-        return getItem(position)?.id.toString()
+    fun getQueryItem(position: Int): String? {
+        return if (position != 0) getItem(position)?.id.toString() else null
     }
 }

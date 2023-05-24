@@ -15,10 +15,12 @@ data class QueryDataModel (
     val name: String?
     ) {
     companion object {
-        fun convertList (it: List<QueryDataModel>): List<QueryEntity> {
-            return it.map {
+        fun convertList (it: List<QueryDataModel>): MutableList<QueryEntity> {
+            val list = it.map {
                 QueryEntity(it.id ?: 0, it.name ?: "")
-            }
+            }.toMutableList()
+            list.add(0, QueryEntity(0, "All"))
+            return list
         }
     }
 }

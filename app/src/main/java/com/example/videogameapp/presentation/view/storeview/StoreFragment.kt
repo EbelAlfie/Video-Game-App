@@ -10,15 +10,18 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.videogameapp.Utils
 import com.example.videogameapp.databinding.FragmentStoreBinding
+import com.example.videogameapp.domain.entity.gameentity.QueryGameItemEntity
+import com.example.videogameapp.presentation.view.MainActivity
 import com.example.videogameapp.presentation.viewmodel.StoreViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
-class StoreFragment(private val viewModel: StoreViewModel) : Fragment(), StoreAdapter.SetOnCLick {
+class StoreFragment : Fragment(), StoreAdapter.SetOnCLick {
     private lateinit var binding: FragmentStoreBinding
     private lateinit var storeAdapter: StoreAdapter
     private lateinit var loadingDialog: AlertDialog
+    private lateinit var viewModel: StoreViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,9 +34,25 @@ class StoreFragment(private val viewModel: StoreViewModel) : Fragment(), StoreAd
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        getViewModel()
         setViews()
         setObserver()
-        getData()
+        checkNetworkState(fun(){ getData() })
+    }
+
+    private fun checkNetworkState(loadData: () -> Unit) {
+        if (Utils.checkNetwork(requireContext())){ loadData() }
+        else {
+            Utils.setUpAlertDialog("No Network", "You appears to be offline", requireContext()).apply{
+                setPositiveButton("Retry"
+                ) { dialogInterface, _ -> dialogInterface.dismiss()
+                    checkNetworkState(loadData) }
+            }.create().show()
+        }
+    }
+
+    private fun getViewModel() {
+        viewModel = (requireActivity() as MainActivity).fetchStoreViewModel()
     }
 
     private fun setObserver() {
@@ -46,6 +65,16 @@ class StoreFragment(private val viewModel: StoreViewModel) : Fragment(), StoreAd
         viewModel.setStatusLoading(true)
         lifecycleScope.launch {
             viewModel.getAllStore(this).collectLatest {
+                binding.apply {
+                    if (it.isNotEmpty()) {
+                        tvNoData.visibility = View.GONE
+                        rvStoreList.visibility = View.VISIBLE
+                    }else {
+                        tvNoData.visibility = View.VISIBLE
+                        rvStoreList.visibility = View.GONE
+                    }
+                }
+
                 viewModel.setStatusLoading(false)
                 storeAdapter.updateList(it)
             }

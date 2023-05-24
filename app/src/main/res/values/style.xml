@@ -47,6 +47,15 @@
     </style>
 
     <style name="spinner_style">
-        <item name="android:background">@drawable/spinner_mode</item>
+        <item name="android:overlapAnchor">false</item>
+        <item name="android:background">@drawable/spinner_design</item>
+        <item name="android:layout_marginTop">@dimen/view_margin</item>
+        <item name="android:layout_marginBottom">@dimen/view_margin</item>
+        <item name="android:dropDownWidth">match_parent</item>
+    </style>
+
+    <style name="no_data_style" parent="tv_header_style">
+        <item name="android:textColor">@color/gray</item>
+        <item name="android:textAlignment">center</item>
     </style>
 </resources>

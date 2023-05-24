@@ -11,13 +11,16 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.videogameapp.Utils
 import com.example.videogameapp.databinding.FragmentSubGameItemBinding
 import com.example.videogameapp.domain.entity.gameentity.QueryGameItemEntity
-import com.example.videogameapp.presentation.viewmodel.HomeViewModel
+import com.example.videogameapp.presentation.view.storeview.StoreDetailActivity
+import com.example.videogameapp.presentation.viewmodel.GameDetailViewModel
+import com.example.videogameapp.presentation.viewmodel.StoreViewModel
 import kotlinx.coroutines.launch
 
-class SubGameFragment (private val viewModel: HomeViewModel, private val queryGameItemEntity: QueryGameItemEntity): Fragment(), GamePagingAdapter.SetOnItemClicked {
+class SubGameFragment (private val queryGameItemEntity: QueryGameItemEntity): Fragment(), GamePagingAdapter.SetOnItemClicked {
     private lateinit var binding: FragmentSubGameItemBinding
     private lateinit var gameAdapter: GamePagingAdapter
     private lateinit var loadingDialog: AlertDialog
+    private lateinit var viewModel: StoreViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,20 +34,34 @@ class SubGameFragment (private val viewModel: HomeViewModel, private val queryGa
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         loadingDialog = Utils.createLoading(requireContext()).create()
+        getViewModel()
         queryGameItemEntity.apply {
-            viewModel.initQueryGameItemParam(QueryGameItemEntity(search, dates, platform, store, genres, ordering, page ?: 10))
+            viewModel.initQueryGameItemParam(
+                search = search,
+                ordering = ordering,
+                dates = dates,
+                platform = platform,
+                store = store,
+                genres = genres,
+                pageSize = Utils.MODE_SUB_PAGE
+            )
         }
         setRv()
         setObserver()
     }
 
+    private fun getViewModel() {
+        viewModel = (requireActivity() as StoreDetailActivity).provideViewModel()
+    }
+
     private fun setObserver() {
         lifecycleScope.launch {
-            viewModel.getListGameData().observe(requireActivity()) {
+            viewModel.getListGameData(this, requireActivity().resources).observe(requireActivity()) {
+                viewModel.setStatusLoading(false)
                 gameAdapter.submitData(lifecycle, it)
             }
+            viewModel.getStatusLoading().observe(requireActivity()){ if (it) loadingDialog.show() else loadingDialog.dismiss() }
         }
-        viewModel.getStatusLoading().observe(requireActivity()){ if (it) loadingDialog.show() else loadingDialog.dismiss() }
     }
 
     private fun setRv() {

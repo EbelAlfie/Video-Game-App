@@ -1,5 +1,6 @@
 package com.example.videogameapp.domain
 
+import android.content.res.Resources
 import androidx.lifecycle.LiveDataScope
 import androidx.paging.PagingData
 import com.example.videogameapp.domain.entity.gameentity.*
@@ -11,8 +12,8 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GameUseCaseInst @Inject constructor(private val repository: GameRepository): GameUseCase {
-    override fun getGameList(queryGameItemEntity: QueryGameItemEntity): Flow<PagingData<GameItemEntity>> {
-        return repository.getGameList(queryGameItemEntity)
+    override fun getGameList(scope: CoroutineScope, resources: Resources, queryGameItemEntity: QueryGameItemEntity): Flow<PagingData<GameItemEntity>> {
+        return repository.getGameList(scope, resources, queryGameItemEntity)
     }
 
     override fun getGameDetail(id: Long): Flow<GameDetailedEntity> {
@@ -21,9 +22,8 @@ class GameUseCaseInst @Inject constructor(private val repository: GameRepository
 
     override fun getGameDetailScreenshots(
         id: Long,
-        scope: CoroutineScope
-    ): Flow<PagingData<ScreenShotEntity>> {
-        return repository.getGameDetailScreenshots(id, scope)
+    ): Flow<List<ScreenShotEntity>> {
+        return repository.getGameDetailScreenshots(id)
     }
 
     override fun getGameStoreLink(id: Long): Flow<List<StoreEntity>> {

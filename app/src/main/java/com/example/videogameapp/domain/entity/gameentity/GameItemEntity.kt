@@ -8,6 +8,8 @@ import com.example.videogameapp.data.modeldata.gamedatamodel.GenresModel
 import com.example.videogameapp.domain.entity.storeentity.GameEntity
 import kotlinx.parcelize.Parcelize
 import okhttp3.internal.platform.Platform
+import java.text.SimpleDateFormat
+import java.util.*
 
 data class GameItemEntity(
     val id: Long,
@@ -57,6 +59,10 @@ data class GameItemEntity(
                 platforms = gameItemEntity.platforms
             )
         }
+
+        fun getNullableString(string: String): String {
+            return string.ifBlank { "-" }
+        }
     }
     fun getMetacritics(): String {
         return metaCritic?.toString() ?: ""
@@ -81,6 +87,10 @@ data class GameItemEntity(
     }
 
     fun getReleasedDate(): String {
-        return if (!tbaStatus) dateReleased else "TBA"
+        if (tbaStatus) return "TBA"
+        return try {
+            val formater = SimpleDateFormat("yyyy-mm-dd", Locale.CANADA).parse(dateReleased)
+            if (formater != null) SimpleDateFormat("dd MMM yyyy", Locale.CANADA).format(formater) else "-"
+        }catch (e: Exception) { "-" }
     }
 }

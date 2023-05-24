@@ -1,15 +1,16 @@
 package com.example.videogameapp.presentation.viewmodel
 
-import android.content.Intent
+import android.content.Context
+import android.content.res.Resources
 import androidx.lifecycle.*
 import androidx.paging.PagingData
 import com.example.videogameapp.Utils
-import com.example.videogameapp.domain.entity.gameentity.*
+import com.example.videogameapp.domain.entity.gameentity.GameItemEntity
+import com.example.videogameapp.domain.entity.gameentity.QueryGameItemEntity
 import com.example.videogameapp.domain.entity.queryentity.QueryEntity
 import com.example.videogameapp.domain.interfaces.GameUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,104 +22,33 @@ class HomeViewModel @Inject constructor(private val useCase: GameUseCase): ViewM
     val getPlatformSpinnerData: LiveData<List<QueryEntity>> = _platformSpinnerData
     val getGenresSpinnerData: LiveData<List<QueryEntity>> = _genresSpinnerData
 
-    private val _detailedGameData = MutableLiveData<GameDetailedEntity>()
-    fun getDetailedGameData(): LiveData<GameDetailedEntity> = _detailedGameData
+/*
+    fun getQueryLiveData(): LiveData<QueryGameItemEntity> = _queryParamModel
+*/
+    fun getListGameData(scope: CoroutineScope, resources: Resources): LiveData<PagingData<GameItemEntity>> = _queryParamModel.switchMap { getGameList(scope, resources, it) }
 
-    fun getListGameData(): LiveData<PagingData<GameItemEntity>> = _queryParamModel.switchMap { getGameList(it) }
-
-    private val _storeLiveData = MutableLiveData<List<StoreEntity>>()
-    fun getStoreLiveData() : LiveData<List<StoreEntity>> = _storeLiveData
-
-    private val _statusLoading = MutableLiveData<Boolean>(false)
+    private val _statusLoading = MutableLiveData<Boolean>()
     fun getStatusLoading(): LiveData<Boolean> = _statusLoading
-    fun setStatusLoading(loading: Boolean) = run { _statusLoading.value = loading }
-
-    private val _isInLibrary = MutableLiveData<Boolean>()
+    fun setStatusLoading(loading: Boolean) { _statusLoading.value = loading }
 
     private val _queryParamModel = MutableLiveData<QueryGameItemEntity>()
 
-    init {
-        getSpinnerGenres()
-        getSpinnerPlatform()
-    }
-
-    fun getGameDetail(id: Long) {
-        viewModelScope.launch {
-            useCase.getGameDetail(id).collect {
-                _detailedGameData.postValue(it)
-            }
-        }
-    }
-
-    fun initQueryGameItemParam(queryGameItemEntity: QueryGameItemEntity) {
+    fun initQueryGameItemParam(search: String? = null, ordering: String? = null, dates: String? = null, platform: String? = null, store: String? = null, genres: String? = null, pageSize: Int? = null) {
         setStatusLoading(true)
-        _queryParamModel.value = queryGameItemEntity
-    /*QueryGameItemEntity(
+        _queryParamModel.value = QueryGameItemEntity(
             search = search,
             dates = dates,
+            ordering = ordering,
             platform = platform,
             store = store,
-            ordering = ordering,
-            page = page
-        ) search : String?, dates: String?, platform: String?, store: String?, ordering: String?, page: Int*/
+            genres = genres,
+            pageSize = pageSize,
+        )
     }
-
-    private fun getGameList(queryGameItemEntity: QueryGameItemEntity): LiveData<PagingData<GameItemEntity>> {
-        return useCase.getGameList(queryGameItemEntity).asLiveData()
+    private fun getGameList(scope: CoroutineScope, resources: Resources, queryGameItemEntity: QueryGameItemEntity): LiveData<PagingData<GameItemEntity>> {
+        return useCase.getGameList(scope, resources, queryGameItemEntity).asLiveData()
     }
-
-    fun getGameStoreLink(id: Long) {
-        CoroutineScope(IO).launch{
-            useCase.getGameStoreLink(id).collectLatest {
-                _storeLiveData.postValue(it)
-            }
-        }
-    }
-
-    fun getGameDetailedScreenshoot(scope: CoroutineScope, id: Long): Flow<PagingData<ScreenShotEntity>> {
-        return useCase.getGameDetailScreenshots(id, scope)
-    }
-
-
-    private fun deleteGameItem(gameData: GameItemEntity) {
-        CoroutineScope(IO).launch {
-            useCase.deleteGameItem(gameData).collectLatest {
-                _isInLibrary.postValue(it == -1)
-            }
-        }
-    }
-    private fun insertGameItem(gameItemEntity: GameItemEntity) {
-        CoroutineScope(IO).launch {
-            useCase.insertToLibrary(gameItemEntity).collectLatest {
-                _isInLibrary.postValue(it != -1L)
-            }
-        }
-    }
-
-    suspend fun getLibraryData(): Flow<List<GameItemEntity>> {
-        return useCase.getAllGameLibrary()
-    }
-
-    fun getIntent(intent: Intent): Long {
-        return intent.getLongExtra(Utils.ID_KEY, -1L)
-    }
-
-    suspend fun getGameDlc(scope: CoroutineScope, id: Long): Flow<PagingData<GameItemEntity>> {
-        return useCase.getDlcData(scope, id)
-    }
-
-    fun manageLibrary(gameData: GameItemEntity) {
-        if (!gameData.isInLibrary) insertGameItem(gameData)
-        else deleteGameItem(gameData)
-    }
-
-    fun updateLiveData(): LiveData<Boolean> = _isInLibrary
-
-    suspend fun getTrailers(id: Long): Flow<List<TrailerEntity>> {
-        return useCase.getTrailers(id)
-    }
-
-    private fun getSpinnerPlatform() {
+    fun getSpinnerPlatform() {
         CoroutineScope(IO).launch {
             useCase.getSpinnerPlatform().collectLatest {
                 _platformSpinnerData.postValue(it)
@@ -126,10 +56,25 @@ class HomeViewModel @Inject constructor(private val useCase: GameUseCase): ViewM
         }
     }
 
-    private fun getSpinnerGenres() {
+    fun getSpinnerGenres() {
         CoroutineScope(IO).launch {
             useCase.getSpinnerGenres().collectLatest {
                 _genresSpinnerData.postValue(it)
+            }
+        }
+    }
+
+
+    fun checkNetworkState(context: Context, queryParam: QueryGameItemEntity, loadData: (QueryGameItemEntity) -> Unit) {
+        if (Utils.checkNetwork(context)){ loadData(queryParam) }
+        else {
+            Utils.setUpAlertDialog("No Network", "You appears to be offline", context).apply {
+                setPositiveButton(
+                    "Retry"
+                ) { dialogInterface, _ ->
+                    dialogInterface.dismiss()
+                    checkNetworkState(context, queryParam, fun(queryParam) { loadData(queryParam) })
+                }.create().show()
             }
         }
     }

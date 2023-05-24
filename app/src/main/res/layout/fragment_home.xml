@@ -17,41 +17,34 @@
 
     <Spinner
         android:id="@+id/sp_order_by"
-        android:layout_width="120dp"
+        android:layout_width="110dp"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/view_margin"
         style="@style/spinner_style"
-        android:spinnerMode="dropdown"
         app:layout_constraintEnd_toStartOf="@+id/sp_platform"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/search_view"
         tools:text="test" />
 
     <Spinner
         android:id="@+id/sp_platform"
-        android:layout_width="120dp"
+        android:layout_width="110dp"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/view_margin"
         style="@style/spinner_style"
-        android:spinnerMode="dropdown"
         app:layout_constraintEnd_toStartOf="@+id/sp_genre"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/sp_order_by"
         app:layout_constraintTop_toBottomOf="@id/search_view" />
 
     <Spinner
         android:id="@+id/sp_genre"
-        android:layout_width="120dp"
+        android:layout_width="110dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/search_view"
-        android:layout_margin="@dimen/view_margin"
         style="@style/spinner_style"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/sp_platform"
         app:layout_constraintTop_toBottomOf="@id/search_view"
-        android:spinnerMode="dropdown"
         tools:text="genre" />
 
     <TextView
@@ -67,8 +60,20 @@
         android:id="@+id/rv_game_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header" />
+
+    <TextView
+        android:id="@+id/tv_no_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/no_data_available"
+        style="@style/no_data_style"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,9 +1,9 @@
 package com.example.videogameapp.presentation.viewmodel
 
+import android.content.Context
 import android.content.Intent
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import android.content.res.Resources
+import androidx.lifecycle.*
 import androidx.paging.PagingData
 import com.example.videogameapp.Utils
 import com.example.videogameapp.domain.entity.gameentity.GameItemEntity
@@ -23,17 +23,33 @@ class StoreViewModel @Inject constructor(private val storeUseCase: StoreUseCase,
     private val _storeDetailData = MutableLiveData<StoreDetailEntity>()
     fun getStoreDetailData() : LiveData<StoreDetailEntity> = _storeDetailData
 
-    private val _statusLoading = MutableLiveData<Boolean>()
+    fun getListGameData(scope: CoroutineScope, resources: Resources): LiveData<PagingData<GameItemEntity>> = _queryParamModel.switchMap { getGameList(scope, resources, it) }
+    private val _queryParamModel = MutableLiveData<QueryGameItemEntity>()
+
+    private val _statusLoading = MutableLiveData(false)
     fun getStatusLoading(): LiveData<Boolean> = _statusLoading
-    fun setStatusLoading(loading: Boolean) = run { _statusLoading.value = loading }
+    fun setStatusLoading(loading: Boolean) { _statusLoading.value = loading }
+
+    private fun getGameList(scope: CoroutineScope, resources: Resources, queryGameItemEntity: QueryGameItemEntity): LiveData<PagingData<GameItemEntity>> {
+        return gameUseCase.getGameList(scope, resources, queryGameItemEntity).asLiveData()
+    }
+
+    fun initQueryGameItemParam(search: String? = null, ordering: String? = null, dates: String? = null, platform: String? = null, store: String? = null, genres: String? = null, pageSize: Int? = null) {
+        setStatusLoading(true)
+        _queryParamModel.value = QueryGameItemEntity(
+            search = search,
+            dates = dates,
+            ordering = ordering,
+            platform = platform,
+            store = store,
+            genres = genres,
+            pageSize = pageSize
+        )
+    }
 
     fun getAllStore(scope: CoroutineScope): Flow<List<StoreItemEntity>> {
         return storeUseCase.getAllStore(scope)
     }
-
-    /*fun getAllGameByStore(queryGameItemEntity: QueryGameItemEntity): Flow<PagingData<GameItemEntity>> {
-        return gameUseCase.getGameList(queryGameItemEntity)
-    }*/
 
     fun getStoreId(intent: Intent): Long {
         return intent.getLongExtra(Utils.ID_KEY, -1L)
@@ -43,6 +59,20 @@ class StoreViewModel @Inject constructor(private val storeUseCase: StoreUseCase,
         CoroutineScope(Dispatchers.IO).launch {
             storeUseCase.getDetailedStoreData(id).collectLatest {
                 _storeDetailData.postValue(it)
+            }
+        }
+    }
+
+    fun checkNetworkState(context: Context, loadData: () -> Unit) {
+        if (Utils.checkNetwork(context)){ loadData() }
+        else {
+            Utils.setUpAlertDialog("No Network", "You appears to be offline", context).apply {
+                setPositiveButton(
+                    "Retry"
+                ) { dialogInterface, _ ->
+                    dialogInterface.dismiss()
+                    checkNetworkState(context, fun() { loadData() })
+                }.create().show()
             }
         }
     }

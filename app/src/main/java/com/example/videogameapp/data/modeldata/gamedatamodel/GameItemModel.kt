@@ -4,6 +4,10 @@ import com.example.videogameapp.domain.entity.gameentity.GameItemEntity
 import com.google.gson.annotations.SerializedName
 
 data class GameItemResponse (
+    @SerializedName("next")
+    val next: String?,
+    @SerializedName("prev")
+    val prev: String?,
     @SerializedName("results")
     val results: List<GameItemModel>
     )

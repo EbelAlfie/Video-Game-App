@@ -7,5 +7,5 @@ data class QueryGameItemModel (
     val store: String?,
     val genres: String?,
     val ordering: String?,
-    val page: Int?
+    val pageSize: Int?,
     )
