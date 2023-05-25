@@ -1,6 +1,5 @@
 package com.example.videogameapp.domain.entity.gameentity
 
-import com.example.videogameapp.data.modeldata.gamedatamodel.VideoData
 import com.google.gson.annotations.SerializedName
 
 data class DeveloperDetailEntity (

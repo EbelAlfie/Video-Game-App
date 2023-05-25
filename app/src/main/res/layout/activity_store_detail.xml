@@ -14,12 +14,19 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+            <include
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                layout="@layout/custom_detail_toolbar"/>
+
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/iv_store_poster"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/baseline_broken_image_24"
+                android:layout_below="@id/toolbar"
                 style="@style/shapeable_image_view_style"
                 tools:ignore="contentDescription"/>
 
@@ -53,6 +60,15 @@
                 android:layout_height="wrap_content"
                 android:text="@string/popular_games"
                 style="@style/tv_header_style"
+                android:layout_below="@id/tv_store_desc"/>
+
+            <TextView
+                android:id="@+id/tv_view_more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="view more"
+                android:textColor="@color/white"
+                android:layout_alignParentEnd="true"
                 android:layout_below="@id/tv_store_desc"/>
 
             <FrameLayout

@@ -2,6 +2,7 @@ package com.example.videogameapp
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -20,7 +21,7 @@ object Utils {
     const val OBJ_KEY = "Object"
 
     const val MODE_SUB_PAGE = 5
-    const val MODE_ALL_PAGE = 10
+    const val MODE_ALL_PAGE = 4
 
     /*const val DELAY_TIME: Long = 2500
     const val PERIODE_TIME: Long = 8000*/
@@ -31,12 +32,6 @@ object Utils {
             setView(View.inflate(context, R.layout.loading_layout, null))
         }
     }
-
-//    fun setUpSearchDialog(context: Context): AlertDialog.Builder {
-//        return AlertDialog.Builder(context).apply {
-//            setView(SearchDialogBinding.inflate(LayoutInflater.from(context)).root)
-//        }
-//    }
 
     fun createLoadingImage(context: Context): CircularProgressDrawable {
         val loading = CircularProgressDrawable(context)

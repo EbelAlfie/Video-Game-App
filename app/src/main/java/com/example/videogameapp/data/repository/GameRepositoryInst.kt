@@ -1,8 +1,8 @@
 package com.example.videogameapp.data.repository
 
+import android.content.Context
 import android.content.res.Resources
 import android.util.Log
-import androidx.lifecycle.LiveDataScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -12,9 +12,9 @@ import com.example.videogameapp.data.modeldata.databasemodel.GameItemDbModel
 import com.example.videogameapp.data.modeldata.gamedatamodel.GameDetailedModel
 import com.example.videogameapp.data.modeldata.gamedatamodel.GameStoreModel
 import com.example.videogameapp.data.modeldata.gamedatamodel.ScreenShotModel
-import com.example.videogameapp.data.modeldata.gamedatamodel.TrailerModel
 import com.example.videogameapp.data.modeldata.querymodel.QueryDataModel
 import com.example.videogameapp.data.onlineservices.GameApiService
+import com.example.videogameapp.data.onlineservices.ServiceUtils
 import com.example.videogameapp.data.onlineservices.ServiceUtils.ORDER_POPULAR
 import com.example.videogameapp.data.onlineservices.ServiceUtils.SPINNER_PAGE
 import com.example.videogameapp.data.onlineservices.ServiceUtils.SPINNER_SIZE
@@ -32,10 +32,10 @@ class GameRepositoryInst @Inject constructor(private val gameApiService: GameApi
     GameRepository {
     override fun getGameList(scope: CoroutineScope, resources: Resources, queryGameItemEntity: QueryGameItemEntity): Flow<PagingData<GameItemEntity>> {
         return Pager(config = PagingConfig(
-            pageSize = 10
+            pageSize = 4
         )) {
             GamePagingDataSource(libraryDbObj, gameApiService, QueryGameItemEntity.transform(resources, queryGameItemEntity))
-        }.flow.cachedIn(scope)
+        }.flow
     }
 
     override fun getGameDetail(id: Long): Flow<GameDetailedEntity> {
@@ -90,15 +90,17 @@ class GameRepositoryInst @Inject constructor(private val gameApiService: GameApi
         }.flowOn(IO)
     }
 
-    override suspend fun getAllGameLibrary(): Flow<List<GameItemEntity>> {
+    override suspend fun getAllGameLibrary(context: Context): Flow<List<GameItemEntity>> {
         return flow{
             try {
                 val data = GameItemDbModel.convertList(libraryDbObj.gameItemDao().getAllGameLibrary())
-                val updatedData = data.map {
+
+                val updatedData = if (ServiceUtils.isNetworkAvailable(context)) { data.map {
                     val fromNet = gameApiService.getGameDetail(it.id)
                     fromNet.isInLibrary = true
                     GameDetailedModel.convertToGameItem(fromNet)
                 }
+                }else data
                 emit(updatedData)
             }catch (e: Exception) {
                 Log.d("TAG", e.message.toString())
@@ -128,22 +130,11 @@ class GameRepositoryInst @Inject constructor(private val gameApiService: GameApi
         }.flow.cachedIn(scope)
     }
 
-    override suspend fun getTrailers(id: Long): Flow<List<TrailerEntity>> {
-        return flow {
-            try{
-                val response = gameApiService.getTrailers(id)
-                emit(TrailerModel.convert(response.results))
-            }catch (e: Exception) {
-                emit(listOf())
-            }
-        }
-    }
-
     override suspend fun getSpinnerPlatform(): Flow<List<QueryEntity>> {
         return flow {
             try {
                 val response = gameApiService.getSpinnerPlatform(ORDER_POPULAR, SPINNER_PAGE, SPINNER_SIZE)
-                emit(QueryDataModel.convertList(response.result))
+                emit(QueryDataModel.convertList(response.result, ServiceUtils.PLATFORMS))
             }catch (e: Exception) {
                 emit(listOf())
             }
@@ -154,7 +145,7 @@ class GameRepositoryInst @Inject constructor(private val gameApiService: GameApi
         return flow {
             try {
                 val response = gameApiService.getSpinnerGenres(ORDER_POPULAR, 1, 20)
-                emit(QueryDataModel.convertList(response.result))
+                emit(QueryDataModel.convertList(response.result, ServiceUtils.GENRES))
             }catch (e: Exception) {
                 emit(listOf())
             }

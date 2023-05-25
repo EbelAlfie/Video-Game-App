@@ -66,14 +66,24 @@ class StoreViewModel @Inject constructor(private val storeUseCase: StoreUseCase,
     fun checkNetworkState(context: Context, loadData: () -> Unit) {
         if (Utils.checkNetwork(context)){ loadData() }
         else {
-            Utils.setUpAlertDialog("No Network", "You appears to be offline", context).apply {
+            createErrorDialog("No Network", "You appears to be offline", context, fun() { loadData() })
+            /*Utils.setUpAlertDialog("No Network", "You appears to be offline", context).apply {
                 setPositiveButton(
                     "Retry"
                 ) { dialogInterface, _ ->
                     dialogInterface.dismiss()
                     checkNetworkState(context, fun() { loadData() })
                 }.create().show()
-            }
+            }*/
         }
+    }
+
+    fun createErrorDialog(title: String, message: String, context: Context, execute: () -> Unit) {
+        Utils.setUpAlertDialog(title, message, context).apply {
+            setPositiveButton("Retry") { dialog, _ ->
+                dialog.dismiss()
+                checkNetworkState(context, fun() { execute() })
+            }
+        }.show()
     }
 }

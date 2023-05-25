@@ -1,5 +1,6 @@
 package com.example.videogameapp.domain.interfaces
 
+import android.content.Context
 import android.content.res.Resources
 import androidx.lifecycle.LiveDataScope
 import androidx.paging.PagingData
@@ -19,10 +20,9 @@ interface GameUseCase {
 
     suspend fun insertToLibrary(gameEntity: GameItemEntity): Flow<Long>
 
-    suspend fun getAllGameLibrary(): Flow<List<GameItemEntity>>
+    suspend fun getAllGameLibrary(context: Context): Flow<List<GameItemEntity>>
     suspend fun deleteGameItem(gameData: GameItemEntity): Flow<Int>
     suspend fun getDlcData(scope: CoroutineScope, id: Long): Flow<PagingData<GameItemEntity>>
-    suspend fun getTrailers(id: Long): Flow<List<TrailerEntity>>
     suspend fun getSpinnerPlatform(): Flow<List<QueryEntity>>
 
     suspend fun getSpinnerGenres(): Flow<List<QueryEntity>>

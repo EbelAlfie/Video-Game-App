@@ -12,7 +12,6 @@ import com.example.videogameapp.Utils
 import com.example.videogameapp.databinding.FragmentSubGameItemBinding
 import com.example.videogameapp.domain.entity.gameentity.QueryGameItemEntity
 import com.example.videogameapp.presentation.view.storeview.StoreDetailActivity
-import com.example.videogameapp.presentation.viewmodel.GameDetailViewModel
 import com.example.videogameapp.presentation.viewmodel.StoreViewModel
 import kotlinx.coroutines.launch
 
@@ -46,7 +45,7 @@ class SubGameFragment (private val queryGameItemEntity: QueryGameItemEntity): Fr
                 pageSize = Utils.MODE_SUB_PAGE
             )
         }
-        setRv()
+        setView()
         setObserver()
     }
 
@@ -64,7 +63,7 @@ class SubGameFragment (private val queryGameItemEntity: QueryGameItemEntity): Fr
         }
     }
 
-    private fun setRv() {
+    private fun setView() {
         binding.apply {
             rvSubGameList.layoutManager = GridLayoutManager(requireContext(), 1, GridLayoutManager.HORIZONTAL, false)
             gameAdapter = GamePagingAdapter(this@SubGameFragment)

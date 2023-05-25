@@ -36,7 +36,6 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
     private lateinit var binding: ActivityGameDetailBinding
     private lateinit var gameStoreLinkAdapter: GameStoreLinkAdapter
     private lateinit var screenShotsAdapter: GameScreenShotAdapter
-    private lateinit var videoAdapter: TrailerAdapter
     private lateinit var dlcAdapter: DlcPagingAdapter
     private lateinit var loadingDialog: AlertDialog
 
@@ -51,18 +50,27 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
         binding = ActivityGameDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        gameDetailViewModel.getId(intent)
+        if (gameDetailViewModel.gameId == -1L) return
         setRecyclerViews()
         setObserver()
-        val id = gameDetailViewModel.getIntent(intent)
-        if (id == -1L) return
-        gameDetailViewModel.checkNetworkState(this, id, fun(id) { reqItem(id) })
+        setToolbar()
+        gameDetailViewModel.checkNetworkState(this, gameDetailViewModel.gameId, fun(id) { reqItem(id) })
+    }
+
+    private fun setToolbar() {
+        binding.toolbar.btnBack.setOnClickListener {
+            finish()
+        }
+        binding.toolbar.btnRefresh.setOnClickListener {
+            gameDetailViewModel.checkNetworkState(this, gameDetailViewModel.gameId, fun(id) { reqItem(id) })
+        }
     }
 
     private fun setRecyclerViews() {
         setStoreLinkRv()
         setDlcRv()
         setScreenShotSlider()
-        setVideoSlider()
     }
 
     private fun setStoreLinkRv() {
@@ -79,17 +87,6 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
             rvListDlc.layoutManager = LinearLayoutManager(this@GameDetailActivity)
             dlcAdapter = DlcPagingAdapter()
             rvListDlc.adapter = dlcAdapter
-        }
-    }
-    private fun setVideoSlider() {
-        binding.apply {
-            videoAdapter = TrailerAdapter(mutableListOf())
-            vpVideoPreviewSlider.apply{
-                offscreenPageLimit = 5
-                (getChildAt(0) as RecyclerView).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
-                setTransformation(this)
-                adapter = videoAdapter
-            }
         }
     }
 
@@ -118,17 +115,8 @@ class GameDetailActivity : AppCompatActivity(), GameStoreLinkAdapter.SetOnItemCl
             setScreenshootObserver(gameData.id)
             setStoreObserver(gameData)
             setDlcObserver(gameData.id)
-            setVideoObserver(gameData.id)
             setView(gameData)
             gameDetailViewModel.setStatusLoading(false)
-        }
-    }
-
-    private fun setVideoObserver(id: Long) {
-        lifecycleScope.launch {
-            gameDetailViewModel.getTrailers(id).collectLatest {
-                videoAdapter.submitData(it)
-            }
         }
     }
 

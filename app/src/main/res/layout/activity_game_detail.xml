@@ -13,6 +13,12 @@
         android:clipChildren="false"
         android:clipToPadding="false"
         android:padding="@dimen/detail_padding" >
+        <include
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            layout="@layout/custom_detail_toolbar"/>
         <ImageView
             android:id="@+id/iv_game_image"
             android:layout_width="match_parent"
@@ -21,7 +27,7 @@
             tools:src="@drawable/baseline_broken_image_24"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
             tools:ignore="ContentDescription"/>
         <TextView
             android:id="@+id/tv_game_title"
@@ -202,26 +208,7 @@
             android:clipToPadding="false"
             android:clipChildren="false"
             app:layout_constraintTop_toBottomOf="@id/tv_screenshot_title"
-            app:layout_constraintBottom_toTopOf="@id/tv_trailer_title"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-        <TextView
-            android:id="@+id/tv_trailer_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/trailer_title"
-            style="@style/tv_header_style"
-            app:layout_constraintTop_toBottomOf="@id/vp_image_slider"
-            app:layout_constraintStart_toStartOf="parent"/>
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/vp_video_preview_slider"
-            android:layout_width="300dp"
-            android:layout_height="200dp"
-            android:clipToPadding="false"
-            android:clipChildren="false"
-            app:layout_constraintTop_toBottomOf="@id/tv_trailer_title"
+            app:layout_constraintBottom_toTopOf="@id/tv_store_title"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -232,7 +219,7 @@
             android:layout_height="wrap_content"
             android:text="@string/store_title"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/vp_video_preview_slider"/>
+            app:layout_constraintTop_toBottomOf="@id/vp_image_slider"/>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_list_store"
             android:layout_width="match_parent"

@@ -56,9 +56,13 @@ class LibraryFragment : Fragment(), LibraryAdapter.SetOnItemClicked {
     }
     private fun getData() {
         lifecycleScope.launch {
-            viewModel.getLibraryData().collectLatest {
-                viewModel.setStatusLoading(false)
+            viewModel.getLibraryData(requireContext()).collectLatest {
+                binding.apply {
+                    tvNoData.visibility = if (it.isEmpty()) View.VISIBLE else View.INVISIBLE
+                    rvGameList.visibility = if (it.isEmpty()) View.INVISIBLE else View.VISIBLE
+                }
                 libraryAdapter.updateList(it.toMutableList())
+                viewModel.setStatusLoading(false)
             }
         }
     }

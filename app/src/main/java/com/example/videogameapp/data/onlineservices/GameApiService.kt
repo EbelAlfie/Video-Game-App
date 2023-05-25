@@ -31,10 +31,6 @@ interface GameApiService {
                                @Query("key") apiKey: String = API_KEY
     ): ScreenshotDetailResponseModel
 
-    @GET("{id}/movies")
-    suspend fun getTrailers(@Path("id") id: Long,
-                            @Query("key") apiKey: String = API_KEY) : TrailerResponseModel
-
     @GET("games/{id}/stores")
     suspend fun getGameStoreLink(@Path("id") id: Long,
                                  @Query("key") apiKey: String = API_KEY): GameStoreResponse

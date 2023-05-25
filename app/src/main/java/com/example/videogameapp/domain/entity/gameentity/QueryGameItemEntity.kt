@@ -34,13 +34,16 @@ data class QueryGameItemEntity (
             val arrayOfOrder = resources.getStringArray(R.array.order_by)
             return when (ordering) {
                 arrayOfOrder[0] -> { "relevance" }
-                arrayOfOrder[1] -> { "rating" }
-                arrayOfOrder[2] -> { "added"}
-                arrayOfOrder[3] -> { "name" }
-                arrayOfOrder[4] -> { "released" }
-                arrayOfOrder[5] -> { "metacritic" }
+                arrayOfOrder[1] -> { "-rating" }
+                arrayOfOrder[2] -> { "-added"}
+                arrayOfOrder[3] -> { "-name" }
+                arrayOfOrder[4] -> { "-released" }
+                arrayOfOrder[5] -> { "-metacritic" }
                 else -> null
             }
+        }
+        fun getNullableString(string: String): String {
+            return string.ifBlank { "-" }
         }
     }
 }

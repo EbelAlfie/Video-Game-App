@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.videogameapp.R
 import com.example.videogameapp.Utils
@@ -23,9 +24,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 
-class HomeFragment: Fragment(),
+class HomeFragment(private var queryParam: QueryGameItemEntity = QueryGameItemEntity(null, null, null, null, null, null, pageSize = Utils.MODE_ALL_PAGE)): Fragment(),
     GamePagingAdapter.SetOnItemClicked {
-    private var queryParam: QueryGameItemEntity = QueryGameItemEntity(null, null, null, null, null, null, pageSize = Utils.MODE_ALL_PAGE)
     private lateinit var binding: FragmentHomeBinding
     private lateinit var pagingAdapter: GamePagingAdapter
     private lateinit var loadingDialog: AlertDialog
@@ -50,7 +50,14 @@ class HomeFragment: Fragment(),
         setSpinner()
         setObserver()
         setSpinnerObserver()
-        viewModel.checkNetworkState(requireContext(), queryParam, fun(queryParam) {getData(queryParam)})
+        setToolbar()
+        viewModel.checkNetworkState(requireContext(), queryParam, fun(queryParam) { getData(queryParam)})
+    }
+
+    private fun setToolbar() {
+        (requireActivity() as MainActivity).getToolbar().btnRefresh.setOnClickListener {
+            queryData()
+        }
     }
 
     private fun fetchViewModel() {
@@ -58,22 +65,22 @@ class HomeFragment: Fragment(),
     }
 
     private fun getData(queryParam: QueryGameItemEntity) {
+        viewModel.setStatusLoading(true)
         viewModel.getSpinnerPlatform()
         viewModel.getSpinnerGenres()
         getListData(queryParam)
     }
 
     private fun getListData(queryParam: QueryGameItemEntity) {
-        lifecycleScope.launch {
-            queryParam.apply {
-                viewModel.initQueryGameItemParam(
-                    search = search,
-                    ordering = ordering,
-                    platform = platform,
-                    genres = genres,
-                    pageSize = pageSize
-                )
-            }
+        viewModel.setStatusLoading(true)
+        queryParam.apply {
+            viewModel.initQueryGameItemParam(
+                search = search,
+                ordering = ordering,
+                platform = platform,
+                genres = genres,
+                pageSize = pageSize
+            )
         }
     }
 
@@ -109,11 +116,11 @@ class HomeFragment: Fragment(),
     }
 
     private fun setObserver() {
-        viewModel.getStatusLoading().observe(requireActivity()) {
-            if (it) loadingDialog.show() else loadingDialog.dismiss()
-        }
-        CoroutineScope(IO).launch{
-            viewModel.getListGameData(this, requireActivity().resources).observe(requireActivity()) {
+        lifecycleScope.launch {
+            viewModel.getStatusLoading().observe(viewLifecycleOwner) {
+                if (it) loadingDialog.show() else loadingDialog.dismiss()
+            }
+            viewModel.getListGameData(requireActivity().resources).observe(viewLifecycleOwner) {
                 binding.apply {
                     tvNoData.visibility = if (it != null) View.GONE else View.VISIBLE
                     rvGameList.visibility = if (it != null) View.VISIBLE else View.GONE
@@ -129,6 +136,20 @@ class HomeFragment: Fragment(),
             rvGameList.layoutManager = GridLayoutManager(requireContext(), 2)
             pagingAdapter = GamePagingAdapter(this@HomeFragment)
             rvGameList.adapter = pagingAdapter
+
+            pagingAdapter.addLoadStateListener {
+                when {
+                    it.prepend is LoadState.Error -> {
+                        it.prepend as LoadState.Error
+                    }
+                    it.append is LoadState.Error -> {
+                        it.append as LoadState.Error
+                    }
+                    it.refresh is LoadState.Error -> {
+                        (it.refresh as LoadState.Error).error.toString()
+                    }
+                }
+            }
 
             searchView.setOnQueryTextListener(object: OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {

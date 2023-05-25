@@ -1,5 +1,6 @@
 package com.example.videogameapp.presentation.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -29,8 +30,8 @@ class LibraryViewModel @Inject constructor(private val useCase: GameUseCase): Vi
         }
     }
 
-    suspend fun getLibraryData(): Flow<List<GameItemEntity>> {
-        return useCase.getAllGameLibrary()
+    suspend fun getLibraryData(context: Context): Flow<List<GameItemEntity>> {
+        return useCase.getAllGameLibrary(context)
     }
 
     fun manageLibrary(gameData: GameItemEntity) {

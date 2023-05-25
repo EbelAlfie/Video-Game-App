@@ -37,17 +37,13 @@ class StoreFragment : Fragment(), StoreAdapter.SetOnCLick {
         getViewModel()
         setViews()
         setObserver()
-        checkNetworkState(fun(){ getData() })
+        setToolbar()
+        viewModel.checkNetworkState(requireContext(), fun(){ getData() })
     }
 
-    private fun checkNetworkState(loadData: () -> Unit) {
-        if (Utils.checkNetwork(requireContext())){ loadData() }
-        else {
-            Utils.setUpAlertDialog("No Network", "You appears to be offline", requireContext()).apply{
-                setPositiveButton("Retry"
-                ) { dialogInterface, _ -> dialogInterface.dismiss()
-                    checkNetworkState(loadData) }
-            }.create().show()
+    private fun setToolbar() {
+        (requireActivity() as MainActivity).getToolbar().btnRefresh.setOnClickListener {
+            viewModel.checkNetworkState(requireContext(), fun(){ getData() })
         }
     }
 
@@ -74,7 +70,6 @@ class StoreFragment : Fragment(), StoreAdapter.SetOnCLick {
                         rvStoreList.visibility = View.GONE
                     }
                 }
-
                 viewModel.setStatusLoading(false)
                 storeAdapter.updateList(it)
             }

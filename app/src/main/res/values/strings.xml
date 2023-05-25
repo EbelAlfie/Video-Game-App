@@ -37,7 +37,7 @@
     <string name="meh_rating">meh</string>
 
     <string-array name="order_by">
-        <item>Relevance</item>
+        <item>Order by</item>
         <item>Popularity</item>
         <item>Date added</item>
         <item>Name</item>

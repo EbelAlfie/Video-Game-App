@@ -8,6 +8,7 @@ import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.example.videogameapp.R
 import com.example.videogameapp.RawgApp
 import com.example.videogameapp.databinding.ActivityMainBinding
+import com.example.videogameapp.databinding.CustomMainToolbarBinding
 import com.example.videogameapp.presentation.viewmodel.*
 import javax.inject.Inject
 
@@ -72,5 +73,9 @@ class MainActivity: AppCompatActivity() {
 
     fun fetchLibraryViewModel(): LibraryViewModel {
         return libraryViewModel
+    }
+
+    fun getToolbar(): CustomMainToolbarBinding {
+        return binding.toolbar
     }
 }

@@ -30,6 +30,8 @@ class GameDetailViewModel @Inject constructor(private val useCase: GameUseCase):
 
     private val _isInLibrary = MutableLiveData<Boolean>()
 
+    var gameId: Long = -1
+
     fun getGameDetail(id: Long) {
         viewModelScope.launch {
             useCase.getGameDetail(id).collect {
@@ -82,22 +84,31 @@ class GameDetailViewModel @Inject constructor(private val useCase: GameUseCase):
 
     fun getLibraryStatus(): LiveData<Boolean> = _isInLibrary
 
-    suspend fun getTrailers(id: Long): Flow<List<TrailerEntity>> {
-        return useCase.getTrailers(id)
-    }
-
     fun checkNetworkState(context: Context, id: Long, loadData: (Long) -> Unit) {
         if (Utils.checkNetwork(context)){ loadData(id) }
         else {
-            Utils.setUpAlertDialog("No Network", "You appears to be offline", context).apply {
+            createErrorDialog("No Network", "You appears to be offline", context, id, fun(id) { loadData(id) })
+            /*Utils.setUpAlertDialog("No Network", "You appears to be offline", context).apply {
                 setPositiveButton(
                     "Retry"
                 ) { dialogInterface, _ ->
                     dialogInterface.dismiss()
                     checkNetworkState(context, id, fun(id) { loadData(id) })
                 }.create().show()
-            }
+            }*/
         }
     }
 
+    fun createErrorDialog(title: String, message: String, context: Context, id: Long, loadData: (Long) -> Unit) {
+        Utils.setUpAlertDialog(title, message, context).apply {
+            setPositiveButton("Retry") { dialog, _ ->
+                dialog.dismiss()
+                checkNetworkState(context, id, fun(id) { loadData(id) })
+            }
+        }.show()
+    }
+
+    fun getId(intent: Intent) {
+        gameId = getIntent(intent)
+    }
 }

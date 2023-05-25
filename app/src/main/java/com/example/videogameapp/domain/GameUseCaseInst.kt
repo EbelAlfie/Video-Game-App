@@ -1,5 +1,6 @@
 package com.example.videogameapp.domain
 
+import android.content.Context
 import android.content.res.Resources
 import androidx.lifecycle.LiveDataScope
 import androidx.paging.PagingData
@@ -34,8 +35,8 @@ class GameUseCaseInst @Inject constructor(private val repository: GameRepository
         return repository.insertToLibrary(gameEntity)
     }
 
-    override suspend fun getAllGameLibrary(): Flow<List<GameItemEntity>> {
-        return repository.getAllGameLibrary()
+    override suspend fun getAllGameLibrary(context: Context): Flow<List<GameItemEntity>> {
+        return repository.getAllGameLibrary(context)
     }
 
     override suspend fun deleteGameItem(gameData: GameItemEntity): Flow<Int> {
@@ -45,11 +46,6 @@ class GameUseCaseInst @Inject constructor(private val repository: GameRepository
     override suspend fun getDlcData(scope: CoroutineScope, id: Long): Flow<PagingData<GameItemEntity>> {
         return repository.getDlcData(scope, id)
     }
-
-    override suspend fun getTrailers(id: Long): Flow<List<TrailerEntity>> {
-        return repository.getTrailers(id)
-    }
-
     override suspend fun getSpinnerPlatform(): Flow<List<QueryEntity>> {
         return repository.getSpinnerPlatform()
     }

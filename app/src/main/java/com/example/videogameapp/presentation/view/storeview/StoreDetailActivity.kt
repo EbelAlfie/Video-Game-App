@@ -3,6 +3,7 @@ package com.example.videogameapp.presentation.view.storeview
 import android.app.AlertDialog
 import android.os.Build
 import android.os.Bundle
+import android.widget.FrameLayout
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.videogameapp.R
@@ -13,8 +14,8 @@ import com.example.videogameapp.databinding.ActivityStoreDetailBinding
 import com.example.videogameapp.domain.entity.gameentity.QueryGameItemEntity
 import com.example.videogameapp.domain.entity.storeentity.StoreDetailEntity
 import com.example.videogameapp.domain.entity.storeentity.StoreItemEntity
+import com.example.videogameapp.presentation.view.homeview.HomeFragment
 import com.example.videogameapp.presentation.view.homeview.SubGameFragment
-import com.example.videogameapp.presentation.viewmodel.HomeViewModel
 import com.example.videogameapp.presentation.viewmodel.StoreViewModel
 import com.example.videogameapp.presentation.viewmodel.ViewModelFactory
 import com.squareup.picasso.Picasso
@@ -23,6 +24,7 @@ import javax.inject.Inject
 class StoreDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityStoreDetailBinding
     private lateinit var loadingDialog: AlertDialog
+    private var id: Long = -1
 
     @Inject
     lateinit var vmFactory: ViewModelFactory
@@ -39,15 +41,24 @@ class StoreDetailActivity : AppCompatActivity() {
             intent.getParcelableExtra(Utils.OBJ_KEY, StoreItemEntity::class.java)
         } else { intent.getParcelableExtra(Utils.OBJ_KEY) }
 
-        val id = storeDetailViewModel.getStoreId(intent)
+        id = storeDetailViewModel.getStoreId(intent)
 
         createLoadingProgress()
         setObserver()
         if (id == -1L || storeItemEntity == null) return
+        setToolbar()
         setLoading(true)
         setViews(storeItemEntity)
         getDescrption(id)
         getGameList(id)
+    }
+    private fun setToolbar() {
+        binding.toolbar.btnBack.setOnClickListener {
+            finish()
+        }
+        binding.toolbar.btnRefresh.setOnClickListener {
+            storeDetailViewModel.checkNetworkState(this, fun() { storeDetailViewModel.getDetailedStoreData(id) })
+        }
     }
 
     private fun setLoading(status: Boolean) {
@@ -73,6 +84,12 @@ class StoreDetailActivity : AppCompatActivity() {
                 into(ivStorePoster)
             }
             tvStoreTitle.text = it.name
+            tvViewMore.setOnClickListener {
+                binding.apply {
+                    val fragmentManager = supportFragmentManager
+                    fragmentManager.beginTransaction().replace(binding.flContainer.id, HomeFragment(QueryGameItemEntity(store = id.toString(), pageSize = Utils.MODE_SUB_PAGE))).commit()
+                }
+            }
         }
     }
 
@@ -80,7 +97,6 @@ class StoreDetailActivity : AppCompatActivity() {
         storeDetailViewModel.getStatusLoading().observe(this) {
             if (it) loadingDialog.show() else loadingDialog.dismiss()
         }
-
         storeDetailViewModel.getStoreDetailData().observe(this) {
             setLoading(false)
             if (it == null) return@observe
@@ -89,7 +105,7 @@ class StoreDetailActivity : AppCompatActivity() {
     }
 
     private fun setDesc(it: StoreDetailEntity) {
-        binding.tvStoreDesc.text = it.desc.fromHtml()
+        binding.tvStoreDesc.text = StoreDetailEntity.getNullableString(it.desc.fromHtml().toString())
     }
 
     private fun getDescrption(id: Long) {

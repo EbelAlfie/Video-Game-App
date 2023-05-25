@@ -51,7 +51,7 @@ class GamePagingAdapter(private val listener: SetOnItemClicked): PagingDataAdapt
                 Picasso.get().load(data.backgroundImage).apply {
                     placeholder(Utils.createLoadingImage(context))
                     error(R.drawable.baseline_broken_image_24)
-                    resize(300, 300)
+                    resize(200, 200)
                     into(ivPoster)
                 }
             }else ivPoster.setImageResource(R.drawable.baseline_broken_image_24)
