@@ -19,7 +19,6 @@ import kotlinx.coroutines.launch
 class LibraryFragment : Fragment(), LibraryAdapter.SetOnItemClicked {
     private lateinit var binding: FragmentLibraryBinding
     private lateinit var libraryAdapter: LibraryAdapter
-    private lateinit var dialogConfirmation: AlertDialog
     private lateinit var loadingDialog: AlertDialog
     private lateinit var viewModel: LibraryViewModel
     override fun onCreateView(
@@ -35,25 +34,32 @@ class LibraryFragment : Fragment(), LibraryAdapter.SetOnItemClicked {
         super.onViewCreated(view, savedInstanceState)
         fetchViewModel()
         setRecView()
-        setDialog()
-    }
-
-    private fun fetchViewModel() {
-        viewModel = (requireActivity() as MainActivity).fetchLibraryViewModel()
+        setObserver()
     }
 
     override fun onResume() {
         super.onResume()
         viewModel.setStatusLoading(true)
-        getData()
+        fetchData()
+    }
+    private fun fetchViewModel() {
+        viewModel = (requireActivity() as MainActivity).fetchLibraryViewModel()
     }
 
-    private fun setDialog() {
+    private fun setObserver() {
         loadingDialog = Utils.createLoading(requireContext()).create()
         viewModel.getStatusLoading().observe(requireActivity()) {
             if (it) loadingDialog.show() else loadingDialog.dismiss()
         }
+        viewModel.getLibraryStatus.observe(requireActivity()) {
+            fetchData()
+        }
     }
+
+    private fun fetchData() {
+        viewModel.checkNetworkState(requireContext(), fun() { getData() })
+    }
+
     private fun getData() {
         lifecycleScope.launch {
             viewModel.getLibraryData(requireContext()).collectLatest {
@@ -83,8 +89,5 @@ class LibraryFragment : Fragment(), LibraryAdapter.SetOnItemClicked {
     override fun onLibraryDelete(position: Int) {
         viewModel.setStatusLoading(true)
         viewModel.manageLibrary(libraryAdapter.getGameItem(position))
-        viewModel.getLibraryStatus.observe(requireActivity()) {
-            getData()
-        }
     }
 }

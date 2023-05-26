@@ -4,11 +4,15 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.example.videogameapp.R
 import com.example.videogameapp.RawgApp
 import com.example.videogameapp.databinding.ActivityMainBinding
 import com.example.videogameapp.databinding.CustomMainToolbarBinding
+import com.example.videogameapp.presentation.view.homeview.HomeFragment
+import com.example.videogameapp.presentation.view.libraryview.LibraryFragment
+import com.example.videogameapp.presentation.view.storeview.StoreFragment
 import com.example.videogameapp.presentation.viewmodel.*
 import javax.inject.Inject
 
@@ -26,6 +30,8 @@ class MainActivity: AppCompatActivity() {
 
     private val mainViewModel: MainViewModel by viewModels()
 
+    private val listOfFragments: MutableList<Fragment> = mutableListOf()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         (application as RawgApp).appComponent.injectMain(this)
         installSplashScreen().apply {
@@ -36,12 +42,19 @@ class MainActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        initFragments()
         setBottomNavBar()
+    }
+
+    private fun initFragments() {
+        listOfFragments.add(HomeFragment())
+        listOfFragments.add(StoreFragment())
+        listOfFragments.add(LibraryFragment())
     }
 
     private fun setBottomNavBar() {
         binding.apply {
-            fragmentViewPager.adapter = FragmentAdapter(this@MainActivity)
+            fragmentViewPager.adapter = FragmentAdapter(this@MainActivity, listOfFragments)
 
             viewNavbar.setOnItemSelectedListener{
                 fragmentViewPager.currentItem = when (it.itemId) {

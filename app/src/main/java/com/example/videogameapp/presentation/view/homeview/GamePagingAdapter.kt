@@ -37,7 +37,7 @@ class GamePagingAdapter(private val listener: SetOnItemClicked): PagingDataAdapt
                 oldItem: GameItemEntity,
                 newItem: GameItemEntity
             ): Boolean {
-                return (oldItem.id == newItem.id)
+                return (oldItem.id != newItem.id && oldItem.name == newItem.name)
             }
         }
     }

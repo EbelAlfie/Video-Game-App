@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.videogameapp.Utils
 import com.example.videogameapp.domain.entity.gameentity.GameItemEntity
 import com.example.videogameapp.domain.interfaces.GameUseCase
 import kotlinx.coroutines.CoroutineScope
@@ -36,5 +37,19 @@ class LibraryViewModel @Inject constructor(private val useCase: GameUseCase): Vi
 
     fun manageLibrary(gameData: GameItemEntity) {
         deleteGameItem(gameData)
+    }
+
+    fun checkNetworkState(context: Context, loadData: () -> Unit) {
+        if (Utils.checkNetwork(context)){ loadData() }
+        else {
+            Utils.createErrorDialog(
+                "No Network",
+                "You appears to be offline",
+                context,
+                fun() {
+                    checkNetworkState(context, loadData)
+                }
+            )
+        }
     }
 }

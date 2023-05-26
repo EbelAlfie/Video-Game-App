@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Video Game App</string>
+    <string name="app_name">Game Hub</string>
     <string name="search">Search…</string>
 
     <string name="released_date">Released date: %s</string>

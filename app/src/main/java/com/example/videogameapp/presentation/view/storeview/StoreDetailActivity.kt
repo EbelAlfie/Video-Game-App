@@ -3,7 +3,6 @@ package com.example.videogameapp.presentation.view.storeview
 import android.app.AlertDialog
 import android.os.Build
 import android.os.Bundle
-import android.widget.FrameLayout
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.videogameapp.R
@@ -14,7 +13,6 @@ import com.example.videogameapp.databinding.ActivityStoreDetailBinding
 import com.example.videogameapp.domain.entity.gameentity.QueryGameItemEntity
 import com.example.videogameapp.domain.entity.storeentity.StoreDetailEntity
 import com.example.videogameapp.domain.entity.storeentity.StoreItemEntity
-import com.example.videogameapp.presentation.view.homeview.HomeFragment
 import com.example.videogameapp.presentation.view.homeview.SubGameFragment
 import com.example.videogameapp.presentation.viewmodel.StoreViewModel
 import com.example.videogameapp.presentation.viewmodel.ViewModelFactory
@@ -72,24 +70,19 @@ class StoreDetailActivity : AppCompatActivity() {
     private fun getGameList(id: Long) {
         binding.apply {
             val fragmentManager = supportFragmentManager
-            fragmentManager.beginTransaction().replace(flFragmentGameList.id, SubGameFragment(QueryGameItemEntity(store = id.toString(), pageSize = Utils.MODE_SUB_PAGE))).commit()
+            fragmentManager.beginTransaction().replace(flFragmentGameList.id, SubGameFragment(QueryGameItemEntity(store = id.toString(), pageSize = Utils.MODE_ALL_PAGE))).commit()
         }
     }
 
     private fun setViews(it: StoreItemEntity) {
         binding.apply {
             Picasso.get().load(it.image).apply{
+                resize(200,200)
                 placeholder(Utils.createLoadingImage(this@StoreDetailActivity))
                 error(R.drawable.baseline_broken_image_24)
                 into(ivStorePoster)
             }
             tvStoreTitle.text = it.name
-            tvViewMore.setOnClickListener {
-                binding.apply {
-                    val fragmentManager = supportFragmentManager
-                    fragmentManager.beginTransaction().replace(binding.flContainer.id, HomeFragment(QueryGameItemEntity(store = id.toString(), pageSize = Utils.MODE_SUB_PAGE))).commit()
-                }
-            }
         }
     }
 

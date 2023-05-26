@@ -32,10 +32,10 @@ class GameRepositoryInst @Inject constructor(private val gameApiService: GameApi
     GameRepository {
     override fun getGameList(scope: CoroutineScope, resources: Resources, queryGameItemEntity: QueryGameItemEntity): Flow<PagingData<GameItemEntity>> {
         return Pager(config = PagingConfig(
-            pageSize = 4
+            pageSize = queryGameItemEntity.pageSize ?: 10
         )) {
             GamePagingDataSource(libraryDbObj, gameApiService, QueryGameItemEntity.transform(resources, queryGameItemEntity))
-        }.flow
+        }.flow.cachedIn(scope)
     }
 
     override fun getGameDetail(id: Long): Flow<GameDetailedEntity> {

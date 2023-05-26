@@ -20,8 +20,6 @@ import com.example.videogameapp.domain.entity.gameentity.QueryGameItemEntity
 import com.example.videogameapp.presentation.view.MainActivity
 import com.example.videogameapp.presentation.view.searchadapter.CustomSpinnerAdapter
 import com.example.videogameapp.presentation.viewmodel.HomeViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 
 class HomeFragment(private var queryParam: QueryGameItemEntity = QueryGameItemEntity(null, null, null, null, null, null, pageSize = Utils.MODE_ALL_PAGE)): Fragment(),
@@ -44,14 +42,35 @@ class HomeFragment(private var queryParam: QueryGameItemEntity = QueryGameItemEn
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        loadingDialog = Utils.createLoading(requireContext()).create()
         fetchViewModel()
+        setOtherObserver()
+        viewModel.setStatusLoading(true)
         initViews()
         setSpinner()
-        setObserver()
         setSpinnerObserver()
         setToolbar()
+        setObserver()
         viewModel.checkNetworkState(requireContext(), queryParam, fun(queryParam) { getData(queryParam)})
+    }
+
+    private fun getData(queryParam: QueryGameItemEntity) {
+        viewModel.getSpinnerData()
+        getListData(queryParam)
+    }
+
+    private fun setOtherObserver() {
+        loadingDialog = Utils.createLoading(requireContext()).create()
+        viewModel.getStatusLoading().observe(viewLifecycleOwner) {
+            if (it) loadingDialog.show() else loadingDialog.dismiss()
+        }
+        viewModel.getPagingItemCount.observe(viewLifecycleOwner) {
+            binding.apply {
+                tvNoData.visibility =
+                    if (it < 1) View.VISIBLE else View.INVISIBLE
+                rvGameList.visibility =
+                    if (it < 1) View.INVISIBLE else View.VISIBLE
+            }
+        }
     }
 
     private fun setToolbar() {
@@ -62,13 +81,6 @@ class HomeFragment(private var queryParam: QueryGameItemEntity = QueryGameItemEn
 
     private fun fetchViewModel() {
         viewModel = (requireActivity() as MainActivity).fetchHomeViewModel()
-    }
-
-    private fun getData(queryParam: QueryGameItemEntity) {
-        viewModel.setStatusLoading(true)
-        viewModel.getSpinnerPlatform()
-        viewModel.getSpinnerGenres()
-        getListData(queryParam)
     }
 
     private fun getListData(queryParam: QueryGameItemEntity) {
@@ -116,17 +128,9 @@ class HomeFragment(private var queryParam: QueryGameItemEntity = QueryGameItemEn
     }
 
     private fun setObserver() {
-        lifecycleScope.launch {
-            viewModel.getStatusLoading().observe(viewLifecycleOwner) {
-                if (it) loadingDialog.show() else loadingDialog.dismiss()
-            }
-            viewModel.getListGameData(requireActivity().resources).observe(viewLifecycleOwner) {
-                binding.apply {
-                    tvNoData.visibility = if (it != null) View.GONE else View.VISIBLE
-                    rvGameList.visibility = if (it != null) View.VISIBLE else View.GONE
-                }
-                pagingAdapter.submitData(lifecycle, it)
-                viewModel.setStatusLoading(false)
+        viewModel.getListGameData(requireActivity().resources).observe(viewLifecycleOwner) {
+            viewLifecycleOwner.lifecycleScope.launch {
+                pagingAdapter.submitData(it)
             }
         }
     }
@@ -138,16 +142,11 @@ class HomeFragment(private var queryParam: QueryGameItemEntity = QueryGameItemEn
             rvGameList.adapter = pagingAdapter
 
             pagingAdapter.addLoadStateListener {
+                viewModel.setItemCount(pagingAdapter.itemCount)
+                viewModel.setStatusLoading(false)
                 when {
-                    it.prepend is LoadState.Error -> {
-                        it.prepend as LoadState.Error
-                    }
-                    it.append is LoadState.Error -> {
-                        it.append as LoadState.Error
-                    }
-                    it.refresh is LoadState.Error -> {
-                        (it.refresh as LoadState.Error).error.toString()
-                    }
+                    (it.prepend is LoadState.Error) -> { setError((it.prepend as LoadState.Error).toString()) }
+                    (it.refresh is LoadState.Error) -> { setError((it.refresh as LoadState.Error).toString()) }
                 }
             }
 
@@ -178,6 +177,10 @@ class HomeFragment(private var queryParam: QueryGameItemEntity = QueryGameItemEn
                 }
             })
         }
+    }
+
+    private fun setError(msg: String) {
+        viewModel.createErrorDialog("Error", msg, requireContext(), fun() { getListData(queryParam) })
     }
 
     private fun setSpinnerOrderListener() {

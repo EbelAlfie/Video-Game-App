@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.imageview.ShapeableImageView
+<ImageView
     android:id="@+id/iv_preview_image"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:scaleType="fitXY"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:adjustViewBounds="true"
-    app:shapeAppearanceOverlay="@style/rounded_image"
     tools:src="@drawable/appicon"
     tools:ignore="ContentDescription"/>

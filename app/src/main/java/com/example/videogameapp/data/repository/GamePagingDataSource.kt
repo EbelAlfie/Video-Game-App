@@ -8,13 +8,12 @@ import com.example.videogameapp.data.modeldata.gamedatamodel.GameItemModel
 import com.example.videogameapp.data.modeldata.gamedatamodel.QueryGameItemModel
 import com.example.videogameapp.data.onlineservices.GameApiService
 import com.example.videogameapp.domain.entity.gameentity.GameItemEntity
+import retrofit2.HttpException
 import java.io.IOException
 
 class GamePagingDataSource(private val libraryDbObj: LocalDbModule, private val gameApiService: GameApiService, private val queryGameItemModel: QueryGameItemModel): PagingSource<Int, GameItemEntity>() {
     override fun getRefreshKey(state: PagingState<Int, GameItemEntity>): Int? {
-        return state.anchorPosition?.let { anchorPosition ->
-            state.closestPageToPosition(anchorPosition)?.prevKey
-        }
+        return null
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, GameItemEntity> {
@@ -26,10 +25,13 @@ class GamePagingDataSource(private val libraryDbObj: LocalDbModule, private val 
             //val prev = responseEntity.second
             LoadResult.Page(
                 data = list,
-                nextKey = if (next == null || list.isEmpty()) null else position + 1,
+                nextKey = if (list.isEmpty() || next == null) null else position + 1,
                 prevKey = null /*if (prev == null || list.isEmpty() || queryGameItemModel.pageSize == 5) null else position - 1*/
             )
         }catch (e: IOException) {
+            Log.d("ERROR", e.toString())
+            LoadResult.Error(e)
+        }catch (e: HttpException) {
             Log.d("ERROR", e.toString())
             LoadResult.Error(e)
         }
@@ -43,7 +45,7 @@ class GamePagingDataSource(private val libraryDbObj: LocalDbModule, private val 
             platform = queryGameItemModel.platform,
             genres = queryGameItemModel.genres,
             ordering = queryGameItemModel.ordering,
-            page = if (position == 1 || queryGameItemModel.pageSize == 5) 1 else position,
+            page = if (position == 1) position else position * 10 - 10,
             pageSize = queryGameItemModel.pageSize
         )
 

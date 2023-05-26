@@ -23,7 +23,7 @@
             android:id="@+id/iv_game_image"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:scaleType="fitCenter"
+            android:scaleType="fitXY"
             tools:src="@drawable/baseline_broken_image_24"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

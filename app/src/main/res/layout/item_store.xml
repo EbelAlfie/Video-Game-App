@@ -36,6 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="0"
+        android:layout_marginEnd="@dimen/detail_padding"
         style="@style/tv_medium_game_item"
         android:layout_alignParentEnd="true"
         android:layout_below="@id/tv_store_title"/>

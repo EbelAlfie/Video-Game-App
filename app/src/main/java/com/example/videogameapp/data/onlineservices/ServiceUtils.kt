@@ -5,7 +5,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 
 object ServiceUtils {
-    const val API_KEY = "d2e12992a64747b88b2cc6e059639efc"
+    const val API_KEY = "f772b0b5baf24d84b2b8810f2effd6b7" /*"d2e12992a64747b88b2cc6e059639efc"*/
 
     const val ORDER_POPULAR = "-games_count"
     const val SPINNER_PAGE = 1

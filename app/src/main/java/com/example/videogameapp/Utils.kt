@@ -2,7 +2,6 @@ package com.example.videogameapp
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -10,21 +9,13 @@ import android.text.Html
 import android.text.Spanned
 import android.view.View
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
-import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
 
 object Utils {
 
     const val ID_KEY = "id"
     const val OBJ_KEY = "Object"
 
-    const val MODE_SUB_PAGE = 5
-    const val MODE_ALL_PAGE = 4
-
-    /*const val DELAY_TIME: Long = 2500
-    const val PERIODE_TIME: Long = 8000*/
+    const val MODE_ALL_PAGE = 10
 
     fun createLoading(context: Context): AlertDialog.Builder {
         return AlertDialog.Builder(context).apply {
@@ -40,6 +31,15 @@ object Utils {
         loading.setColorSchemeColors(context.getColor(R.color.white))
         loading.start()
         return loading
+    }
+
+    fun createErrorDialog(title: String, message: String, context: Context, runQuery: () -> Unit) {
+        setUpAlertDialog(title, message, context).apply {
+            setPositiveButton("Retry") { dialog, _ ->
+                dialog.dismiss()
+                runQuery()
+            }
+        }.show()
     }
 
     fun setUpAlertDialog(title: String, message: String, context: Context): AlertDialog.Builder {

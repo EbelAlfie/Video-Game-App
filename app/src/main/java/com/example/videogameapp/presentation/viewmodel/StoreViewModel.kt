@@ -23,15 +23,19 @@ class StoreViewModel @Inject constructor(private val storeUseCase: StoreUseCase,
     private val _storeDetailData = MutableLiveData<StoreDetailEntity>()
     fun getStoreDetailData() : LiveData<StoreDetailEntity> = _storeDetailData
 
-    fun getListGameData(scope: CoroutineScope, resources: Resources): LiveData<PagingData<GameItemEntity>> = _queryParamModel.switchMap { getGameList(scope, resources, it) }
+    fun getListGameData(resources: Resources): LiveData<PagingData<GameItemEntity>> = _queryParamModel.switchMap { getGameList(resources, it) }
     private val _queryParamModel = MutableLiveData<QueryGameItemEntity>()
 
     private val _statusLoading = MutableLiveData(false)
     fun getStatusLoading(): LiveData<Boolean> = _statusLoading
     fun setStatusLoading(loading: Boolean) { _statusLoading.value = loading }
 
-    private fun getGameList(scope: CoroutineScope, resources: Resources, queryGameItemEntity: QueryGameItemEntity): LiveData<PagingData<GameItemEntity>> {
-        return gameUseCase.getGameList(scope, resources, queryGameItemEntity).asLiveData()
+    private val _pagingItemCount = MutableLiveData<Int>()
+    val getPagingItemCount: LiveData<Int> = _pagingItemCount
+    fun setItemCount(itemCount: Int) { _pagingItemCount.value = itemCount }
+
+    private fun getGameList(resources: Resources, queryGameItemEntity: QueryGameItemEntity): LiveData<PagingData<GameItemEntity>> {
+        return gameUseCase.getGameList(viewModelScope, resources, queryGameItemEntity).asLiveData()
     }
 
     fun initQueryGameItemParam(search: String? = null, ordering: String? = null, dates: String? = null, platform: String? = null, store: String? = null, genres: String? = null, pageSize: Int? = null) {
@@ -66,24 +70,14 @@ class StoreViewModel @Inject constructor(private val storeUseCase: StoreUseCase,
     fun checkNetworkState(context: Context, loadData: () -> Unit) {
         if (Utils.checkNetwork(context)){ loadData() }
         else {
-            createErrorDialog("No Network", "You appears to be offline", context, fun() { loadData() })
-            /*Utils.setUpAlertDialog("No Network", "You appears to be offline", context).apply {
-                setPositiveButton(
-                    "Retry"
-                ) { dialogInterface, _ ->
-                    dialogInterface.dismiss()
-                    checkNetworkState(context, fun() { loadData() })
-                }.create().show()
-            }*/
+            Utils.createErrorDialog(
+                "No Network",
+                "You appears to be offline",
+                context,
+                fun() {
+                    checkNetworkState(context, loadData)
+                }
+            )
         }
-    }
-
-    fun createErrorDialog(title: String, message: String, context: Context, execute: () -> Unit) {
-        Utils.setUpAlertDialog(title, message, context).apply {
-            setPositiveButton("Retry") { dialog, _ ->
-                dialog.dismiss()
-                checkNetworkState(context, fun() { execute() })
-            }
-        }.show()
     }
 }

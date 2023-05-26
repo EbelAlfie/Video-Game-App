@@ -1,82 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    android:id="@+id/fl_container"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.view.storeview.StoreDetailActivity"
+    tools:context=".presentation.view.storeview.StoreDetailActivity">
+<androidx.core.widget.NestedScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="@color/dark_background">
-    <androidx.core.widget.NestedScrollView
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <RelativeLayout
+        <include
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <include
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                layout="@layout/custom_detail_toolbar"/>
+            android:layout_height="wrap_content"
+            layout="@layout/custom_detail_toolbar"/>
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/iv_store_poster"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/baseline_broken_image_24"
-                android:layout_below="@id/toolbar"
-                style="@style/shapeable_image_view_style"
-                tools:ignore="contentDescription"/>
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/iv_store_poster"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/baseline_broken_image_24"
+            android:layout_below="@id/toolbar"
+            style="@style/shapeable_image_view_style"
+            tools:ignore="contentDescription"/>
+        <TextView
+            android:id="@+id/tv_store_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Title"
+            android:layout_below="@id/iv_store_poster"
+            style="@style/tv_header_style"/>
 
-            <TextView
-                android:id="@+id/tv_store_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="Title"
-                android:layout_below="@id/iv_store_poster"
-                style="@style/tv_header_style"/>
+        <TextView
+            android:id="@+id/tv_store_desc_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/about_us"
+            style="@style/tv_header_style"
+            android:layout_below="@id/tv_store_title"/>
+        <TextView
+            android:id="@+id/tv_store_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="desc"
+            style="@style/tv_small_style"
+            android:layout_below="@id/tv_store_desc_title"/>
 
-            <TextView
-                android:id="@+id/tv_store_desc_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/about_us"
-                style="@style/tv_header_style"
-                android:layout_below="@id/tv_store_title"/>
-
-            <TextView
-                android:id="@+id/tv_store_desc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="desc"
-                style="@style/tv_small_style"
-                android:layout_below="@id/tv_store_desc_title"/>
-
-            <TextView
-                android:id="@+id/tv_store_game_list"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/popular_games"
-                style="@style/tv_header_style"
-                android:layout_below="@id/tv_store_desc"/>
-
-            <TextView
-                android:id="@+id/tv_view_more"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="view more"
-                android:textColor="@color/white"
-                android:layout_alignParentEnd="true"
-                android:layout_below="@id/tv_store_desc"/>
-
-            <FrameLayout
-                android:id="@+id/fl_fragment_game_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/tv_store_game_list"/>
-
+        <TextView
+            android:id="@+id/tv_store_game_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/popular_games"
+            style="@style/tv_header_style"
+            android:layout_below="@id/tv_store_desc"/>
+        <FrameLayout
+            android:id="@+id/fl_fragment_game_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_store_game_list"/>
         </RelativeLayout>
     </androidx.core.widget.NestedScrollView>
-</FrameLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

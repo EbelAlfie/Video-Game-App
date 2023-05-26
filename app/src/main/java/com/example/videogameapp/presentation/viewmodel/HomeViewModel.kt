@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.res.Resources
 import androidx.lifecycle.*
 import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import com.example.videogameapp.Utils
 import com.example.videogameapp.domain.entity.gameentity.GameItemEntity
 import com.example.videogameapp.domain.entity.gameentity.QueryGameItemEntity
@@ -12,7 +11,6 @@ import com.example.videogameapp.domain.entity.queryentity.QueryEntity
 import com.example.videogameapp.domain.interfaces.GameUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -31,6 +29,10 @@ class HomeViewModel @Inject constructor(private val useCase: GameUseCase): ViewM
 
     private val _queryParamModel = MutableLiveData<QueryGameItemEntity>()
 
+    private val _pagingItemCount = MutableLiveData<Int>()
+    val getPagingItemCount: LiveData<Int> = _pagingItemCount
+    fun setItemCount(itemCount: Int) { _pagingItemCount.value = itemCount }
+
     fun initQueryGameItemParam(search: String? = null, ordering: String? = null, dates: String? = null, platform: String? = null, store: String? = null, genres: String? = null, pageSize: Int? = null) {
         _queryParamModel.value = QueryGameItemEntity(
             search = search,
@@ -46,16 +48,15 @@ class HomeViewModel @Inject constructor(private val useCase: GameUseCase): ViewM
         return useCase.getGameList(viewModelScope, resources, queryGameItemEntity).asLiveData()
     }
 
-    fun getSpinnerPlatform() {
+    /*suspend fun collectGameList(scope: CoroutineScope, resources: Resources, queryGameItemEntity: QueryGameItemEntity): Flow<PagingData<GameItemEntity>> {
+        return useCase.getGameList(scope, resources, queryGameItemEntity)
+    }*/
+
+    fun getSpinnerData() {
         CoroutineScope(IO).launch {
             useCase.getSpinnerPlatform().collectLatest {
                 _platformSpinnerData.postValue(it)
             }
-        }
-    }
-
-    fun getSpinnerGenres() {
-        CoroutineScope(IO).launch {
             useCase.getSpinnerGenres().collectLatest {
                 _genresSpinnerData.postValue(it)
             }
@@ -65,15 +66,13 @@ class HomeViewModel @Inject constructor(private val useCase: GameUseCase): ViewM
     fun checkNetworkState(context: Context, queryParam: QueryGameItemEntity, loadData: (QueryGameItemEntity) -> Unit) {
         if (Utils.checkNetwork(context)){ loadData(queryParam) }
         else {
-            createErrorDialog("No Network", "You appears to be offline", context, fun() { loadData(queryParam) })
-            /*Utils.setUpAlertDialog("No Network", "You appears to be offline", context).apply {
-                setPositiveButton(
-                    "Retry"
-                ) { dialogInterface, _ ->
-                    dialogInterface.dismiss()
-                    checkNetworkState(context, queryParam, fun(queryParam) { loadData(queryParam) })
-                }.create().show()
-            }*/
+            setStatusLoading(false)
+            Utils.createErrorDialog(
+                "No Network",
+                "You appears to be offline",
+                context,
+                fun() { checkNetworkState(context, queryParam, loadData ) }
+            )
         }
     }
 
@@ -86,3 +85,12 @@ class HomeViewModel @Inject constructor(private val useCase: GameUseCase): ViewM
         }.show()
     }
 }
+
+/*Utils.setUpAlertDialog("No Network", "You appears to be offline", context).apply {
+                setPositiveButton(
+                    "Retry"
+                ) { dialogInterface, _ ->
+                    dialogInterface.dismiss()
+                    checkNetworkState(context, queryParam, fun(queryParam) { loadData(queryParam) })
+                }.create().show()
+            }*/

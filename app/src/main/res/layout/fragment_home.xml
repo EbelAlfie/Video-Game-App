@@ -17,7 +17,7 @@
 
     <Spinner
         android:id="@+id/sp_order_by"
-        android:layout_width="110dp"
+        android:layout_width="@dimen/spinner_width"
         android:layout_height="wrap_content"
         style="@style/spinner_style"
         app:layout_constraintEnd_toStartOf="@+id/sp_platform"
@@ -28,7 +28,7 @@
 
     <Spinner
         android:id="@+id/sp_platform"
-        android:layout_width="110dp"
+        android:layout_width="@dimen/spinner_width"
         android:layout_height="wrap_content"
         style="@style/spinner_style"
         app:layout_constraintEnd_toStartOf="@+id/sp_genre"
@@ -38,7 +38,7 @@
 
     <Spinner
         android:id="@+id/sp_genre"
-        android:layout_width="110dp"
+        android:layout_width="@dimen/spinner_width"
         android:layout_height="wrap_content"
         style="@style/spinner_style"
         app:layout_constraintEnd_toEndOf="parent"
