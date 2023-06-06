@@ -28,7 +28,7 @@ object Utils {
         val loading = CircularProgressDrawable(context)
         loading.strokeWidth = 5f
         loading.centerRadius = 30f
-        loading.setColorSchemeColors(context.getColor(R.color.white))
+        loading.setColorSchemeColors(context.getColor(R.color.gray))
         loading.start()
         return loading
     }

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.videogameapp.R
+import com.example.videogameapp.Utils
 import com.example.videogameapp.databinding.ItemGameBinding
 import com.example.videogameapp.domain.entity.gameentity.GameItemEntity
 import com.squareup.picasso.Picasso
@@ -67,7 +68,9 @@ class LibraryAdapter(private var inList: MutableList<GameItemEntity>, private va
         val data = inList[position]
         holder.binding.apply {
             Picasso.get().load(data.backgroundImage).apply {
-                resize(300, 300).placeholder(R.drawable.baseline_broken_image_24)
+                resize(300, 300)
+                placeholder(Utils.createLoadingImage(context))
+                error(R.drawable.baseline_broken_image_24)
                 into(ivPoster)
             }
 
